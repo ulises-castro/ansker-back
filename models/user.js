@@ -1,5 +1,16 @@
 import mongoose from 'mongoose';
 
+const ips = new mongoose.Schema({
+  ip {
+    type: String,
+    required: true,
+  },
+  registerAt: {
+    type: Date,
+    required: true,
+  }
+});
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -9,7 +20,7 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: '',
   },
-  position: {
+  ip: {
     type: {
       lat: {
         type: String,
@@ -61,6 +72,7 @@ const userSchema = new mongoose.Schema({
       }
     }
   },
+  ips: [ipsUser],
 });
 
 userSchema.statics.findByLogin = async function (facebookId) {
