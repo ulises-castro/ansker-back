@@ -5,7 +5,7 @@ const client_secret = process.env.FACEBOOK_CLIENT_SECRET;
 var fetch = require('node-fetch');
 let fbUrl = 'https://graph.faceobok.com';
 
-module.export.getUser = code => {
+module.exports.getUser = code => {
   let appToken;
   let url = `${fbUrl}/oauth/access_token?client_id=${client_id}&client_secret=${client_secret}&grant_type=client_credentials`;
   return fetch(url, {
