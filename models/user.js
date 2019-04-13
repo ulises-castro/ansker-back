@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const ips = new mongoose.Schema({
-  ip {
+  ip: {
     type: String,
     required: true,
   },
@@ -77,7 +77,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.statics.findByLogin = async function (facebookId) {
   let user = await this.findOne({
-    facebook.id: facebookId
+    facebookId: facebookId
   });
 
   return user;
