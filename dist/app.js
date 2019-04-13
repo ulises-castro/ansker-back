@@ -21,4 +21,6 @@ app.use(passport.initialize());
 
 app.use('/api', auth);
 
-module.exports = app;
+app.listen(3000, function () {
+  console.log('SERVER IS ONLINE');
+});

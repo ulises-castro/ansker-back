@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
-import getFacebookUser = from '../auth/facebook-auth';
+import getFacebookUser from '../auth/facebook-auth';
 
 // Configuration
 
