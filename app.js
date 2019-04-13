@@ -19,8 +19,7 @@ app.use(passport.initialize());
 
 app.use('/api', auth);
 
-
-
+// Sending response that app is alive
 app.listen(3000, () => {
   console.log('SERVER IS ONLINE');
 });

@@ -7,6 +7,8 @@ const passportJWT = require('passport-jwt');
 const ExtractJwt = passportJWT.ExtractJwt;
 const JwtStrategy = passportJWT.Strategy;
 
+import getFacebookUser from '../../auth/facebook-auth.js';
+
 require('dotenv').config();
 
 // Configuration
@@ -16,19 +18,29 @@ jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 
 // Post login
 router.post('/login', function (req, res, next) {
+  const { tokenFB } = req.body;
 
-  const payload = { id: 1 };
-  const token = jwt.sign(payload, jwtOptions.secret);
-  return res.status(400).json({
-    message: token,
-  });
+  const payload = {
+    tokenFB
+  };
+
+  const response = getFacebookUser(payload.tokenFB);
+  console.log(req.body, "req ====");
+
+  if (response && response.length) {
+    const token = jwt.sign(payload, jwtOptions.secret);
+
+    return res.status(200).json({
+      token: response.id
+    });
+  }
+
 });
 
 router.post('/secret', passport.authenticate('jwt', {
   session: false
 }), function(req, res) {
-  console.log('hola');
-  res.json({ message: "Successs! yotube"});
+  res.json({ message: "Successs!"});
 });
 
 module.exports = router;
