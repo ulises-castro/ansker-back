@@ -22,7 +22,7 @@ var jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 
-// Post login
+// Post login/ Register login
 router.post('/login', function (req, res, next) {
   var tokenFB = req.body.tokenFB;
 
@@ -39,6 +39,10 @@ router.post('/login', function (req, res, next) {
 
     return res.status(200).json({
       token: response.id
+    });
+  } else {
+    return res.status(403).json({
+      token: false
     });
   }
 });

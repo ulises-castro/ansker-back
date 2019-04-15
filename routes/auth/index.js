@@ -16,7 +16,7 @@ const jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 
-// Post login
+// Post login/ Register login vía facebook
 router.post('/login', function (req, res, next) {
   const { tokenFB } = req.body;
 
@@ -32,6 +32,10 @@ router.post('/login', function (req, res, next) {
 
     return res.status(200).json({
       token: response.id
+    });
+  } else {
+    return res.status(403).json({
+      token: false,
     });
   }
 
