@@ -24,7 +24,11 @@ router.post('/login', function (req, res, next) {
     tokenFB
   };
 
-  const response = joinOrLoginFacebook(payload.tokenFB);
+  const ipUser =  req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+  const response = joinOrLoginFacebook(
+    payload.tokenFB, ipUser);
+
   console.log(req.body, "req ====");
 
   if (response && response.length) {

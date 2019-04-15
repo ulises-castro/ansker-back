@@ -1,5 +1,9 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
@@ -74,7 +78,7 @@ var userSchema = new _mongoose2.default.Schema({
         }
       },
       email: {
-        type: string
+        type: String
       }
     }
   },
@@ -90,3 +94,5 @@ userSchema.statics.findByLogin = async function (facebookId) {
 };
 
 var User = _mongoose2.default.model('User', userSchema);
+
+exports.default = User;

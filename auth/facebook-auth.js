@@ -2,12 +2,16 @@ require('dotenv').config();
 
 var axios = require('axios');
 
+// import User from '../models/user';
+
+import getUserLocation from './getLocation';
+
 const client_id = process.env.FACEBOOK_CLIENT_ID;
 const client_secret = process.env.FACEBOOK_CLIENT_SECRET;
 
 let fbUrl = 'https://graph.facebook.com';
 
-const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebookToken) {
+const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebookToken, ipUser) {
   // Get AppToken ###########################
   let appToken;
   let url = `${fbUrl}/oauth/access_token?client_id=${client_id}&client_secret=${client_secret}&grant_type=client_credentials`;
@@ -48,7 +52,19 @@ const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebo
   //   );
   // });
 
+  console.log(getUserLocation(ipUser));
+
   console.log(appToken, response3, "Holaaa a todos");
 }
+
+// async function registerUserViaFacebook() {
+//   let newUser = User({
+//    name:
+//   });
+//
+//   newUser.save(() => {
+//     if (err) throw err;
+//   });
+// }
 
 export default joinOrLoginFacebook;
