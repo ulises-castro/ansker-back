@@ -1,11 +1,17 @@
 'use strict';
 
+require('./db');
+
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var auth = require('./routes/auth');
 var passport = require('passport');
 var axios = require('axios');
+
+// Load database connection
+
+
 // const session = require('express-session');
 //Configure our app
 var app = express();

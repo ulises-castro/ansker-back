@@ -22,7 +22,7 @@ var jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 
-// Post login/ Register login
+// Post login/ Register login vía facebook\
 router.post('/login', function (req, res, next) {
   var tokenFB = req.body.tokenFB;
 
@@ -42,7 +42,8 @@ router.post('/login', function (req, res, next) {
     });
   } else {
     return res.status(403).json({
-      token: false
+      token: false,
+      error: 'login.failed_token'
     });
   }
 });

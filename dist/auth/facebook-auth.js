@@ -12,7 +12,7 @@ var client_secret = process.env.FACEBOOK_CLIENT_SECRET;
 
 var fbUrl = 'https://graph.facebook.com';
 
-var getFacebookUser = async function getFacebookUserAndVerified(facebookToken) {
+var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebookToken) {
   // Get AppToken ###########################
   var appToken = void 0;
   var url = fbUrl + '/oauth/access_token?client_id=' + client_id + '&client_secret=' + client_secret + '&grant_type=client_credentials';
@@ -54,4 +54,4 @@ var getFacebookUser = async function getFacebookUserAndVerified(facebookToken) {
   console.log(appToken, response3, "Holaaa a todos");
 };
 
-exports.default = getFacebookUser;
+exports.default = joinOrLoginFacebook;

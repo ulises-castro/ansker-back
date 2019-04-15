@@ -4,6 +4,10 @@ var bodyParser = require('body-parser');
 var auth = require('./routes/auth');
 var passport = require('passport');
 var axios = require('axios');
+
+// Load database connection
+import './db';
+
 // const session = require('express-session');
 //Configure our app
 var app = express();

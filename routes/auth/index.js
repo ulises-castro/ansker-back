@@ -7,7 +7,7 @@ const passportJWT = require('passport-jwt');
 const ExtractJwt = passportJWT.ExtractJwt;
 const JwtStrategy = passportJWT.Strategy;
 
-import getFacebookUser from '../../auth/facebook-auth.js';
+import joinOrLoginFacebook from '../../auth/facebook-auth.js';
 
 require('dotenv').config();
 
@@ -16,7 +16,7 @@ const jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 
-// Post login/ Register login vía facebook
+// Post login/ Register login vía facebook\
 router.post('/login', function (req, res, next) {
   const { tokenFB } = req.body;
 
@@ -24,7 +24,7 @@ router.post('/login', function (req, res, next) {
     tokenFB
   };
 
-  const response = getFacebookUser(payload.tokenFB);
+  const response = joinOrLoginFacebook(payload.tokenFB);
   console.log(req.body, "req ====");
 
   if (response && response.length) {
@@ -36,6 +36,7 @@ router.post('/login', function (req, res, next) {
   } else {
     return res.status(403).json({
       token: false,
+      error: 'login.failed_token',
     });
   }
 

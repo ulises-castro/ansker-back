@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
-import getFacebookUser from '../auth/facebook-auth';
+import joinOrLoginFacebook from '../auth/facebook-auth';
 
 // Configuration
 
@@ -16,9 +16,9 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = process.env.JWT_SECRET_PASSWORD;
 
 var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next) {
-  console.log('Aqui entro, payload', jwt_payload, getFacebookUser(jwt_payload));
+  console.log('Aqui entro, payload', jwt_payload, joinOrLoginFacebook(jwt_payload));
 
-  // getFacebookUser(jwt_payload);
+  // joinOrLoginFacebook(jwt_payload);
 
   next(false, { user: 'hola'});
 });
