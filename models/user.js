@@ -1,14 +1,27 @@
 import mongoose from 'mongoose';
 
-const ips = new mongoose.Schema({
+
+const location = {
+  type: {
+    countryCode: String,
+    regionName: String,
+    regionCode: String,
+    latitude: String,
+    longitude: String,
+  },
+}
+
+const ipsUser = new mongoose.Schema({
   ip: {
     type: String,
     required: true,
   },
+  location,
   registerAt: {
     type: Date,
     required: true,
-  }
+    default: Date.now(),
+  },
 });
 
 const userSchema = new mongoose.Schema({
@@ -20,19 +33,11 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: '',
   },
-  ip: {
-    type: {
-      lat: {
-        type: String,
-      },
-      long: {
-        type: String,
-      },
-      lastUpdated: {
-        type: Date,
-      }
-    }
-  },
+  // ip: {
+  //   type: String,
+  //   required: true,
+  // },
+  ipLogs: [ipsUser],
   registerBy: {
     type: String,
     default: 'facebook'
@@ -72,15 +77,15 @@ const userSchema = new mongoose.Schema({
       }
     }
   },
-  ips: [ipsUser],
 });
 
-userSchema.statics.findByLogin = async function (facebookId) {
-  let user = await this.findOne({
-    facebookId: facebookId
-  });
+userSchema.statics.findByLogin = async function (targetUserId, provider = 'facebook') {
+  // Search by Provider
+  // let user = await this.findOne({
+  //   authProviders[provider].id: targetUserId
+  // });
 
-  return user;
+  // return user;
 }
 
 const User = mongoose.model('User', userSchema);

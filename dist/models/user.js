@@ -10,14 +10,26 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ips = new _mongoose2.default.Schema({
+var location = {
+  type: {
+    countryCode: String,
+    regionName: String,
+    regionCode: String,
+    latitude: String,
+    longitude: String
+  }
+};
+
+var ipsUser = new _mongoose2.default.Schema({
   ip: {
     type: String,
     required: true
   },
+  location: location,
   registerAt: {
     type: Date,
-    required: true
+    required: true,
+    default: Date.now()
   }
 });
 
@@ -30,19 +42,11 @@ var userSchema = new _mongoose2.default.Schema({
     type: Number,
     default: ''
   },
-  ip: {
-    type: {
-      lat: {
-        type: String
-      },
-      long: {
-        type: String
-      },
-      lastUpdated: {
-        type: Date
-      }
-    }
-  },
+  // ip: {
+  //   type: String,
+  //   required: true,
+  // },
+  ipLogs: [ipsUser],
   registerBy: {
     type: String,
     default: 'facebook'
@@ -81,16 +85,18 @@ var userSchema = new _mongoose2.default.Schema({
         type: String
       }
     }
-  },
-  ips: [ipsUser]
+  }
 });
 
-userSchema.statics.findByLogin = async function (facebookId) {
-  var user = await this.findOne({
-    facebookId: facebookId
-  });
+userSchema.statics.findByLogin = async function (targetUserId) {
+  // Search by Provider
+  // let user = await this.findOne({
+  //   authProviders[provider].id: targetUserId
+  // });
 
-  return user;
+  // return user;
+
+  var provider = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'facebook';
 };
 
 var User = _mongoose2.default.model('User', userSchema);

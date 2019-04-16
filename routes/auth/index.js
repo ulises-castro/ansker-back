@@ -9,6 +9,7 @@ const JwtStrategy = passportJWT.Strategy;
 
 import joinOrLoginFacebook from '../../auth/facebook-auth.js';
 
+// TODO: Remove and declare in app.js
 require('dotenv').config();
 
 // Configuration
@@ -24,13 +25,15 @@ router.post('/login', function (req, res, next) {
     tokenFB
   };
 
-  const ipUser =  req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const ipUser = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
+  // Find User via Facebook || Register if user doesn't exists in database
   const response = joinOrLoginFacebook(
     payload.tokenFB, ipUser);
 
   console.log(req.body, "req ====");
 
+  // Returned respones based on response value
   if (response && response.length) {
     const token = jwt.sign(payload, jwtOptions.secret);
 

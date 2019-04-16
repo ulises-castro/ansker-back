@@ -15,6 +15,7 @@ var passportJWT = require('passport-jwt');
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
+// TODO: Remove and declare in app.js
 require('dotenv').config();
 
 // Configuration
@@ -33,10 +34,12 @@ router.post('/login', function (req, res, next) {
 
   var ipUser = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
+  // Find User via Facebook || Register if user doesn't exists in database
   var response = (0, _facebookAuth2.default)(payload.tokenFB, ipUser);
 
   console.log(req.body, "req ====");
 
+  // Returned respones based on response value
   if (response && response.length) {
     var token = jwt.sign(payload, jwtOptions.secret);
 

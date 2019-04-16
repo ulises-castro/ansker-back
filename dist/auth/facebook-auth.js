@@ -4,17 +4,21 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _user = require('../models/user');
+
+var _user2 = _interopRequireDefault(_user);
+
 var _getLocation = require('./getLocation');
 
 var _getLocation2 = _interopRequireDefault(_getLocation);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 require('dotenv').config();
 
 var axios = require('axios');
-
-// import User from '../models/user';
 
 var client_id = process.env.FACEBOOK_CLIENT_ID;
 var client_secret = process.env.FACEBOOK_CLIENT_SECRET;
@@ -32,15 +36,15 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
 
   // Checking appToken #########################
   url = fbUrl + '/debug_token?input_token=' + facebookToken + '&access_token=' + appToken;
-  var response2 = await axios.get(url);
+  var appFacebookData = await axios.get(url);
 
-  var _response2$data$data = response2.data.data,
-      app_id = _response2$data$data.app_id,
-      user_id = _response2$data$data.user_id,
-      is_valid = _response2$data$data.is_valid;
+  var _appFacebookData$data = appFacebookData.data.data,
+      app_id = _appFacebookData$data.app_id,
+      user_id = _appFacebookData$data.user_id,
+      is_valid = _appFacebookData$data.is_valid;
 
 
-  console.log("Entro 22", response2.data.data, "---------");
+  console.log("Entro 22", appFacebookData.data.data, "---------");
 
   if (app_id !== client_id) {
 
@@ -52,27 +56,78 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
   // It's okay, get user information #############
   url = fbUrl + '/v3.2/' + user_id + '?fields=id,name,picture,email&access_token=' + appToken;
 
-  var response3 = await axios.get(url);
-
-  // response3.catch(err => {
+  // TODO: Creater catch error handler. ###################
+  // facebookUserData.catch(err => {
   //   throw new Error(
   //     'error while authenticating facebook user: ' + JSON.stringify(err)
   //   );
   // });
 
-  console.log((0, _getLocation2.default)(ipUser));
+  var facebookUserData = await axios.get(url);
+  var userLocation = (0, _getLocation2.default)(ipUser);
 
-  console.log(appToken, response3, "Holaaa a todos");
+  var userData = [].concat(_toConsumableArray(facebookUserData), _toConsumableArray(userLocation));
+
+  // TODO: This is temporaly, remove when added more ways to log
+  userData['provider'] = 'facebook';
+  userData['facebookToken'] = facebookToken;
+
+  // TODO: Find user in database via ID, and if it doesnt exists lets added.
+  if (true) {
+    return registerUserDB(userLocation, ipUser);
+  } else {}
+
+  console.log(facebookUserData, "Holaaa a todos");
 };
 
-// async function registerUserViaFacebook() {
-//   let newUser = User({
-//    name:
-//   });
-//
-//   newUser.save(() => {
-//     if (err) throw err;
-//   });
-// }
+// Save user into database
+async function registerUserDB(userData, ipUser) {
+
+  console.log(userData, "USERDATAAA");
+
+  var registerAt = new Date();
+  var ip = userData.ip,
+      country_code = userData.country_code,
+      region_name = userData.region_name,
+      region_code = userData.region_code,
+      latitude = userData.latitude,
+      longitude = userData.longitude,
+      id = userData.id,
+      name = userData.name,
+      facebookToken = userData.facebookToken;
+
+
+  var newUser = (0, _user2.default)({
+    username: 'primerotesting',
+    // ip,
+    ipLogs: {
+      ip: ipUser,
+      location: {
+        countryCode: country_code,
+        regionName: region_name,
+        regionCode: region_code,
+        latitude: latitude,
+        longitude: longitude
+      }
+    },
+    // authProvider TODO: Facebook is only way to get access
+    authProviders: {
+      facebook: {
+        id: id,
+        name: name,
+        email: '',
+        token: facebookToken
+      }
+    },
+    registerAt: registerAt
+  });
+
+  return await newUser.save();
+
+  // (res) => {
+  //   if (err) throw err;
+  //   console.log(res, "RESPONSE new user");
+  // });
+}
 
 exports.default = joinOrLoginFacebook;
