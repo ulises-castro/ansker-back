@@ -1,16 +1,27 @@
+require('dotenv').config();
+
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var auth = require('./routes/auth');
 var passport = require('passport');
 var axios = require('axios');
+var cors = require('cors');
 
 // Load database connection
 import './db';
 
-// const session = require('express-session');
 //Configure our app
 var app = express();
+
+const corsOption = {
+  origin: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: false,
+  exposedHeaders: ['Authorization']
+};
+
+app.use(cors(corsOption));
 
 app.use(require('morgan')('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
