@@ -38,11 +38,13 @@ router.post('/login', function (req, res, next) {
     const token = jwt.sign(payload, jwtOptions.secret);
 
     return res.status(200).json({
-      token: response.id
+      token: response.id,
+      status: true,
     });
   } else {
-    return res.status(403).json({
+    return res.status(401).json({
       token: false,
+      status: false,
       error: 'login.failed_token',
     });
   }
