@@ -64,24 +64,25 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
   // });
 
   var facebookUserData = await axios.get(url);
-  var userLocation = (0, _getLocation2.default)(ipUser);
+  var userLocation = await (0, _getLocation2.default)(ipUser);
 
   var userData = [].concat(_toConsumableArray(facebookUserData), _toConsumableArray(userLocation));
 
   // TODO: This is temporaly, remove when added more ways to log
   userData['provider'] = 'facebook';
   userData['facebookToken'] = facebookToken;
+  userData['ip'] = ipUser;
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
   if (true) {
-    return registerUserDB(userLocation, ipUser);
+    return registerUserDB(userLocation);
   } else {}
 
   console.log(facebookUserData, "Holaaa a todos");
 };
 
 // Save user into database
-async function registerUserDB(userData, ipUser) {
+async function registerUserDB(userData) {
 
   console.log(userData, "USERDATAAA");
 
@@ -94,14 +95,15 @@ async function registerUserDB(userData, ipUser) {
       longitude = userData.longitude,
       id = userData.id,
       name = userData.name,
-      facebookToken = userData.facebookToken;
+      facebookToken = userData.facebookToken,
+      ipUser = userData.ipUser;
 
 
   var newUser = (0, _user2.default)({
-    username: 'primerotesting',
+    username: 'primerotesting3',
     // ip,
     ipLogs: {
-      ip: ipUser,
+      ip: ip,
       location: {
         countryCode: country_code,
         regionName: region_name,

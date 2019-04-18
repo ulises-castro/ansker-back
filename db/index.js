@@ -1,6 +1,10 @@
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 
 const uri = 'mongodb://localhost/ansker';
+
+const autoIndex = !!process.env.PRODUCTION;
 
 // Defining vars to connect to database
 const options = {
@@ -8,6 +12,7 @@ const options = {
   pass: process.env.DATABASE_PWD,
   useNewUrlParser: true,
   useCreateIndex: true,
+  autoIndex,
 };
 
 mongoose.connect(uri, options).then(() => {
