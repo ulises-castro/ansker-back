@@ -43,7 +43,10 @@ const authProviders = {
     type: {
       facebook: {
         type: {
-          id: String,
+          id: {
+            type: String,
+            unique: true,
+          },
           name: String,
           email: String,
           token: String,
@@ -51,7 +54,10 @@ const authProviders = {
       },
       google: {
         type: {
-          id: String,
+          id: {
+            type: String,
+            unique: true,
+          },
           name: String,
           email: String,
           token: String,
@@ -59,7 +65,10 @@ const authProviders = {
       },
       twitter: {
         type: {
-          id: String,
+          id: {
+            type: String,
+            unique: true,
+          },
           name: String,
           email: String,
           token: String,
@@ -104,6 +113,14 @@ userSchema.statics.findByLogin = async function (targetUserId, provider = 'faceb
 
 userSchema.statics.findUserOrRegister = async function (targetUserId, userGeolocationData, provider = 'facebook') {
 
+  let user = this.findOne({
+    authProviders.facebook.id: targetUserId
+  }).exec();
+
+  if (user) {
+    return targetUserId;
+  }
+
   const registerAt = new Date();
   const {
     ip,
@@ -142,7 +159,9 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userGeoloc
     registerAt,
   });
 
-  return await newUser.save();
+  newUser.save().then((value) => {
+    return targetUserId;
+  });
 }
 
 const User = mongoose.model('User', userSchema);

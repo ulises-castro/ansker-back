@@ -64,6 +64,7 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
   // });
 
   var facebookUserData = await axios.get(url);
+  var userIdFB = facebookUserData.id;
   var userLocation = await (0, _getLocation2.default)(ipUser);
 
   var userData = [].concat(_toConsumableArray(facebookUserData), _toConsumableArray(userLocation));
@@ -74,62 +75,61 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
   userData['ip'] = ipUser;
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
-  if (true) {
-    return registerUserDB(userLocation);
-  } else {}
+  return _user2.default.findUserOrRegister(userIdFB, userLocation);
 
   console.log(facebookUserData, "Holaaa a todos");
 };
 
-// Save user into database
-async function registerUserDB(userData) {
-
-  console.log(userData, "USERDATAAA");
-
-  var registerAt = new Date();
-  var ip = userData.ip,
-      country_code = userData.country_code,
-      region_name = userData.region_name,
-      region_code = userData.region_code,
-      latitude = userData.latitude,
-      longitude = userData.longitude,
-      id = userData.id,
-      name = userData.name,
-      facebookToken = userData.facebookToken,
-      ipUser = userData.ipUser;
-
-
-  var newUser = (0, _user2.default)({
-    username: 'primerotesting3',
-    // ip,
-    ipLogs: {
-      ip: ip,
-      location: {
-        countryCode: country_code,
-        regionName: region_name,
-        regionCode: region_code,
-        latitude: latitude,
-        longitude: longitude
-      }
-    },
-    // authProvider TODO: Facebook is only way to get access
-    authProviders: {
-      facebook: {
-        id: id,
-        name: name,
-        email: '',
-        token: facebookToken
-      }
-    },
-    registerAt: registerAt
-  });
-
-  return await newUser.save();
-
-  // (res) => {
-  //   if (err) throw err;
-  //   console.log(res, "RESPONSE new user");
-  // });
-}
+// // Save user into database
+// async function registerUserDB(userData) {
+//
+//   console.log(userData, "USERDATAAA");
+//
+//   const registerAt = new Date();
+//   const {
+//     ip,
+//     country_code,
+//     region_name,
+//     region_code,
+//     latitude,
+//     longitude,
+//     id,
+//     name,
+//     facebookToken,
+//     ipUser
+//   } = userData;
+//
+//   let newUser = User({
+//     username: 'primerotesting3',
+//     // ip,
+//     ipLogs: {
+//       ip,
+//       location: {
+//         countryCode: country_code,
+//         regionName: region_name,
+//         regionCode: region_code,
+//         latitude,
+//         longitude,
+//       }
+//     },
+//     // authProvider TODO: Facebook is only way to get access
+//     authProviders: {
+//       facebook: {
+//         id,
+//         name,
+//         email: '',
+//         token: facebookToken,
+//       }
+//     },
+//     registerAt,
+//   });
+//
+//   return await newUser.save();
+//
+//   // (res) => {
+//   //   if (err) throw err;
+//   //   console.log(res, "RESPONSE new user");
+//   // });
+// }
 
 exports.default = joinOrLoginFacebook;
