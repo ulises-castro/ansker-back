@@ -51,73 +51,28 @@ const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebo
   //   );
   // });
 
-  const facebookUserData = await axios.get(url);
+  let facebookUserData = await axios.get(url);
+  facebookUserData = facebookUserData.data;
   const userIdFB = facebookUserData.id;
   const userLocation = await getUserLocation(ipUser);
 
-  const userData = [...facebookUserData, ...userLocation];
+  const userData = {};
 
   // TODO: This is temporaly, remove when added more ways to log
   userData['provider'] = 'facebook';
   userData['facebookToken'] = facebookToken;
+  userData['name'] = facebookUserData.name;
+  userData['id'] = facebookUserData.id;
+  userData['email'] = facebookUserData.email || '';
+  // Location user
   userData['ip'] = ipUser;
+  userData['location'] = userLocation.data;
+
+  console.log(userData, "Holaaa a todos");
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
-  return User.findUserOrRegister(userIdFB, userLocation);
+  return User.findUserOrRegister(userIdFB, userData);
 
-  console.log(facebookUserData, "Holaaa a todos");
 }
-
-// // Save user into database
-// async function registerUserDB(userData) {
-//
-//   console.log(userData, "USERDATAAA");
-//
-//   const registerAt = new Date();
-//   const {
-//     ip,
-//     country_code,
-//     region_name,
-//     region_code,
-//     latitude,
-//     longitude,
-//     id,
-//     name,
-//     facebookToken,
-//     ipUser
-//   } = userData;
-//
-//   let newUser = User({
-//     username: 'primerotesting3',
-//     // ip,
-//     ipLogs: {
-//       ip,
-//       location: {
-//         countryCode: country_code,
-//         regionName: region_name,
-//         regionCode: region_code,
-//         latitude,
-//         longitude,
-//       }
-//     },
-//     // authProvider TODO: Facebook is only way to get access
-//     authProviders: {
-//       facebook: {
-//         id,
-//         name,
-//         email: '',
-//         token: facebookToken,
-//       }
-//     },
-//     registerAt,
-//   });
-//
-//   return await newUser.save();
-//
-//   // (res) => {
-//   //   if (err) throw err;
-//   //   console.log(res, "RESPONSE new user");
-//   // });
-// }
 
 export default joinOrLoginFacebook;

@@ -31,16 +31,16 @@ router.post('/login', function (req, res, next) {
   const response = joinOrLoginFacebook(
     payload.tokenFB, ipUser);
 
-  console.log(req.body, "req ====");
 
   payload.id = response;
+  console.log(req.body, "req ====");
 
   // Returned respones based on response value
-  if (response) {
+  if (response && response !== null) {
     const token = jwt.sign(payload, jwtOptions.secret);
 
     return res.status(200).json({
-      token: response.id,
+      token: token,
       status: true,
     });
   } else {

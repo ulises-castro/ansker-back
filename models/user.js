@@ -6,22 +6,27 @@ const location = {
     countryCode: {
       type: String,
       default: '',
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
     },
     regionName: {
       type: String,
-      default: '',
+      required: true,
     },
     regionCode:  {
       type: String,
-      default: '',
+      required: true,
     },
     latitude:  {
       type: String,
-      default: '',
+      required: true,
     },
     longitude:  {
       type: String,
-      default: '',
+      required: true,
     },
   },
 }
@@ -111,38 +116,49 @@ userSchema.statics.findByLogin = async function (targetUserId, provider = 'faceb
   // return user;
 }
 
-userSchema.statics.findUserOrRegister = async function (targetUserId, userGeolocationData, provider = 'facebook') {
+userSchema.statics.findUserOrRegister = async function (targetUserId, userData, provider = 'facebook') {
 
-  let user = this.findOne({
-    authProviders.facebook.id: targetUserId
+  let user = await this.findOne({
+    'authProviders.facebook.id': targetUserId
   }).exec();
 
   if (user) {
+    console.log('Finded here and USER', targetUserId, user);
     return targetUserId;
   }
+
+  console.log(targetUserId, userData, user, targetUserId, "Mirame en el modelo");
+
+  // REGISTER USER BECAUSE DOESNT EXISTS YET
 
   const registerAt = new Date();
   const {
     ip,
+    city,
     country_code,
     region_name,
     region_code,
     latitude,
     longitude,
+  } = userData.location;
+
+  const  {
     id,
     name,
-    facebookToken
-  } = userGeolocationData;
+    email,
+    facebookToken,
+  } = userData;
 
   let newUser = User({
     username: targetUserId,
     // ip,
     ipLogs: {
-      ip: ipUser,
+      ip,
       location: {
         countryCode: country_code,
         regionName: region_name,
         regionCode: region_code,
+        city: city,
         latitude,
         longitude,
       }
@@ -152,7 +168,7 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userGeoloc
       facebook: {
         id,
         name,
-        email: '',
+        email,
         token: facebookToken,
       }
     },
@@ -160,6 +176,7 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userGeoloc
   });
 
   newUser.save().then((value) => {
+    console.log('saved here', targetUserId);
     return targetUserId;
   });
 }

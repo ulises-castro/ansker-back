@@ -18,11 +18,11 @@ var access_token = process.env.IPTOKEN;
 
 // Gettings user location information ##############
 var getUserLocation = async function getUserLocation(ipUser) {
-  var response = await _axios2.default.get(ipProviderUrl + '/' + ipUser + '?access_key=' + access_token);
-
+  return _axios2.default.get(ipProviderUrl + '/' + ipUser + '?access_key=' + access_token);
+  //
   // console.log("Entro aquí IP====,", ipUser, response);
-
-  return response;
+  //
+  // return response;
 };
 
 exports.default = getUserLocation;

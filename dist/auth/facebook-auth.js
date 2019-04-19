@@ -14,8 +14,6 @@ var _getLocation2 = _interopRequireDefault(_getLocation);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 require('dotenv').config();
 
 var axios = require('axios');
@@ -64,72 +62,26 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
   // });
 
   var facebookUserData = await axios.get(url);
+  facebookUserData = facebookUserData.data;
   var userIdFB = facebookUserData.id;
   var userLocation = await (0, _getLocation2.default)(ipUser);
 
-  var userData = [].concat(_toConsumableArray(facebookUserData), _toConsumableArray(userLocation));
+  var userData = {};
 
   // TODO: This is temporaly, remove when added more ways to log
   userData['provider'] = 'facebook';
   userData['facebookToken'] = facebookToken;
+  userData['name'] = facebookUserData.name;
+  userData['id'] = facebookUserData.id;
+  userData['email'] = facebookUserData.email || '';
+  // Location user
   userData['ip'] = ipUser;
+  userData['location'] = userLocation.data;
+
+  console.log(userData, "Holaaa a todos");
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
-  return _user2.default.findUserOrRegister(userIdFB, userLocation);
-
-  console.log(facebookUserData, "Holaaa a todos");
+  return _user2.default.findUserOrRegister(userIdFB, userData);
 };
-
-// // Save user into database
-// async function registerUserDB(userData) {
-//
-//   console.log(userData, "USERDATAAA");
-//
-//   const registerAt = new Date();
-//   const {
-//     ip,
-//     country_code,
-//     region_name,
-//     region_code,
-//     latitude,
-//     longitude,
-//     id,
-//     name,
-//     facebookToken,
-//     ipUser
-//   } = userData;
-//
-//   let newUser = User({
-//     username: 'primerotesting3',
-//     // ip,
-//     ipLogs: {
-//       ip,
-//       location: {
-//         countryCode: country_code,
-//         regionName: region_name,
-//         regionCode: region_code,
-//         latitude,
-//         longitude,
-//       }
-//     },
-//     // authProvider TODO: Facebook is only way to get access
-//     authProviders: {
-//       facebook: {
-//         id,
-//         name,
-//         email: '',
-//         token: facebookToken,
-//       }
-//     },
-//     registerAt,
-//   });
-//
-//   return await newUser.save();
-//
-//   // (res) => {
-//   //   if (err) throw err;
-//   //   console.log(res, "RESPONSE new user");
-//   // });
-// }
 
 exports.default = joinOrLoginFacebook;
