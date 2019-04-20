@@ -8,10 +8,6 @@ var _user = require('../models/user');
 
 var _user2 = _interopRequireDefault(_user);
 
-var _getLocation = require('./getLocation');
-
-var _getLocation2 = _interopRequireDefault(_getLocation);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 require('dotenv').config();
@@ -55,33 +51,20 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
   url = fbUrl + '/v3.2/' + user_id + '?fields=id,name,picture,email&access_token=' + appToken;
 
   // TODO: Creater catch error handler. ###################
-  // facebookUserData.catch(err => {
-  //   throw new Error(
-  //     'error while authenticating facebook user: ' + JSON.stringify(err)
-  //   );
-  // });
 
   var facebookUserData = await axios.get(url);
-  facebookUserData = facebookUserData.data;
-  var userIdFB = facebookUserData.id;
-  var userLocation = await (0, _getLocation2.default)(ipUser);
-
-  var userData = {};
 
   // TODO: This is temporaly, remove when added more ways to log
-  userData['provider'] = 'facebook';
-  userData['facebookToken'] = facebookToken;
-  userData['name'] = facebookUserData.name;
-  userData['id'] = facebookUserData.id;
-  userData['email'] = facebookUserData.email || '';
-  // Location user
-  userData['ip'] = ipUser;
-  userData['location'] = userLocation.data;
+  facebookUserData = facebookUserData.data;
+  facebookUserData['provider'] = 'facebook';
+  facebookUserData['facebookToken'] = facebookToken;
+  facebookUserData['email'] = facebookUserData.email || '';
+  facebookUserData['ip'] = ipUser;
 
-  console.log(userData, "Holaaa a todos");
+  var userIdFB = facebookUserData.id;
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
-  return _user2.default.findUserOrRegister(userIdFB, userData);
+  return _user2.default.findUserOrRegister(userIdFB, facebookUserData);
 };
 
 exports.default = joinOrLoginFacebook;

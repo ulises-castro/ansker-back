@@ -107,14 +107,8 @@ const userSchema = new mongoose.Schema({
   authProviders,
 });
 
-userSchema.statics.findByLogin = async function (targetUserId, provider = 'facebook') {
-  // Search by Provider
-  // let user = await this.findOne({
-  //   authProviders[provider].id: targetUserId
-  // });
-
-  // return user;
-}
+// include services to get user geolocation data
+import getUserLocation from '../services/getLocation';
 
 userSchema.statics.findUserOrRegister = async function (targetUserId, userData, provider = 'facebook') {
 
@@ -124,7 +118,7 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
 
   if (user) {
     console.log('Finded here and USER', targetUserId, user);
-    return targetUserId;
+    return user;
   }
 
   console.log(targetUserId, userData, user, targetUserId, "Mirame en el modelo");
@@ -132,6 +126,10 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
   // REGISTER USER BECAUSE DOESNT EXISTS YET
 
   const registerAt = new Date();
+
+  // Get user geolocation data ########################
+  const userLocation = await getUserLocation(userData.ip);
+
   const {
     ip,
     city,
@@ -140,7 +138,7 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
     region_code,
     latitude,
     longitude,
-  } = userData.location;
+  } = userLocation.data;
 
   const  {
     id,
@@ -169,15 +167,16 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
         id,
         name,
         email,
+        // TODO Create a function which performences update facebooktoken when user had been signed
         token: facebookToken,
       }
     },
     registerAt,
   });
 
-  newUser.save().then((value) => {
-    console.log('saved here', targetUserId);
-    return targetUserId;
+  newUser.save().then((userCreated) => {
+    console.log('saved here', userCreated);
+    return userCreated;
   });
 }
 

@@ -4,8 +4,6 @@ var axios = require('axios');
 
 import User from '../models/user';
 
-import getUserLocation from './getLocation';
-
 const client_id = process.env.FACEBOOK_CLIENT_ID;
 const client_secret = process.env.FACEBOOK_CLIENT_SECRET;
 
@@ -45,33 +43,20 @@ const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebo
   url = `${fbUrl}/v3.2/${user_id}?fields=id,name,picture,email&access_token=${appToken}`;
 
   // TODO: Creater catch error handler. ###################
-  // facebookUserData.catch(err => {
-  //   throw new Error(
-  //     'error while authenticating facebook user: ' + JSON.stringify(err)
-  //   );
-  // });
 
   let facebookUserData = await axios.get(url);
-  facebookUserData = facebookUserData.data;
-  const userIdFB = facebookUserData.id;
-  const userLocation = await getUserLocation(ipUser);
-
-  const userData = {};
 
   // TODO: This is temporaly, remove when added more ways to log
-  userData['provider'] = 'facebook';
-  userData['facebookToken'] = facebookToken;
-  userData['name'] = facebookUserData.name;
-  userData['id'] = facebookUserData.id;
-  userData['email'] = facebookUserData.email || '';
-  // Location user
-  userData['ip'] = ipUser;
-  userData['location'] = userLocation.data;
+  facebookUserData = facebookUserData.data;
+  facebookUserData['provider'] = 'facebook';
+  facebookUserData['facebookToken'] = facebookToken;
+  facebookUserData['email'] = facebookUserData.email || '';
+  facebookUserData['ip'] = ipUser;
 
-  console.log(userData, "Holaaa a todos");
+  const userIdFB = facebookUserData.id;
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
-  return User.findUserOrRegister(userIdFB, userData);
+  return User.findUserOrRegister(userIdFB, facebookUserData);
 
 }
 

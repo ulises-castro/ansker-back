@@ -37,8 +37,10 @@ router.post('/login', function (req, res, next) {
   // Find User via Facebook || Register if user doesn't exists in database
   var response = (0, _facebookAuth2.default)(payload.tokenFB, ipUser);
 
-  payload.id = response;
-  console.log(req.body, "req ====");
+  var userData = {};
+  userData.facebookId = response.facebook.id;
+  userData.id = '' + response._id;
+  console.log(req.body, payload, "req ====");
 
   // Returned respones based on response value
   if (response && response !== null) {

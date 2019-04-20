@@ -8,6 +8,10 @@ var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _getLocation = require('../services/getLocation');
+
+var _getLocation2 = _interopRequireDefault(_getLocation);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var location = {
@@ -116,16 +120,8 @@ var userSchema = new _mongoose2.default.Schema({
   authProviders: authProviders
 });
 
-userSchema.statics.findByLogin = async function (targetUserId) {
-  // Search by Provider
-  // let user = await this.findOne({
-  //   authProviders[provider].id: targetUserId
-  // });
+// include services to get user geolocation data
 
-  // return user;
-
-  var provider = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'facebook';
-};
 
 userSchema.statics.findUserOrRegister = async function (targetUserId, userData) {
   var provider = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'facebook';
@@ -137,7 +133,7 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
 
   if (user) {
     console.log('Finded here and USER', targetUserId, user);
-    return targetUserId;
+    return user;
   }
 
   console.log(targetUserId, userData, user, targetUserId, "Mirame en el modelo");
@@ -145,14 +141,18 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
   // REGISTER USER BECAUSE DOESNT EXISTS YET
 
   var registerAt = new Date();
-  var _userData$location = userData.location,
-      ip = _userData$location.ip,
-      city = _userData$location.city,
-      country_code = _userData$location.country_code,
-      region_name = _userData$location.region_name,
-      region_code = _userData$location.region_code,
-      latitude = _userData$location.latitude,
-      longitude = _userData$location.longitude;
+
+  // Get user geolocation data ########################
+  var userLocation = await (0, _getLocation2.default)(userData.ip);
+
+  var _userLocation$data = userLocation.data,
+      ip = _userLocation$data.ip,
+      city = _userLocation$data.city,
+      country_code = _userLocation$data.country_code,
+      region_name = _userLocation$data.region_name,
+      region_code = _userLocation$data.region_code,
+      latitude = _userLocation$data.latitude,
+      longitude = _userLocation$data.longitude;
   var id = userData.id,
       name = userData.name,
       email = userData.email,
@@ -179,15 +179,16 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
         id: id,
         name: name,
         email: email,
+        // TODO Create a function which performences update facebooktoken when user had been signed
         token: facebookToken
       }
     },
     registerAt: registerAt
   });
 
-  newUser.save().then(function (value) {
-    console.log('saved here', targetUserId);
-    return targetUserId;
+  newUser.save().then(function (userCreated) {
+    console.log('saved here', userCreated);
+    return userCreated;
   });
 };
 
