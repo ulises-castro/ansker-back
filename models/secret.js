@@ -41,6 +41,29 @@ const ShareSchema = new Schema({
   },
 });
 
+const location =  {
+  countryCode: {
+    type: String,
+    index: true,
+    required: true,
+  },
+  regionCode: {
+    type: String,
+    index: true,
+    required: true,
+  },
+  regionName: {
+    type: String,
+    index: true,
+    required: true,
+  },
+  city: {
+    type: String,
+    index: true,
+    required: true,
+  },
+};
+
 const SecretSchema = new Schema({
   authorId: {
     type: String,
@@ -51,45 +74,13 @@ const SecretSchema = new Schema({
     type: String,
     required: true,
     maxlength: 200,
-    minLength: 2,
-  },
-  latitude: {
-    type: String,
-    index: true,
-    required: true,
-  },
-  longitude: {
-    type: String,
-    index: true,
-    required: true,
-  },
-  place: {
-    countryCode: {
-      type: String,
-      index: true,
-      required: true,
-    },
-    region: {
-      type: String,
-      index: true,
-      required: true,
-    },
-    locality: {
-      type: String,
-      index: true,
-      required: true,
-    },
-    city: {
-      type: String,
-      index: true,
-      required: true,
-    },
-    metropolitanArea: String,
+    minLength: 10,
   },
   publishAt: {
     type: Date,
     default: Date.now,
   },
+  location,
   likes: [LikeSchema],
   comments: [CommentSchema],
   shares: [ShareSchema],

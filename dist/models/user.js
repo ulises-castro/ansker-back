@@ -160,7 +160,8 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
 
 
   var newUser = User({
-    username: targetUserId,
+    // Change facebook to provider
+    username: 'facebook-' + targetUserId,
     // ip,
     ipLogs: {
       ip: ip,
@@ -174,6 +175,7 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
       }
     },
     // authProvider TODO: Facebook is only way to get access
+    // Added more authProvider (Google | Twitter);
     authProviders: {
       facebook: {
         id: id,
@@ -186,10 +188,12 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
     registerAt: registerAt
   });
 
-  newUser.save().then(function (userCreated) {
+  var userCreated = await newUser.save().then(function (userCreated) {
     console.log('saved here', userCreated);
     return userCreated;
   });
+
+  return userCreated;
 };
 
 var User = _mongoose2.default.model('User', userSchema);

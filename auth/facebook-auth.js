@@ -28,7 +28,7 @@ const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebo
     is_valid,
   } = appFacebookData.data.data;
 
-  console.log("Entro 22", appFacebookData.data.data, "---------");
+  // console.log("Entro 22", appFacebookData.data.data, "---------");
 
   if (app_id !== client_id) {
 
@@ -56,7 +56,9 @@ const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebo
   const userIdFB = facebookUserData.id;
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
-  return User.findUserOrRegister(userIdFB, facebookUserData);
+  const userData = await User.findUserOrRegister(userIdFB, facebookUserData);
+
+  return userData;
 
 }
 

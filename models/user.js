@@ -148,7 +148,8 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
   } = userData;
 
   let newUser = User({
-    username: targetUserId,
+    // Change facebook to provider
+    username: 'facebook-' + targetUserId,
     // ip,
     ipLogs: {
       ip,
@@ -162,6 +163,7 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
       }
     },
     // authProvider TODO: Facebook is only way to get access
+    // Added more authProvider (Google | Twitter);
     authProviders: {
       facebook: {
         id,
@@ -174,13 +176,14 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
     registerAt,
   });
 
-  newUser.save().then((userCreated) => {
+  const userCreated = await newUser.save().then((userCreated) => {
     console.log('saved here', userCreated);
     return userCreated;
   });
+
+  return userCreated;
 }
 
 const User = mongoose.model('User', userSchema);
-
 
 export default User;

@@ -37,8 +37,7 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
       user_id = _appFacebookData$data.user_id,
       is_valid = _appFacebookData$data.is_valid;
 
-
-  console.log("Entro 22", appFacebookData.data.data, "---------");
+  // console.log("Entro 22", appFacebookData.data.data, "---------");
 
   if (app_id !== client_id) {
 
@@ -64,7 +63,9 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
   var userIdFB = facebookUserData.id;
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
-  return _user2.default.findUserOrRegister(userIdFB, facebookUserData);
+  var userData = await _user2.default.findUserOrRegister(userIdFB, facebookUserData);
+
+  return userData;
 };
 
 exports.default = joinOrLoginFacebook;
