@@ -132,11 +132,11 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
   }).exec();
 
   if (user) {
-    console.log('Finded here and USER', targetUserId, user);
+    // console.log('Finded here and USER', targetUserId, user);
     return user;
   }
 
-  console.log(targetUserId, userData, user, targetUserId, "Mirame en el modelo");
+  // console.log(targetUserId, userData, user, targetUserId, "Mirame en el modelo");
 
   // REGISTER USER BECAUSE DOESNT EXISTS YET
 
@@ -189,7 +189,7 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
   });
 
   var userCreated = await newUser.save().then(function (userCreated) {
-    console.log('saved here', userCreated);
+    // console.log('saved here', userCreated);
     return userCreated;
   });
 

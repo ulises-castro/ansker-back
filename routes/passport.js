@@ -9,18 +9,23 @@ var JwtStrategy = passportJWT.Strategy;
 
 import joinOrLoginFacebook from '../auth/facebook-auth';
 
+import User from '../models/user';
 // Configuration
 
 var jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = process.env.JWT_SECRET_PASSWORD;
 
-var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next) {
-  console.log('Aqui entro, payload', jwt_payload, joinOrLoginFacebook(jwt_payload));
+var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, done) {
 
-  // joinOrLoginFacebook(jwt_payload);
+  User.findOne({ '_id': jwt_payload }, function(err, user) {
+    console.log('Aqui entro, payload', jwt_payload, user);
+    if (err) {
+      done(err, false);
+    }
 
-  next(false, { user: 'hola'});
+    done(null, user);
+  });
 });
 
 passport.use(strategy);

@@ -66,8 +66,8 @@ router.post('/login', async function (req, res, next) {
   // console.log(req.body, payload, "req ====");
 
   // Returned respones based on response value
-  if (response && response !== null) {
-    var token = jwt.sign(userData, jwtOptions.secret);
+  if (response && response._id) {
+    var token = jwt.sign(userData.id, jwtOptions.secret);
 
     return res.status(200).json({
       token: token,

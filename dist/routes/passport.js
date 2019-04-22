@@ -4,6 +4,10 @@ var _facebookAuth = require('../auth/facebook-auth');
 
 var _facebookAuth2 = _interopRequireDefault(_facebookAuth);
 
+var _user = require('../models/user');
+
+var _user2 = _interopRequireDefault(_user);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 require('dotenv').config();
@@ -21,12 +25,16 @@ var jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = process.env.JWT_SECRET_PASSWORD;
 
-var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
-  console.log('Aqui entro, payload', jwt_payload, (0, _facebookAuth2.default)(jwt_payload));
+var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, done) {
 
-  // joinOrLoginFacebook(jwt_payload);
+  _user2.default.findOne({ '_id': jwt_payload }, function (err, user) {
+    console.log('Aqui entro, payload', jwt_payload, user);
+    if (err) {
+      done(err, false);
+    }
 
-  next(false, { user: 'hola' });
+    done(null, user);
+  });
 });
 
 passport.use(strategy);
