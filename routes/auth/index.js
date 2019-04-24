@@ -1,21 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
 
 const ExtractJwt = passportJWT.ExtractJwt;
 const JwtStrategy = passportJWT.Strategy;
 
-import joinOrLoginFacebook from '../../auth/facebook-auth.js';
-
-// TODO: Remove and declare in app.js
 require('dotenv').config();
 
-// Configuration
 const jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
+
+import joinOrLoginFacebook from '../../auth/facebook-auth.js';
 
 // Post login/ Register login vía facebook\
 router.post('/login', async function (req, res, next) {
@@ -75,12 +74,6 @@ router.post('/login', async function (req, res, next) {
       error: 'login.failed_token',
     });
   }
-});
-
-router.post('/secret', passport.authenticate('jwt', {
-  session: false
-}), function(req, res) {
-  res.json({ message: "Successs!"});
 });
 
 module.exports = router;

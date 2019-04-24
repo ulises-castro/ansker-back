@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
-const  { Schema } = mongoose.Schema;
+const { Schema } = mongoose;
+
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const LikeSchema = new Schema({
-  authorId: {
-    type: String,
-    index: true,
+  author: {
+    type: ObjectId,
+    ref: 'User',
     required: true,
   },
   registerAt: {
@@ -14,9 +16,9 @@ const LikeSchema = new Schema({
 });
 
 const CommentSchema = new Schema({
-  authorId: {
-    type: String,
-    index: true,
+  author: {
+    type: ObjectId,
+    ref: 'User',
     required: true,
   },
   content: {
@@ -30,9 +32,9 @@ const CommentSchema = new Schema({
 });
 
 const ShareSchema = new Schema({
-  authorId: {
-    type: String,
-    index: true,
+  author: {
+    type: ObjectId,
+    ref: 'User',
     required: true,
   },
   registerAt: {
@@ -41,40 +43,53 @@ const ShareSchema = new Schema({
   },
 });
 
-const location =  {
+const location = {
   countryCode: {
     type: String,
-    index: true,
     required: true,
   },
   regionCode: {
     type: String,
-    index: true,
     required: true,
   },
   regionName: {
     type: String,
-    index: true,
     required: true,
   },
   city: {
     type: String,
-    index: true,
     required: true,
   },
+  longitude: {
+    type: String,
+    default: '',
+  },
+  latitude: {
+    type: String,
+    default: '',
+  }
 };
 
 const SecretSchema = new Schema({
-  authorId: {
-    type: String,
-    index: true,
+  author: {
+    type: ObjectId,
+    ref: 'User',
     required: true,
   },
   content: {
     type: String,
     required: true,
-    maxlength: 200,
-    minLength: 10,
+    maxlength: 120,
+    minLength: 8,
+  },
+  background: {
+    type: 'String',
+  },
+  backgroundColor: {
+    type: 'String',
+  },
+  fontFamily: {
+    type: 'String',
   },
   publishAt: {
     type: Date,
@@ -88,21 +103,21 @@ const SecretSchema = new Schema({
 
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });
 
-SecretSchema.statics.getByCity = async function (countryCode, state, city, done) {
+SecretSchema.statics.getByCity = async function (countryCode, regionCode, city, done) {
 
-  this.find({})
+  const secrets = this.find({})
   .where('place.countryCode')
     .equals(countryCode)
-  .where('place.state')
-    .equals(state)
+  .where('place.regionCode')
+    .equals(regionCode)
   .where('place.city')
     .equals(city)
-  .exec((err, secrets) => {
-    done(err, secrets);
-  });
+  .exec();
 
+  return secrets;
 }
 
+// TODO: Next feature to added, added get location by geolocation
 SecretSchema.statics.getByNear = function (longitude, latitude, countryCode, state, locality, city, done) {
 
   this.find({
@@ -118,4 +133,4 @@ SecretSchema.statics.getByNear = function (longitude, latitude, countryCode, sta
 
 }
 
-module.exports = db.model('Secret', SecretSchema);
+module.exports = mongoose.model('Secret', SecretSchema);

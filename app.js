@@ -4,6 +4,7 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var auth = require('./routes/auth');
+var secret = require('./routes/secret');
 var passport = require('passport');
 var axios = require('axios');
 var cors = require('cors');
@@ -33,6 +34,7 @@ require('./routes/passport.js');
 app.use(passport.initialize());
 
 app.use('/api', auth);
+app.use('/api/secret', secret);
 
 // Sending response that app is alive
 app.listen(3000, () => {

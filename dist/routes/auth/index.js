@@ -9,16 +9,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
+
 var passport = require('passport');
 var passportJWT = require('passport-jwt');
 
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
-// TODO: Remove and declare in app.js
 require('dotenv').config();
 
-// Configuration
 var jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
@@ -81,12 +80,6 @@ router.post('/login', async function (req, res, next) {
       error: 'login.failed_token'
     });
   }
-});
-
-router.post('/secret', passport.authenticate('jwt', {
-  session: false
-}), function (req, res) {
-  res.json({ message: "Successs!" });
 });
 
 module.exports = router;
