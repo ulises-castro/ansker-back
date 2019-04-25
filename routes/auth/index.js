@@ -33,6 +33,17 @@ router.post('/login', async function (req, res, next) {
   //Get last position
   // TODO: Get clear this code and break into chunks of code and files.
   console.log(response, "RESPONSEEEEEE");
+
+  const sendInvalidUser = {
+    token: false,
+    status: false,
+    error: 'login.failed_token',
+  };
+
+  if (!response) {
+    return res.status(403).json(sendInvalidUser);
+  }
+
   let lastLocation = response.ipLogs.length;
   // Find out how to get the lasted record
   lastLocation = (lastLocation) ? lastLocation - 1 : 0;
@@ -68,11 +79,7 @@ router.post('/login', async function (req, res, next) {
       status: true,
     });
   } else {
-    return res.status(401).json({
-      token: false,
-      status: false,
-      error: 'login.failed_token',
-    });
+    return res.status(403).json(sendInvalidUser);
   }
 });
 

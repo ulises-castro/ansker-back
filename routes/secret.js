@@ -25,28 +25,41 @@ function(req, res) {
   ];
 
   // console.log(req.user, "Holaaaa");
-  const UserData = req.user;
+  const invalidDataReceived = {
+    error: 'secret.publish.invalid'
+  };
 
   // Sended an invalid color, received an no-valid color
   if (availableColours.indexOf(req.body.backgroundColor) === -1) {
-    res.status(403).json({
-      error: 'secret.publish.invalid'
-    });
+    res.status(403).json(invalidDataReceived);
   }
 
-  const lastLocation = (!UserData.ipLogs.length) ? 0 : UserData.ipLogs.length - 1;
-  let location = UserData.ipLogs[lastLocation];
-  const author = UserData._id;
-  location = location.location;
+  // TODO: Added into middleware to avoid boilerplate
+  const { location } = req.user;
 
   const newSecret = new Secret({
-    author,
-    content: res.content,
-    backgroundColor: res.backgroundColor,
+    author: req.user._id,
+    content: req.body.content,
+    backgroundColor: req.body.backgroundColor,
     location,
   });
 
-  res.status(200).json({ message: '' });
+  newSecret.save(function (err) {
+    if (err) {
+      console.log(err, req.user);
+      return res.status(403).json(invalidDataReceived);
+    }
+
+    return res.status(200).json({ success: true });
+  });
+
+});
+
+router.get('allByCity', passport.authenticate('jwt', {
+  session: false,
+}),
+ function(req, res) {
+
 });
 
 module.exports = router;

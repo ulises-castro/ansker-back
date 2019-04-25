@@ -63,6 +63,7 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
   var userIdFB = facebookUserData.id;
 
   // TODO: Find user in database via ID, and if it doesnt exists lets added.
+  console.log(userIdFB, "Obteniendo el facebook ID");
   var userData = await _user2.default.findUserOrRegister(userIdFB, facebookUserData);
 
   return userData;

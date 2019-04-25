@@ -23,6 +23,20 @@ var LikeSchema = new Schema({
   }
 });
 
+var randomAuthorSchema = new Schema({
+  author: {
+    type: ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true
+  },
+  avatar: {
+    type: 'String',
+    required: true,
+    unique: true
+  }
+});
+
 var CommentSchema = new Schema({
   author: {
     type: ObjectId,
@@ -106,7 +120,8 @@ var SecretSchema = new Schema({
   location: location,
   likes: [LikeSchema],
   comments: [CommentSchema],
-  shares: [ShareSchema]
+  shares: [ShareSchema],
+  authors: [randomAuthorSchema]
 });
 
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });

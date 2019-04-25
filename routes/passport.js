@@ -24,7 +24,12 @@ var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, done) {
       done(err, false);
     }
 
-    done(null, user);
+    const userData = user;
+    const lastLocation = (!userData.ipLogs.length) ? 0 : userData.ipLogs.length - 1;
+    let location = userData.ipLogs[lastLocation];
+    userData.location = location.location;
+
+    done(null, userData);
   });
 });
 
