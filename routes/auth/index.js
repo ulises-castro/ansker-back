@@ -44,10 +44,11 @@ router.post('/login', async function (req, res, next) {
     return res.status(403).json(sendInvalidUser);
   }
 
-  let lastLocation = response.ipLogs.length;
+  // TODO register new ips if users have a new one ####, get last register
+  // let lastLocation = response.ipLogs.length;
   // Find out how to get the lasted record
-  lastLocation = (lastLocation) ? lastLocation - 1 : 0;
-  // lastLocation = lastLocation[0];
+  // lastLocation = (lastLocation) ? lastLocation - 1 : 0;
+  let lastLocation = 0;
 
   lastLocation = response.ipLogs[lastLocation].location;
   const {

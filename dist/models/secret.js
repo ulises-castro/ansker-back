@@ -32,8 +32,7 @@ var randomAuthorSchema = new Schema({
   },
   avatar: {
     type: 'String',
-    required: true,
-    unique: true
+    required: true
   }
 });
 
@@ -102,7 +101,7 @@ var SecretSchema = new Schema({
     type: String,
     required: true,
     maxlength: 120,
-    minLength: 8
+    minLength: 5
   },
   background: {
     type: 'String'
@@ -137,7 +136,7 @@ SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, cit
     'location.countryCode': countryCode,
     'location.regionCode': regionCode,
     'location.city': city
-  }).select('content backgroundColor publishAt fontFamily comments shares likes')
+  }).select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt')
   // .skip(2)
   .limit(20).sort({ publishAt: -1 }).exec();
 
@@ -147,10 +146,11 @@ SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, cit
 // TODO: Verify secret was send from same user's location.
 SecretSchema.statics.setLiked = async function (secretId, author) {
 
+  console.log(secretId, "Holaaa");
   var like = await this.findOne({ secretId: secretId }).exec();
   like.likes.push({ author: author });
 
-  return await like.save(function (err, like) {
+  return await like.save().then(function (like) {
     return like;
   });
 };

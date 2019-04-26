@@ -66,17 +66,39 @@ router.get('/allByCity', passport.authenticate('jwt', {
 
   var secrets = await _secret2.default.getAllByCity(countryCode, regionCode, city);
 
+  // secrets.forEach(secret => {
+  //   secret.howmuch = secret.likes.length;
+  // });
+  var response = secrets;
+  for (var key in response) {
+    response[key].how = 1;
+  }
+
   res.status(200).json({
-    secrets: secrets
+    secrets: secrets,
+    response: response
   });
 });
 
-router.put('/liked', passport.authenticate('jwt', {
+router.post('/liked', passport.authenticate('jwt', {
   session: false
-}), function (req, res) {
+}), async function (req, res) {
   var userData = req.user;
+  var secretId = req.body.secretId;
+  var author = userData._id;
 
-  console.log(req, res);
+  var secret = await _secret2.default.setLiked(secretId, author);
+  console.log(secret);
+
+  if (secret) {
+    res.status(200).json({
+      success: true
+    });
+  } else {
+    res.status(403).json({
+      error: 'secret.error.setLike'
+    });
+  }
 });
 
 module.exports = router;

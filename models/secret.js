@@ -25,7 +25,6 @@ const randomAuthorSchema = new Schema({
   avatar: {
     type: 'String',
     required: true,
-    unique: true,
   }
 });
 
@@ -94,7 +93,7 @@ const SecretSchema = new Schema({
     type: String,
     required: true,
     maxlength: 120,
-    minLength: 8,
+    minLength: 5,
   },
   background: {
     type: 'String',
@@ -130,7 +129,7 @@ SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, cit
     'location.regionCode': regionCode,
     'location.city': city
   })
-  .select('content backgroundColor publishAt fontFamily comments shares likes')
+  .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt')
   // .skip(2)
   .limit(20)
   .sort({ publishAt: -1 })
@@ -142,10 +141,11 @@ SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, cit
 // TODO: Verify secret was send from same user's location.
 SecretSchema.statics.setLiked = async function (secretId, author) {
 
+  console.log(secretId, "Holaaa");
   const like = await this.findOne({ secretId }).exec();
   like.likes.push({ author });
 
-  return await like.save((err, like) => {
+  return await like.save().then(like => {
     return like;
   });
 }

@@ -65,20 +65,43 @@ async function(req, res) {
      city,
    } = req.user.location;
 
-   const secrets = await Secret.getAllByCity(countryCode, regionCode, city);
+   let secrets = await Secret.getAllByCity(countryCode, regionCode, city);
+
+   // secrets.forEach(secret => {
+   //   secret.howmuch = secret.likes.length;
+   // });
+   const response = secrets;
+   for (let key in response) {
+     response[key].how = 1;
+   }
 
    res.status(200).json({
-     secrets
+     secrets,
+     response,
    });
 });
 
-router.put('/liked', passport.authenticate('jwt', {
+router.post('/liked', passport.authenticate('jwt', {
   session: false,
 }),
-function(req, res) {
+async function(req, res) {
   const userData = req.user;
+  const secretId = req.body.secretId;
+  const author = userData._id;
 
-  console.log(req, res);
+  const secret = await Secret.setLiked(secretId, author);
+  console.log(secret);
+
+  if (secret) {
+    res.status(200).json({
+      success: true,
+    });
+  } else {
+    res.status(403).json({
+      error: 'secret.error.setLike'
+    });
+  }
+
 });
 
 module.exports = router;
