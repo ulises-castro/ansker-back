@@ -55,11 +55,30 @@ function(req, res) {
 
 });
 
-router.get('allByCity', passport.authenticate('jwt', {
+router.get('/allByCity', passport.authenticate('jwt', {
   session: false,
 }),
- function(req, res) {
+async function(req, res) {
+   const {
+     countryCode,
+     regionCode,
+     city,
+   } = req.user.location;
 
+   const secrets = await Secret.getAllByCity(countryCode, regionCode, city);
+
+   res.status(200).json({
+     secrets
+   });
+});
+
+router.put('/liked', passport.authenticate('jwt', {
+  session: false,
+}),
+function(req, res) {
+  const userData = req.user;
+
+  console.log(req, res);
 });
 
 module.exports = router;

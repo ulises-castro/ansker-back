@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const location = {
   type: {
@@ -85,7 +85,7 @@ const authProviders = {
     }
   };
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
@@ -110,7 +110,9 @@ const userSchema = new mongoose.Schema({
 // include services to get user geolocation data
 import getUserLocation from '../services/getLocation';
 
-userSchema.statics.findUserOrRegister = async function (targetUserId, userData, provider = 'facebook') {
+UserSchema.plugin(AutoIncrement, {inc_field: 'user_id'});
+
+UserSchema.statics.findUserOrRegister = async function (targetUserId, userData, provider = 'facebook') {
 
   let user = await this.findOne({
     'authProviders.facebook.id': targetUserId
@@ -184,6 +186,6 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
   return userCreated;
 }
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', UserSchema);
 
 export default User;

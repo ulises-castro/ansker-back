@@ -6,6 +6,7 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var AutoIncrement = require('mongoose-sequence')(_mongoose2.default);
 var Schema = _mongoose2.default.Schema;
 
 
@@ -27,8 +28,7 @@ var randomAuthorSchema = new Schema({
   author: {
     type: ObjectId,
     ref: 'User',
-    required: true,
-    unique: true
+    required: true
   },
   avatar: {
     type: 'String',
@@ -121,14 +121,23 @@ var SecretSchema = new Schema({
   likes: [LikeSchema],
   comments: [CommentSchema],
   shares: [ShareSchema],
-  authors: [randomAuthorSchema]
+  commentsAuthors: [randomAuthorSchema]
 });
 
+SecretSchema.plugin(AutoIncrement, { inc_field: 'secret_id' });
+
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });
+// TODO: implement paginate, scroll infinite
+SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, city, done) {
 
-SecretSchema.statics.getByCity = async function (countryCode, regionCode, city, done) {
-
-  var secrets = this.find({}).where('place.countryCode').equals(countryCode).where('place.regionCode').equals(regionCode).where('place.city').equals(city).exec();
+  console.log(countryCode, regionCode, city);
+  var secrets = await this.find({
+    'location.countryCode': countryCode,
+    'location.regionCode': regionCode,
+    'location.city': city
+  }).select('content backgroundColor publishAt fontFamily comments shares likes')
+  // .skip(2)
+  .limit(20).sort({ publishAt: -1 }).exec();
 
   return secrets;
 };

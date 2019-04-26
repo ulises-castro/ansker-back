@@ -55,8 +55,28 @@ router.post('/publish', passport.authenticate('jwt', {
   });
 });
 
-router.get('allByCity', passport.authenticate('jwt', {
+router.get('/allByCity', passport.authenticate('jwt', {
   session: false
-}), function (req, res) {});
+}), async function (req, res) {
+  var _req$user$location = req.user.location,
+      countryCode = _req$user$location.countryCode,
+      regionCode = _req$user$location.regionCode,
+      city = _req$user$location.city;
+
+
+  var secrets = await _secret2.default.getAllByCity(countryCode, regionCode, city);
+
+  res.status(200).json({
+    secrets: secrets
+  });
+});
+
+router.put('/liked', passport.authenticate('jwt', {
+  session: false
+}), function (req, res) {
+  var userData = req.user;
+
+  console.log(req, res);
+});
 
 module.exports = router;

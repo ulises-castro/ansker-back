@@ -14,6 +14,8 @@ var _getLocation2 = _interopRequireDefault(_getLocation);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var AutoIncrement = require('mongoose-sequence')(_mongoose2.default);
+
 var location = {
   type: {
     countryCode: {
@@ -98,7 +100,7 @@ var authProviders = {
   }
 };
 
-var userSchema = new _mongoose2.default.Schema({
+var UserSchema = new _mongoose2.default.Schema({
   username: {
     type: String,
     unique: true
@@ -123,7 +125,9 @@ var userSchema = new _mongoose2.default.Schema({
 // include services to get user geolocation data
 
 
-userSchema.statics.findUserOrRegister = async function (targetUserId, userData) {
+UserSchema.plugin(AutoIncrement, { inc_field: 'user_id' });
+
+UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) {
   var provider = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'facebook';
 
 
@@ -196,6 +200,6 @@ userSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
   return userCreated;
 };
 
-var User = _mongoose2.default.model('User', userSchema);
+var User = _mongoose2.default.model('User', UserSchema);
 
 exports.default = User;
