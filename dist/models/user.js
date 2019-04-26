@@ -125,7 +125,7 @@ var UserSchema = new _mongoose2.default.Schema({
 // include services to get user geolocation data
 
 
-UserSchema.plugin(AutoIncrement, { inc_field: 'user_id' });
+UserSchema.plugin(AutoIncrement, { inc_field: 'userId' });
 
 UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) {
   var provider = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'facebook';

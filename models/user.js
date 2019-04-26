@@ -110,7 +110,7 @@ const UserSchema = new mongoose.Schema({
 // include services to get user geolocation data
 import getUserLocation from '../services/getLocation';
 
-UserSchema.plugin(AutoIncrement, {inc_field: 'user_id'});
+UserSchema.plugin(AutoIncrement, {inc_field: 'userId'});
 
 UserSchema.statics.findUserOrRegister = async function (targetUserId, userData, provider = 'facebook') {
 

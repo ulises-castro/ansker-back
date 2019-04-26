@@ -116,7 +116,9 @@ const SecretSchema = new Schema({
   commentsAuthors: [randomAuthorSchema],
 });
 
-SecretSchema.plugin(AutoIncrement, { inc_field: 'secret_id' });
+SecretSchema.plugin(AutoIncrement, { inc_field: 'secretId' });
+LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
+CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
 
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });
 // TODO: implement paginate, scroll infinite
@@ -135,6 +137,17 @@ SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, cit
   .exec();
 
   return secrets;
+}
+
+// TODO: Verify secret was send from same user's location.
+SecretSchema.statics.setLiked = async function (secretId, author) {
+
+  const like = await this.findOne({ secretId }).exec();
+  like.likes.push({ author });
+
+  return await like.save((err, like) => {
+    return like;
+  });
 }
 
 // TODO: Next feature to added, added get location by geolocation
