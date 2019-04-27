@@ -37,6 +37,7 @@ const CommentSchema = new Schema({
   content: {
     type: String,
     required: true,
+    trim: true,
   },
   publishAt: {
     type: Date,
@@ -94,6 +95,7 @@ const SecretSchema = new Schema({
     required: true,
     maxlength: 120,
     minLength: 5,
+    trim: true,
   },
   background: {
     type: 'String',
@@ -133,6 +135,7 @@ SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, cit
   // .skip(2)
   .limit(20)
   .sort({ publishAt: -1 })
+  .lean()
   .exec();
 
   return secrets;

@@ -59,6 +59,8 @@ router.get('/allByCity', passport.authenticate('jwt', {
   session: false,
 }),
 async function(req, res) {
+
+   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
    const {
      countryCode,
      regionCode,
@@ -67,17 +69,19 @@ async function(req, res) {
 
    let secrets = await Secret.getAllByCity(countryCode, regionCode, city);
 
-   // secrets.forEach(secret => {
-   //   secret.howmuch = secret.likes.length;
-   // });
-   const response = secrets;
-   for (let key in response) {
-     response[key].how = 1;
-   }
+   // Passing only how many likes|comments|shares it has
+   secrets = secrets.map(secret => {
+     let { likes, comments, shares } = secret;
+
+     secret.likes = likes.length;
+     secret.comments = comments.length;
+     secret.shares = shares.length;
+
+     return secret;
+   });
 
    res.status(200).json({
      secrets,
-     response,
    });
 });
 

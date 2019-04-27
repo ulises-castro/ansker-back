@@ -58,6 +58,8 @@ router.post('/publish', passport.authenticate('jwt', {
 router.get('/allByCity', passport.authenticate('jwt', {
   session: false
 }), async function (req, res) {
+
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   var _req$user$location = req.user.location,
       countryCode = _req$user$location.countryCode,
       regionCode = _req$user$location.regionCode,
@@ -66,17 +68,22 @@ router.get('/allByCity', passport.authenticate('jwt', {
 
   var secrets = await _secret2.default.getAllByCity(countryCode, regionCode, city);
 
-  // secrets.forEach(secret => {
-  //   secret.howmuch = secret.likes.length;
-  // });
-  var response = secrets;
-  for (var key in response) {
-    response[key].how = 1;
-  }
+  // Passing only how many likes|comments|shares it has
+  secrets = secrets.map(function (secret) {
+    var likes = secret.likes,
+        comments = secret.comments,
+        shares = secret.shares;
+
+
+    secret.likes = likes.length;
+    secret.comments = comments.length;
+    secret.shares = shares.length;
+
+    return secret;
+  });
 
   res.status(200).json({
-    secrets: secrets,
-    response: response
+    secrets: secrets
   });
 });
 

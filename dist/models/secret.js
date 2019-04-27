@@ -44,7 +44,8 @@ var CommentSchema = new Schema({
   },
   content: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   publishAt: {
     type: Date,
@@ -101,7 +102,8 @@ var SecretSchema = new Schema({
     type: String,
     required: true,
     maxlength: 120,
-    minLength: 5
+    minLength: 5,
+    trim: true
   },
   background: {
     type: 'String'
@@ -138,7 +140,7 @@ SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, cit
     'location.city': city
   }).select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt')
   // .skip(2)
-  .limit(20).sort({ publishAt: -1 }).exec();
+  .limit(20).sort({ publishAt: -1 }).lean().exec();
 
   return secrets;
 };
