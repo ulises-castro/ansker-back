@@ -124,10 +124,14 @@ router.get('/:secretId', async function(req, res) {
 
   const secret = await Secret
   .findOne({ secretId })
-  .select('content, backgroundColor, publishAt, fontFamily, comments.content, comments.registerAt, likes.author')
+  .select('content backgroundColor publishAt fontFamily comments.content comments.registerAt likes.author')
   .lean().exec();
 
+  // Remove sensitive data and useless information
+  delete secret._id;
   secret.likes = secret.likes.length;
+  secret.commentsData = secret.comments;
+  secret.comments = secret.comments.length;
 
   res.status(200).json({
     success: true,
