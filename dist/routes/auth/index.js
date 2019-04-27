@@ -79,6 +79,7 @@ router.post('/login', async function (req, res, next) {
   var userData = {};
   userData.facebookId = response.authProviders.facebook.id;
   userData.id = '' + response._id;
+  var isUserNew = response.isNew;
   // console.log(req.body, payload, "req ====");
 
   // Returned respones based on response value
@@ -90,6 +91,7 @@ router.post('/login', async function (req, res, next) {
     return res.status(200).json({
       token: token,
       userLocation: userLocation,
+      isUserNew: true,
       status: true
     });
   } else {
