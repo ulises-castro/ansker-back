@@ -119,4 +119,20 @@ router.post('/liked', passport.authenticate('jwt', {
   }
 });
 
+router.get('/:secretId', async function (req, res) {
+  console.log(req.params, "Req");
+
+  var secretId = req.params.secretId;
+
+
+  var secret = await _secret2.default.findOne({ secretId: secretId }).select('content, backgroundColor, publishAt, fontFamily, comments.content, comments.registerAt, likes.author').lean().exec();
+
+  secret.likes = secret.likes.length;
+
+  res.status(200).json({
+    success: true,
+    secret: secret
+  });
+});
+
 module.exports = router;

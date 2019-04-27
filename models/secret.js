@@ -21,6 +21,7 @@ const randomAuthorSchema = new Schema({
     type: ObjectId,
     ref: 'User',
     required: true,
+    index: true,
   },
   avatar: {
     type: 'String',
@@ -33,6 +34,7 @@ const CommentSchema = new Schema({
     type: ObjectId,
     ref: 'User',
     required: true,
+    index: true,
   },
   content: {
     type: String,
@@ -50,6 +52,7 @@ const ShareSchema = new Schema({
     type: ObjectId,
     ref: 'User',
     required: true,
+    index: true,
   },
   registerAt: {
     type: Date,
@@ -167,19 +170,19 @@ SecretSchema.statics.setLiked = async function (secretId, author) {
 }
 
 // TODO: Next feature to added, added get location by geolocation
-SecretSchema.statics.getByNear = function (longitude, latitude, countryCode, state, locality, city, done) {
-
-  this.find({
-    'place.countryCode': countryCode,
-    'place.city': city,
-    'place.state': state,
-    'place.locality': locality
-  },
-  (err, secrets) => {
-    done(err, secrets);
-  })
-  .sort({ longitude: 1, latitude: 1 });
-
-}
+// SecretSchema.statics.getByNear = function (longitude, latitude, countryCode, state, locality, city, done) {
+//
+//   this.find({
+//     'place.countryCode': countryCode,
+//     'place.city': city,
+//     'place.state': state,
+//     'place.locality': locality
+//   },
+//   (err, secrets) => {
+//     done(err, secrets);
+//   })
+//   .sort({ longitude: 1, latitude: 1 });
+//
+// }
 
 module.exports = mongoose.model('Secret', SecretSchema);

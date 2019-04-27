@@ -117,4 +117,22 @@ async function(req, res) {
 
 });
 
+router.get('/:secretId', async function(req, res) {
+  console.log(req.params, "Req");
+
+  const { secretId } = req.params;
+
+  const secret = await Secret
+  .findOne({ secretId })
+  .select('content, backgroundColor, publishAt, fontFamily, comments.content, comments.registerAt, likes.author')
+  .lean().exec();
+
+  secret.likes = secret.likes.length;
+
+  res.status(200).json({
+    success: true,
+    secret,
+  });
+});
+
 module.exports = router;
