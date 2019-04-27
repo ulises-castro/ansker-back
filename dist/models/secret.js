@@ -96,7 +96,8 @@ var SecretSchema = new Schema({
   author: {
     type: ObjectId,
     ref: 'User',
-    required: true
+    required: true,
+    index: true
   },
   content: {
     type: String,
@@ -138,7 +139,7 @@ SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, cit
     'location.countryCode': countryCode,
     'location.regionCode': regionCode,
     'location.city': city
-  }).select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt')
+  }).select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
   // .skip(2)
   .limit(20).sort({ publishAt: -1 }).lean().exec();
 
@@ -150,10 +151,23 @@ SecretSchema.statics.setLiked = async function (secretId, author) {
 
   console.log(secretId, "Holaaa");
   var like = await this.findOne({ secretId: secretId }).exec();
-  like.likes.push({ author: author });
+
+  var likeFormarted = like.toObject();
+  var userLike = likeFormarted.likes.find(function (like) {
+    return '' + like.author == author;
+  });
+
+  // console.log(userLike,"userlike", likeFormarted, (like.likes[0].author == author), author)
+  var rest = false;
+  if (userLike) {
+    like.likes.id(userLike._id).remove();
+    rest = true;
+  } else {
+    like.likes.push({ author: author });
+  }
 
   return await like.save().then(function (like) {
-    return like;
+    return [like, rest];
   });
 };
 

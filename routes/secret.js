@@ -69,9 +69,15 @@ async function(req, res) {
 
    let secrets = await Secret.getAllByCity(countryCode, regionCode, city);
 
+   const userId = req.user._id;
+
    // Passing only how many likes|comments|shares it has
    secrets = secrets.map(secret => {
      let { likes, comments, shares } = secret;
+
+     const userLiked = secret.likes.find((like) => `${like.author}` == userId)
+
+     secret.userLiked = (userLiked) ? true : false;
 
      secret.likes = likes.length;
      secret.comments = comments.length;
@@ -94,11 +100,14 @@ async function(req, res) {
   const author = userData._id;
 
   const secret = await Secret.setLiked(secretId, author);
-  console.log(secret);
+  // console.log(secret);
 
-  if (secret) {
+  const rest = secret[1];
+
+  if (secret[0]) {
     res.status(200).json({
       success: true,
+      rest,
     });
   } else {
     res.status(403).json({

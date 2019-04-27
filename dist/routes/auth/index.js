@@ -1,5 +1,9 @@
 'use strict';
 
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _facebookAuth = require('../../auth/facebook-auth.js');
 
 var _facebookAuth2 = _interopRequireDefault(_facebookAuth);
@@ -9,6 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
+
 
 var passport = require('passport');
 var passportJWT = require('passport-jwt');
@@ -79,6 +84,8 @@ router.post('/login', async function (req, res, next) {
   // Returned respones based on response value
   if (response && response._id) {
     var token = jwt.sign(userData.id, jwtOptions.secret);
+
+    _axios2.default.get('https://api.telegram.org/bot\'\n    ' + process.env.TELEGRAM_TOKEN + '/sendMessage?chat_id=183061705&text="Se ha unido un nuevo usuario a las "');
 
     return res.status(200).json({
       token: token,

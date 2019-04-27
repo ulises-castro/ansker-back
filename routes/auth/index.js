@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+import axios from 'axios';
 
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
@@ -73,6 +74,9 @@ router.post('/login', async function (req, res, next) {
   // Returned respones based on response value
   if (response && response._id) {
     const token = jwt.sign(userData.id, jwtOptions.secret);
+
+    axios.get(`https://api.telegram.org/bot'
+    ${process.env.TELEGRAM_TOKEN}/sendMessage?chat_id=183061705&text="Se ha unido un nuevo usuario a las "`);
 
     return res.status(200).json({
       token: token,

@@ -68,12 +68,20 @@ router.get('/allByCity', passport.authenticate('jwt', {
 
   var secrets = await _secret2.default.getAllByCity(countryCode, regionCode, city);
 
+  var userId = req.user._id;
+
   // Passing only how many likes|comments|shares it has
   secrets = secrets.map(function (secret) {
     var likes = secret.likes,
         comments = secret.comments,
         shares = secret.shares;
 
+
+    var userLiked = secret.likes.find(function (like) {
+      return '' + like.author == userId;
+    });
+
+    secret.userLiked = userLiked ? true : false;
 
     secret.likes = likes.length;
     secret.comments = comments.length;
@@ -95,11 +103,14 @@ router.post('/liked', passport.authenticate('jwt', {
   var author = userData._id;
 
   var secret = await _secret2.default.setLiked(secretId, author);
-  console.log(secret);
+  // console.log(secret);
 
-  if (secret) {
+  var rest = secret[1];
+
+  if (secret[0]) {
     res.status(200).json({
-      success: true
+      success: true,
+      rest: rest
     });
   } else {
     res.status(403).json({
