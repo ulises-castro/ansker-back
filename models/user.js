@@ -112,7 +112,10 @@ import getUserLocation from '../services/getLocation';
 
 UserSchema.plugin(AutoIncrement, {inc_field: 'userId'});
 
-UserSchema.statics.findUserOrRegister = async function (targetUserId, userData, provider = 'facebook') {
+UserSchema.statics.findUserOrRegister =
+async function (
+  targetUserId, userData, provider = 'facebook'
+) {
 
   let user = await this.findOne({
     'authProviders.facebook.id': targetUserId
@@ -122,8 +125,6 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
     // console.log('Finded here and USER', targetUserId, user);
     return user;
   }
-
-  // console.log(targetUserId, userData, user, targetUserId, "Mirame en el modelo");
 
   // REGISTER USER BECAUSE DOESNT EXISTS YET
 
@@ -178,12 +179,10 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData, 
     registerAt,
   });
 
-  const userCreated = await newUser.save().then((userCreated) => {
-    // console.log('saved here', userCreated);
+  return await newUser.save().then((userCreated) => {
+    console.log('saved here', userCreated);
     return userCreated;
   });
-
-  return userCreated;
 }
 
 const User = mongoose.model('User', UserSchema);

@@ -127,6 +127,11 @@ router.get('/:secretId', async function(req, res) {
   .select('content backgroundColor publishAt fontFamily comments.content comments.registerAt likes.author')
   .lean().exec();
 
+  if (!secret) {
+    return res.status(404).json({
+      success: false,
+    });
+  }
   // Remove sensitive data and useless information
   delete secret._id;
   secret.likes = secret.likes.length;

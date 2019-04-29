@@ -140,8 +140,6 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
     return user;
   }
 
-  // console.log(targetUserId, userData, user, targetUserId, "Mirame en el modelo");
-
   // REGISTER USER BECAUSE DOESNT EXISTS YET
 
   var registerAt = new Date();
@@ -192,12 +190,10 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
     registerAt: registerAt
   });
 
-  var userCreated = await newUser.save().then(function (userCreated) {
-    // console.log('saved here', userCreated);
+  return await newUser.save().then(function (userCreated) {
+    console.log('saved here', userCreated);
     return userCreated;
   });
-
-  return userCreated;
 };
 
 var User = _mongoose2.default.model('User', UserSchema);

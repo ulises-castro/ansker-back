@@ -24,26 +24,21 @@ const randomAuthorSchema = new Schema({
     index: true,
   },
   avatar: {
-    type: 'String',
-    required: true,
-  }
-});
-
-const CommentSchema = new Schema({
-  author: {
-    type: ObjectId,
-    ref: 'User',
+    type: Number,
     required: true,
     index: true,
   },
-  content: {
-    type: String,
-    required: true,
-    trim: true,
+  backgroundColor: {
+    type: 'String',
   },
-  publishAt: {
-    type: Date,
-    default: Date.now,
+});
+
+const CommentSchema = new Schema({
+  commentId: {
+    type: ObjectId,
+    ref: 'Comment',
+    required: true,
+    index: true,
   },
 });
 
@@ -97,7 +92,7 @@ const SecretSchema = new Schema({
   content: {
     type: String,
     required: true,
-    maxlength: 120,
+    maxLength: 120,
     minLength: 5,
     trim: true,
   },
@@ -123,7 +118,7 @@ const SecretSchema = new Schema({
 
 SecretSchema.plugin(AutoIncrement, { inc_field: 'secretId' });
 LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
-CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
+// CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
 
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });
 // TODO: implement paginate, scroll infinite
@@ -151,8 +146,10 @@ SecretSchema.statics.setLiked = async function (secretId, author) {
   console.log(secretId, "Holaaa");
   const like = await this.findOne({ secretId }).exec();
 
-  const likeFormarted = like.toObject();
-  const userLike = likeFormarted.likes
+  // Change find method for an FindOne, this is useless
+  // secret.likes.findOne
+  const likeFormated = like.toObject();
+  const userLike = likeFormated.likes
     .find(like => `${like.author}` == author);
 
     // console.log(userLike,"userlike", likeFormarted, (like.likes[0].author == author), author)
@@ -165,6 +162,7 @@ SecretSchema.statics.setLiked = async function (secretId, author) {
   }
 
   return await like.save().then(like => {
+    // TODO: check this, return only like, rest is useless now
     return [like, rest];
   });
 }

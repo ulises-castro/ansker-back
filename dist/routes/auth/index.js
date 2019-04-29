@@ -39,7 +39,9 @@ router.post('/login', async function (req, res, next) {
   var ipUser = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
   // Find User via Facebook || Register if user doesn't exists in database
-  var response = await (0, _facebookAuth2.default)(payload.tokenFB, ipUser);
+  var response = await (0, _facebookAuth2.default)(payload.tokenFB, ipUser).catch(function (err) {
+    console.log(err, "Aqui el error que está pasando");
+  });
 
   //Get last position
   // TODO: Get clear this code and break into chunks of code and files.

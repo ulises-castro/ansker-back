@@ -29,7 +29,10 @@ router.post('/login', async function (req, res, next) {
 
 // Find User via Facebook || Register if user doesn't exists in database
   const response = await joinOrLoginFacebook(
-    payload.tokenFB, ipUser);
+    payload.tokenFB, ipUser)
+    .catch(err => {
+      console.log(err, "Aqui el error que está pasando");
+    });
 
   //Get last position
   // TODO: Get clear this code and break into chunks of code and files.

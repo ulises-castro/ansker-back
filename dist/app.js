@@ -7,11 +7,15 @@ require('dotenv').config();
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
-var auth = require('./routes/auth');
-var secret = require('./routes/secret');
+
 var passport = require('passport');
 var axios = require('axios');
 var cors = require('cors');
+
+// Routes
+var auth = require('./routes/auth');
+var secret = require('./routes/secret');
+var comment = require('./routes/comments');
 
 // Load database connection
 
@@ -39,6 +43,7 @@ app.use(passport.initialize());
 
 app.use('/api', auth);
 app.use('/api/secret', secret);
+app.use('/api/secret/comment', comment);
 
 // Sending response that app is alive
 app.listen(3000, function () {

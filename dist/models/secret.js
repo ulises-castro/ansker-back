@@ -32,26 +32,21 @@ var randomAuthorSchema = new Schema({
     index: true
   },
   avatar: {
-    type: 'String',
-    required: true
+    type: Number,
+    required: true,
+    index: true
+  },
+  backgroundColor: {
+    type: 'String'
   }
 });
 
 var CommentSchema = new Schema({
-  author: {
+  commentId: {
     type: ObjectId,
-    ref: 'User',
+    ref: 'Comment',
     required: true,
     index: true
-  },
-  content: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  publishAt: {
-    type: Date,
-    default: Date.now
   }
 });
 
@@ -105,7 +100,7 @@ var SecretSchema = new Schema({
   content: {
     type: String,
     required: true,
-    maxlength: 120,
+    maxLength: 120,
     minLength: 5,
     trim: true
   },
@@ -131,7 +126,7 @@ var SecretSchema = new Schema({
 
 SecretSchema.plugin(AutoIncrement, { inc_field: 'secretId' });
 LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
-CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
+// CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
 
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });
 // TODO: implement paginate, scroll infinite
@@ -155,8 +150,10 @@ SecretSchema.statics.setLiked = async function (secretId, author) {
   console.log(secretId, "Holaaa");
   var like = await this.findOne({ secretId: secretId }).exec();
 
-  var likeFormarted = like.toObject();
-  var userLike = likeFormarted.likes.find(function (like) {
+  // Change find method for an FindOne, this is useless
+  // secret.likes.findOne
+  var likeFormated = like.toObject();
+  var userLike = likeFormated.likes.find(function (like) {
     return '' + like.author == author;
   });
 
@@ -170,6 +167,7 @@ SecretSchema.statics.setLiked = async function (secretId, author) {
   }
 
   return await like.save().then(function (like) {
+    // TODO: check this, return only like, rest is useless now
     return [like, rest];
   });
 };
