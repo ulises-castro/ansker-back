@@ -44,6 +44,7 @@ app.use(passport.initialize());
 app.use('/api', auth);
 app.use('/api/secret', secret);
 app.use('/api/secret/comment', comment);
+app.set('trust proxy', true);
 
 // Sending response that app is alive
 app.listen(3000, function () {
