@@ -39,7 +39,7 @@ router.post('/login', async function (req, res, next) {
   var ipUser = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
   // Find User via Facebook || Register if user doesn't exists in database
-  var response = await (0, _facebookAuth2.default)(payload.tokenFB, ipUser).catch(function (err) {
+  var response = await (0, _facebookAuth2.default)(payload.tokenFB).catch(function (err) {
     console.log(err, "Aqui el error que está pasando");
   });
 
@@ -57,31 +57,10 @@ router.post('/login', async function (req, res, next) {
     return res.status(403).json(sendInvalidUser);
   }
 
-  // TODO register new ips if users have a new one ####, get last register
-  // let lastLocation = response.ipLogs.length;
-  // Find out how to get the lasted record
-  // lastLocation = (lastLocation) ? lastLocation - 1 : 0;
-  var lastLocation = 0;
-
-  lastLocation = response.ipLogs[lastLocation].location;
-  var _lastLocation = lastLocation,
-      city = _lastLocation.city,
-      regionName = _lastLocation.regionName,
-      regionCode = _lastLocation.regionCode,
-      countryCode = _lastLocation.countryCode;
-
-
-  var userLocation = {
-    city: city,
-    regionName: regionName,
-    regionCode: regionCode,
-    countryCode: countryCode
-  };
-
   var userData = {};
+  var isUserNew = response.isNew;
   userData.facebookId = response.authProviders.facebook.id;
   userData.id = '' + response._id;
-  var isUserNew = response.isNew;
   // console.log(req.body, payload, "req ====");
 
   // Returned respones based on response value
@@ -92,8 +71,7 @@ router.post('/login', async function (req, res, next) {
 
     return res.status(200).json({
       token: token,
-      userLocation: userLocation,
-      isUserNew: true,
+      isUserNew: isUserNew,
       status: true
     });
   } else {

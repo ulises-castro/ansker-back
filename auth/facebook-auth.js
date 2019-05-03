@@ -9,7 +9,8 @@ const client_secret = process.env.FACEBOOK_CLIENT_SECRET;
 
 let fbUrl = 'https://graph.facebook.com';
 
-const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebookToken, ipUser) {
+const joinOrLoginFacebook =
+async function joinOrLoginFacebookAndVerified(facebookToken) {
   // Get AppToken ###########################
   let appToken;
   let url = `${fbUrl}/oauth/access_token?client_id=${client_id}&client_secret=${client_secret}&grant_type=client_credentials`;
@@ -51,7 +52,6 @@ const joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebo
   facebookUserData['provider'] = 'facebook';
   facebookUserData['facebookToken'] = facebookToken;
   facebookUserData['email'] = facebookUserData.email || '';
-  facebookUserData['ip'] = ipUser;
 
   const userIdFB = facebookUserData.id;
 

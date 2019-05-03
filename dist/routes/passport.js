@@ -34,10 +34,10 @@ var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, done) {
     }
 
     var userData = user;
-    if (user) {
+    if (user && user.locations.length) {
       console.log(user, 'Userdata');
-      var lastLocation = !userData.ipLogs.length ? 0 : userData.ipLogs.length - 1;
-      var location = userData.ipLogs[lastLocation];
+      var lastLocation = userData.locations.length - 1;
+      var location = userData.locations[lastLocation];
       userData.location = location.location;
     }
 

@@ -8,6 +8,8 @@ const passportJWT = require('passport-jwt');
 const ExtractJwt = passportJWT.ExtractJwt;
 const JwtStrategy = passportJWT.Strategy;
 
+const axios = require('axios');
+
 import Secret from '../models/secret';
 
 require('dotenv').config();
@@ -61,13 +63,22 @@ router.get('/allByCity', passport.authenticate('jwt', {
 async function(req, res) {
 
    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-   const {
-     countryCode,
-     regionCode,
-     city,
-   } = req.user.location;
 
-   let secrets = await Secret.getAllByCity(countryCode, regionCode, city);
+  const { latitude, longitude } = req.query;
+
+  const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
+
+  const geolocation = await axios.get(geolocationUrl);
+
+  console.log(geolocation, "Geolocaiton");
+
+  const {
+    Region,
+    City,
+    CountryCode,
+  } = geolocation.data.address;
+
+   let secrets = await Secret.getAllByCity(latitude, longitude);
 
    const userId = req.user._id;
 

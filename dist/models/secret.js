@@ -68,10 +68,10 @@ var location = {
     type: String,
     required: true
   },
-  regionCode: {
-    type: String,
-    required: true
-  },
+  // regionCode: {
+  //   type: String,
+  //   required: true,
+  // },
   regionName: {
     type: String,
     required: true

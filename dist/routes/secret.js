@@ -16,6 +16,8 @@ var passportJWT = require('passport-jwt');
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
+var axios = require('axios');
+
 require('dotenv').config();
 
 router.post('/publish', passport.authenticate('jwt', {
@@ -60,13 +62,25 @@ router.get('/allByCity', passport.authenticate('jwt', {
 }), async function (req, res) {
 
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-  var _req$user$location = req.user.location,
-      countryCode = _req$user$location.countryCode,
-      regionCode = _req$user$location.regionCode,
-      city = _req$user$location.city;
+
+  var _req$query = req.query,
+      latitude = _req$query.latitude,
+      longitude = _req$query.longitude;
 
 
-  var secrets = await _secret2.default.getAllByCity(countryCode, regionCode, city);
+  var geolocationUrl = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=' + process.env.GEOLOCATION_TOKEN + '&f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
+
+  var geolocation = await axios.get(geolocationUrl);
+
+  console.log(geolocation, "Geolocaiton");
+
+  var _geolocation$data$add = geolocation.data.address,
+      Region = _geolocation$data$add.Region,
+      City = _geolocation$data$add.City,
+      CountryCode = _geolocation$data$add.CountryCode;
+
+
+  var secrets = await _secret2.default.getAllByCity(latitude, longitude);
 
   var userId = req.user._id;
 

@@ -16,10 +16,10 @@ const location = {
       type: String,
       required: true,
     },
-    regionCode:  {
-      type: String,
-      required: true,
-    },
+    // regionCode:  {
+    //   type: String,
+    //   required: true,
+    // },
     latitude:  {
       type: String,
       required: true,
@@ -31,15 +31,13 @@ const location = {
   },
 }
 
-const ipsUser = new mongoose.Schema({
+const locations = new mongoose.Schema({
   ip: {
     type: String,
-    required: true,
   },
   location,
   registerAt: {
     type: Date,
-    required: true,
     default: Date.now(),
   },
 });
@@ -95,7 +93,7 @@ const UserSchema = new mongoose.Schema({
     default: '',
   },
   // Saved all ips
-  ipLogs: [ipsUser],
+  locations: [locations],
   registerBy: {
     type: String,
     default: 'facebook'
@@ -106,9 +104,6 @@ const UserSchema = new mongoose.Schema({
   },
   authProviders,
 });
-
-// include services to get user geolocation data
-import getUserLocation from '../services/getLocation';
 
 UserSchema.plugin(AutoIncrement, {inc_field: 'userId'});
 
@@ -131,17 +126,8 @@ async function (
   const registerAt = new Date();
 
   // Get user geolocation data ########################
-  const userLocation = await getUserLocation(userData.ip);
-
-  const {
-    ip,
-    city,
-    country_code,
-    region_name,
-    region_code,
-    latitude,
-    longitude,
-  } = userLocation.data;
+  // TODO: Remove file and provider api
+  // const userLocation = await getUserLocation(userData.ip);
 
   const  {
     id,
@@ -154,18 +140,6 @@ async function (
     // Change facebook to provider
     username: 'facebook-' + targetUserId,
     // ip,
-    ipLogs: {
-      ip,
-      location: {
-        countryCode: country_code,
-        regionName: region_name,
-        regionCode: region_code,
-        city: city,
-        latitude,
-        longitude,
-      }
-    },
-    // authProvider TODO: Facebook is only way to get access
     // Added more authProvider (Google | Twitter);
     authProviders: {
       facebook: {

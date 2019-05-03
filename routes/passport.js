@@ -25,10 +25,10 @@ var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, done) {
     }
 
     const userData = user;
-    if (user) {
+    if (user && user.locations.length) {
       console.log(user, 'Userdata');
-      const lastLocation = (!userData.ipLogs.length) ? 0 : userData.ipLogs.length - 1;
-      let location = userData.ipLogs[lastLocation];
+      const lastLocation = userData.locations.length - 1;
+      let location = userData.locations[lastLocation];
       userData.location = location.location;
     }
 

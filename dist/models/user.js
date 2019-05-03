@@ -8,10 +8,6 @@ var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
-var _getLocation = require('../services/getLocation');
-
-var _getLocation2 = _interopRequireDefault(_getLocation);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var AutoIncrement = require('mongoose-sequence')(_mongoose2.default);
@@ -31,10 +27,10 @@ var location = {
       type: String,
       required: true
     },
-    regionCode: {
-      type: String,
-      required: true
-    },
+    // regionCode:  {
+    //   type: String,
+    //   required: true,
+    // },
     latitude: {
       type: String,
       required: true
@@ -46,15 +42,13 @@ var location = {
   }
 };
 
-var ipsUser = new _mongoose2.default.Schema({
+var locations = new _mongoose2.default.Schema({
   ip: {
-    type: String,
-    required: true
+    type: String
   },
   location: location,
   registerAt: {
     type: Date,
-    required: true,
     default: Date.now()
   }
 });
@@ -110,7 +104,7 @@ var UserSchema = new _mongoose2.default.Schema({
     default: ''
   },
   // Saved all ips
-  ipLogs: [ipsUser],
+  locations: [locations],
   registerBy: {
     type: String,
     default: 'facebook'
@@ -121,9 +115,6 @@ var UserSchema = new _mongoose2.default.Schema({
   },
   authProviders: authProviders
 });
-
-// include services to get user geolocation data
-
 
 UserSchema.plugin(AutoIncrement, { inc_field: 'userId' });
 
@@ -145,16 +136,9 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
   var registerAt = new Date();
 
   // Get user geolocation data ########################
-  var userLocation = await (0, _getLocation2.default)(userData.ip);
+  // TODO: Remove file and provider api
+  // const userLocation = await getUserLocation(userData.ip);
 
-  var _userLocation$data = userLocation.data,
-      ip = _userLocation$data.ip,
-      city = _userLocation$data.city,
-      country_code = _userLocation$data.country_code,
-      region_name = _userLocation$data.region_name,
-      region_code = _userLocation$data.region_code,
-      latitude = _userLocation$data.latitude,
-      longitude = _userLocation$data.longitude;
   var id = userData.id,
       name = userData.name,
       email = userData.email,
@@ -165,18 +149,6 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
     // Change facebook to provider
     username: 'facebook-' + targetUserId,
     // ip,
-    ipLogs: {
-      ip: ip,
-      location: {
-        countryCode: country_code,
-        regionName: region_name,
-        regionCode: region_code,
-        city: city,
-        latitude: latitude,
-        longitude: longitude
-      }
-    },
-    // authProvider TODO: Facebook is only way to get access
     // Added more authProvider (Google | Twitter);
     authProviders: {
       facebook: {
