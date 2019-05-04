@@ -4,6 +4,10 @@ var _secret = require('../models/secret');
 
 var _secret2 = _interopRequireDefault(_secret);
 
+var _user = require('../models/user');
+
+var _user2 = _interopRequireDefault(_user);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var express = require('express');
@@ -22,7 +26,7 @@ require('dotenv').config();
 
 router.post('/publish', passport.authenticate('jwt', {
   session: false
-}), function (req, res) {
+}), async function (req, res) {
 
   var availableColours = ['#0000ff', '#ffa500', '#065535', '#ffc0cb', '#ff0000', '#003366', '#008080', '#8a2be2', '#666666', '#ff1493'];
 
@@ -37,14 +41,38 @@ router.post('/publish', passport.authenticate('jwt', {
   }
 
   // TODO: Added into middleware to avoid boilerplate
-  var location = req.user.location;
+  // const { location } = req.user.location;
+  var _req$body = req.body,
+      longitude = _req$body.longitude,
+      latitude = _req$body.latitude;
+
+  // TODO: Modularize this into one file
+
+  var geolocationUrl = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=' + process.env.GEOLOCATION_TOKEN + '&f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
+
+  var geolocation = await axios.get(geolocationUrl);
+
+  // console.log(geolocation, "Geolocaiton");
+
+  var _geolocation$data$add = geolocation.data.address,
+      CountryCode = _geolocation$data$add.CountryCode,
+      Region = _geolocation$data$add.Region,
+      City = _geolocation$data$add.City;
 
 
   var newSecret = new _secret2.default({
     author: req.user._id,
     content: req.body.content,
     backgroundColor: req.body.backgroundColor,
-    location: location
+    location: {
+      countryCode: CountryCode,
+      regionName: Region,
+      city: City,
+      location: {
+        type: 'Point',
+        coordinates: [Number(longitude), Number(latitude)]
+      }
+    }
   });
 
   newSecret.save(function (err) {
@@ -67,6 +95,7 @@ router.get('/allByCity', passport.authenticate('jwt', {
       latitude = _req$query.latitude,
       longitude = _req$query.longitude;
 
+  // TODO: Modularize this into one file
 
   var geolocationUrl = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=' + process.env.GEOLOCATION_TOKEN + '&f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
 
@@ -74,13 +103,26 @@ router.get('/allByCity', passport.authenticate('jwt', {
 
   console.log(geolocation, "Geolocaiton");
 
-  var _geolocation$data$add = geolocation.data.address,
-      Region = _geolocation$data$add.Region,
-      City = _geolocation$data$add.City,
-      CountryCode = _geolocation$data$add.CountryCode;
+  var _geolocation$data$add2 = geolocation.data.address,
+      Region = _geolocation$data$add2.Region,
+      City = _geolocation$data$add2.City,
+      CountryCode = _geolocation$data$add2.CountryCode;
 
 
-  var secrets = await _secret2.default.getAllByCity(latitude, longitude);
+  var locationData = {
+    countryCode: CountryCode,
+    regionName: Region,
+    city: City,
+    location: {
+      type: 'Point',
+      coordinates: [Number(longitude), Number(latitude)]
+    }
+  };
+
+  // TODO: Using location to avoid make this request
+  var updatedUser = await _user2.default.updateUserLocation(locationData, req.user._id);
+
+  var secrets = await _secret2.default.getAllByCity(Number(longitude), Number(latitude));
 
   var userId = req.user._id;
 

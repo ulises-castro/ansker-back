@@ -11,13 +11,14 @@ const JwtStrategy = passportJWT.Strategy;
 const axios = require('axios');
 
 import Secret from '../models/secret';
+import User from '../models/user';
 
 require('dotenv').config();
 
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
 }),
-function(req, res) {
+async function(req, res) {
 
   const availableColours = [
     '#0000ff', '#ffa500', '#065535',
@@ -37,13 +38,35 @@ function(req, res) {
   }
 
   // TODO: Added into middleware to avoid boilerplate
-  const { location } = req.user;
+  // const { location } = req.user.location;
+  const { longitude, latitude } = req.body;
+
+  // TODO: Modularize this into one file
+  const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
+
+  const geolocation = await axios.get(geolocationUrl);
+
+  // console.log(geolocation, "Geolocaiton");
+
+  const {
+    CountryCode,
+    Region,
+    City,
+  } = geolocation.data.address;
 
   const newSecret = new Secret({
     author: req.user._id,
     content: req.body.content,
     backgroundColor: req.body.backgroundColor,
-    location,
+    location: {
+      countryCode: CountryCode,
+      regionName: Region,
+      city: City,
+      location: {
+        type: 'Point',
+        coordinates: [ Number(longitude), Number(latitude) ],
+      }
+    }
   });
 
   newSecret.save(function (err) {
@@ -62,10 +85,11 @@ router.get('/allByCity', passport.authenticate('jwt', {
 }),
 async function(req, res) {
 
-   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
   const { latitude, longitude } = req.query;
 
+  // TODO: Modularize this into one file
   const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
 
   const geolocation = await axios.get(geolocationUrl);
@@ -78,28 +102,43 @@ async function(req, res) {
     CountryCode,
   } = geolocation.data.address;
 
-   let secrets = await Secret.getAllByCity(latitude, longitude);
+  const locationData = {
+    countryCode: CountryCode,
+    regionName: Region,
+    city: City,
+    location: {
+      type: 'Point',
+      coordinates: [Number(longitude), Number(latitude)],
+    }
+  };
 
-   const userId = req.user._id;
+  // TODO: Using location to avoid make this request
+  let updatedUser = await User
+    .updateUserLocation(locationData, req.user._id);
 
-   // Passing only how many likes|comments|shares it has
-   secrets = secrets.map(secret => {
-     let { likes, comments, shares } = secret;
+  let secrets = await Secret
+    .getAllByCity(Number(longitude), Number(latitude));
 
-     const userLiked = secret.likes.find((like) => `${like.author}` == userId)
+  const userId = req.user._id;
 
-     secret.userLiked = (userLiked) ? true : false;
+  // Passing only how many likes|comments|shares it has
+  secrets = secrets.map(secret => {
+    let { likes, comments, shares } = secret;
 
-     secret.likes = likes.length;
-     secret.comments = comments.length;
-     secret.shares = shares.length;
+    const userLiked = secret.likes.find((like) => `${like.author}` == userId)
 
-     return secret;
-   });
+    secret.userLiked = (userLiked) ? true : false;
 
-   res.status(200).json({
-     secrets,
-   });
+    secret.likes = likes.length;
+    secret.comments = comments.length;
+    secret.shares = shares.length;
+
+    return secret;
+  });
+
+  res.status(200).json({
+    secrets,
+  });
 });
 
 router.post('/liked', passport.authenticate('jwt', {

@@ -1,41 +1,35 @@
 import mongoose from 'mongoose';
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
-const location = {
-  type: {
-    countryCode: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    city: {
-      type: String,
-      required: true,
-    },
-    regionName: {
-      type: String,
-      required: true,
-    },
-    // regionCode:  {
-    //   type: String,
-    //   required: true,
-    // },
-    latitude:  {
-      type: String,
-      required: true,
-    },
-    longitude:  {
-      type: String,
-      required: true,
-    },
-  },
-}
-
 const locations = new mongoose.Schema({
   ip: {
     type: String,
   },
-  location,
+  countryCode: {
+    type: String,
+    default: '',
+    required: true,
+  },
+  regionName: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+      index: '2dsphere',
+    },
+  },
   registerAt: {
     type: Date,
     default: Date.now(),
@@ -159,6 +153,37 @@ async function (
   });
 }
 
+UserSchema.statics.updateUserLocation =
+async function(locationData, userId) {
+  const _id = userId;
+  const user = await this.findOne({ _id }).exec();
+
+  const { coordinates } = locationData.location;
+
+  console.log(locationData);
+
+  let isSameLocation = false;
+  if (user.locations && user.locations.length) {
+    const userFormated = user.toObject();
+    const lastLocation = userFormated.locations.length - 1;
+    console.log(userFormated.locations[0], lastLocation);
+
+    const isNewLocation = userFormated.locations[lastLocation];
+    isSameLocation = (
+      isNewLocation[1] === coordinates[1]
+      && isNewLocation[0] === coordinates[0]
+    );
+  }
+
+  if (!isSameLocation) {
+    user.locations.push(locationData);
+    return await user.save().then(location => location);
+  }
+
+  return false;
+}
+
+// UserSchema.index({ "locations.location" : '2dsphere' });
 const User = mongoose.model('User', UserSchema);
 
 export default User;

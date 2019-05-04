@@ -60,25 +60,26 @@ const location = {
     type: String,
     required: true,
   },
-  // regionCode: {
-  //   type: String,
-  //   required: true,
-  // },
   regionName: {
     type: String,
     required: true,
+    index: true,
   },
   city: {
     type: String,
     required: true,
+    index: true,
   },
-  longitude: {
-    type: String,
-    default: '',
-  },
-  latitude: {
-    type: String,
-    default: '',
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
   }
 };
 
@@ -122,27 +123,34 @@ LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
 
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });
 // TODO: implement paginate, scroll infinite
-SecretSchema.statics.getAllByCity = async function (countryCode, regionCode, city, done) {
-
-  console.log(countryCode, regionCode, city);
+SecretSchema.statics.getAllByCity =
+async function (longitude, latitude) {
+  console.log(longitude, latitude);
   const secrets = await this.find({
-    'location.countryCode' : countryCode,
-    'location.regionCode': regionCode,
-    'location.city': city
+    "location.location": {
+      $near: {
+        $geometry: {
+            type: "Point" ,
+            coordinates: [ longitude, latitude ]
+        },
+        $maxDistance: 1000,
+        $minDistance: 0,
+      },
+    },
   })
-  .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  // .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
   // .skip(2)
   .limit(20)
-  .sort({ publishAt: -1 })
   .lean()
   .exec();
 
   return secrets;
 }
 
+// ##### LIKE SYSTEM ############
 // TODO: Verify secret was send from same user's location.
-SecretSchema.statics.setLiked = async function (secretId, author) {
-
+SecretSchema.statics.setLiked =
+async function (secretId, author) {
   console.log(secretId, "Holaaa");
   const like = await this.findOne({ secretId }).exec();
 

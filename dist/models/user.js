@@ -12,41 +12,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var AutoIncrement = require('mongoose-sequence')(_mongoose2.default);
 
-var location = {
-  type: {
-    countryCode: {
-      type: String,
-      default: '',
-      required: true
-    },
-    city: {
-      type: String,
-      required: true
-    },
-    regionName: {
-      type: String,
-      required: true
-    },
-    // regionCode:  {
-    //   type: String,
-    //   required: true,
-    // },
-    latitude: {
-      type: String,
-      required: true
-    },
-    longitude: {
-      type: String,
-      required: true
-    }
-  }
-};
-
 var locations = new _mongoose2.default.Schema({
   ip: {
     type: String
   },
-  location: location,
+  countryCode: {
+    type: String,
+    default: '',
+    required: true
+  },
+  regionName: {
+    type: String,
+    required: true
+  },
+  city: {
+    type: String,
+    required: true
+  },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+      index: '2dsphere'
+    }
+  },
   registerAt: {
     type: Date,
     default: Date.now()
@@ -168,6 +162,36 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
   });
 };
 
+UserSchema.statics.updateUserLocation = async function (locationData, userId) {
+  var _id = userId;
+  var user = await this.findOne({ _id: _id }).exec();
+
+  var coordinates = locationData.location.coordinates;
+
+
+  console.log(locationData);
+
+  var isSameLocation = false;
+  if (user.locations && user.locations.length) {
+    var userFormated = user.toObject();
+    var lastLocation = userFormated.locations.length - 1;
+    console.log(userFormated.locations[0], lastLocation);
+
+    var isNewLocation = userFormated.locations[lastLocation];
+    isSameLocation = isNewLocation[1] === coordinates[1] && isNewLocation[0] === coordinates[0];
+  }
+
+  if (!isSameLocation) {
+    user.locations.push(locationData);
+    return await user.save().then(function (location) {
+      return location;
+    });
+  }
+
+  return false;
+};
+
+// UserSchema.index({ "locations.location" : '2dsphere' });
 var User = _mongoose2.default.model('User', UserSchema);
 
 exports.default = User;
