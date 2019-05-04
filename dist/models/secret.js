@@ -140,14 +140,13 @@ SecretSchema.statics.getAllByCity = async function (longitude, latitude) {
           type: "Point",
           coordinates: [longitude, latitude]
         },
-        $maxDistance: 1000000,
+        $maxDistance: 5000,
         $minDistance: 0
       }
     }
-  })
-  // .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  }).select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
   // .skip(2)
-  .limit(20).lean().exec();
+  .limit(20).sort({ publishAt: 1 }).lean().exec();
 
   return secrets;
 };

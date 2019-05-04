@@ -129,6 +129,9 @@ async function(req, res) {
 
     secret.userLiked = (userLiked) ? true : false;
 
+    // Remove _id for security reasons
+    delete secret._id;
+
     secret.likes = likes.length;
     secret.comments = comments.length;
     secret.shares = shares.length;

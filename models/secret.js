@@ -141,6 +141,7 @@ async function (longitude, latitude) {
   .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
   // .skip(2)
   .limit(20)
+  .sort({ publishAt: 1, })
   .lean()
   .exec();
 
