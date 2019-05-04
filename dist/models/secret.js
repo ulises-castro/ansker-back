@@ -140,7 +140,7 @@ SecretSchema.statics.getAllByCity = async function (longitude, latitude) {
           type: "Point",
           coordinates: [longitude, latitude]
         },
-        $maxDistance: 1000,
+        $maxDistance: 1000000,
         $minDistance: 0
       }
     }
