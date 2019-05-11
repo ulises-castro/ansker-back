@@ -42,7 +42,9 @@ async function(req, res) {
   const { longitude, latitude } = req.body;
 
   // TODO: Modularize this into one file
-  const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
+  // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
+
+  const getlocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`
 
   const geolocation = await axios.get(geolocationUrl);
 
@@ -90,7 +92,9 @@ async function(req, res) {
   const { latitude, longitude } = req.query;
 
   // TODO: Modularize this into one file
-  const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
+  // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
+
+  const geolocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`
 
   const geolocation = await axios.get(geolocationUrl);
 

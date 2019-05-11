@@ -176,20 +176,6 @@ async function (secretId, author) {
   });
 }
 
-// TODO: Next feature to added, added get location by geolocation
-// SecretSchema.statics.getByNear = function (longitude, latitude, countryCode, state, locality, city, done) {
-//
-//   this.find({
-//     'place.countryCode': countryCode,
-//     'place.city': city,
-//     'place.state': state,
-//     'place.locality': locality
-//   },
-//   (err, secrets) => {
-//     done(err, secrets);
-//   })
-//   .sort({ longitude: 1, latitude: 1 });
-//
-// }
+SecretSchema.index({ "location.location.coordinates": "2dsphere" });
 
 module.exports = mongoose.model('Secret', SecretSchema);

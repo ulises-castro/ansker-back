@@ -29,7 +29,7 @@ async function joinOrLoginFacebookAndVerified(facebookToken) {
     is_valid,
   } = appFacebookData.data.data;
 
-  // console.log("Entro 22", appFacebookData.data.data, "---------");
+  console.log("Entro 22", appFacebookData.data.data, "---------");
 
   if (app_id !== client_id) {
 

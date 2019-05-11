@@ -38,7 +38,11 @@ var locations = new _mongoose2.default.Schema({
     coordinates: {
       type: [Number],
       required: true,
-      index: '2dsphere'
+      default: [0, 0],
+      index: {
+        type: '2dsphere',
+        sparse: false
+      }
     }
   },
   registerAt: {

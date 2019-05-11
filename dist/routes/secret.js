@@ -47,8 +47,9 @@ router.post('/publish', passport.authenticate('jwt', {
       latitude = _req$body.latitude;
 
   // TODO: Modularize this into one file
+  // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
 
-  var geolocationUrl = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=' + process.env.GEOLOCATION_TOKEN + '&f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
+  var getlocationUrl = 'https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
 
   var geolocation = await axios.get(geolocationUrl);
 
@@ -96,8 +97,9 @@ router.get('/allByCity', passport.authenticate('jwt', {
       longitude = _req$query.longitude;
 
   // TODO: Modularize this into one file
+  // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
 
-  var geolocationUrl = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=' + process.env.GEOLOCATION_TOKEN + '&f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
+  var geolocationUrl = 'https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
 
   var geolocation = await axios.get(geolocationUrl);
 

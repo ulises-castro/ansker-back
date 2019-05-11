@@ -37,7 +37,8 @@ var joinOrLoginFacebook = async function joinOrLoginFacebookAndVerified(facebook
       user_id = _appFacebookData$data.user_id,
       is_valid = _appFacebookData$data.is_valid;
 
-  // console.log("Entro 22", appFacebookData.data.data, "---------");
+
+  console.log("Entro 22", appFacebookData.data.data, "---------");
 
   if (app_id !== client_id) {
 

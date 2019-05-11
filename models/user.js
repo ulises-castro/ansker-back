@@ -27,7 +27,11 @@ const locations = new mongoose.Schema({
     coordinates: {
       type: [Number],
       required: true,
-      index: '2dsphere',
+      default: [0, 0],
+      index: {
+        type: '2dsphere',
+        sparse: false
+      },
     },
   },
   registerAt: {
