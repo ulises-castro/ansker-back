@@ -179,6 +179,7 @@ SecretSchema.statics.setLiked = async function (secretId, author) {
   });
 };
 
-SecretSchema.index({ "location.location.coordinates": "2dsphere" });
+// SecretSchema.index({ "location.location.coordinates": "2dsphere" });
+// db.secrets.createIndex({"location.location": "2dsphere"})
 
 module.exports = _mongoose2.default.model('Secret', SecretSchema);

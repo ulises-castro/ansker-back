@@ -35,6 +35,8 @@ router.post('/publish', passport.authenticate('jwt', {
     error: 'secret.publish.invalid'
   };
 
+  console.log(req.body, "Req boyd");
+
   // Sended an invalid color, received an no-valid color
   if (availableColours.indexOf(req.body.backgroundColor) === -1) {
     res.status(403).json(invalidDataReceived);
@@ -42,23 +44,23 @@ router.post('/publish', passport.authenticate('jwt', {
 
   // TODO: Added into middleware to avoid boilerplate
   // const { location } = req.user.location;
-  var _req$body = req.body,
-      longitude = _req$body.longitude,
-      latitude = _req$body.latitude;
+  // const { longitude, latitude } = req.body;
 
   // TODO: Modularize this into one file
   // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
 
-  var getlocationUrl = 'https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
+  // const getlocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`
 
-  var geolocation = await axios.get(geolocationUrl);
+  // const geolocation = await axios.get(geolocationUrl);
 
   // console.log(geolocation, "Geolocaiton");
 
-  var _geolocation$data$add = geolocation.data.address,
-      CountryCode = _geolocation$data$add.CountryCode,
-      Region = _geolocation$data$add.Region,
-      City = _geolocation$data$add.City;
+  var _req$body = req.body,
+      CountryCode = _req$body.CountryCode,
+      Region = _req$body.Region,
+      City = _req$body.City,
+      longitude = _req$body.longitude,
+      latitude = _req$body.latitude;
 
 
   var newSecret = new _secret2.default({
@@ -86,30 +88,47 @@ router.post('/publish', passport.authenticate('jwt', {
   });
 });
 
-router.get('/allByCity', passport.authenticate('jwt', {
+router.post('/allByCity', passport.authenticate('jwt', {
   session: false
 }), async function (req, res) {
 
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
-  var _req$query = req.query,
-      latitude = _req$query.latitude,
-      longitude = _req$query.longitude;
+  // return console.log(req.headers.referer, 'hola bebé');
+
+  // const { latitude, longitude } = req.query;
 
   // TODO: Modularize this into one file
   // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
+  // const requestUrl = `http://d6449894.ngrok.io/`;
 
-  var geolocationUrl = 'https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=' + longitude + ',' + latitude;
+  // const request = await axios.get(requestUrl);
 
-  var geolocation = await axios.get(geolocationUrl);
+  // console.log(request, "Geolocaiton");
 
-  console.log(geolocation, "Geolocaiton");
+  // return;
 
-  var _geolocation$data$add2 = geolocation.data.address,
-      Region = _geolocation$data$add2.Region,
-      City = _geolocation$data$add2.City,
-      CountryCode = _geolocation$data$add2.CountryCode;
+  // const geolocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`;
 
+  // const geolocation = await axios.get(geolocationUrl);
+
+  // console.log(geolocation, "Geolocaiton");
+
+  // const {
+  //   Region,
+  //   City,
+  //   CountryCode,
+  // } = geolocation.data.address;
+
+  var _req$body2 = req.body,
+      Region = _req$body2.Region,
+      City = _req$body2.City,
+      latitude = _req$body2.latitude,
+      longitude = _req$body2.longitude,
+      CountryCode = _req$body2.CountryCode;
+
+
+  console.log(req.body, req.params);
 
   var locationData = {
     countryCode: CountryCode,

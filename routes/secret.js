@@ -32,6 +32,8 @@ async function(req, res) {
     error: 'secret.publish.invalid'
   };
 
+  console.log(req.body, "Req boyd");
+
   // Sended an invalid color, received an no-valid color
   if (availableColours.indexOf(req.body.backgroundColor) === -1) {
     res.status(403).json(invalidDataReceived);
@@ -39,14 +41,14 @@ async function(req, res) {
 
   // TODO: Added into middleware to avoid boilerplate
   // const { location } = req.user.location;
-  const { longitude, latitude } = req.body;
+  // const { longitude, latitude } = req.body;
 
   // TODO: Modularize this into one file
   // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
 
-  const getlocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`
+  // const getlocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`
 
-  const geolocation = await axios.get(geolocationUrl);
+  // const geolocation = await axios.get(geolocationUrl);
 
   // console.log(geolocation, "Geolocaiton");
 
@@ -54,7 +56,9 @@ async function(req, res) {
     CountryCode,
     Region,
     City,
-  } = geolocation.data.address;
+    longitude,
+    latitude,
+  } = req.body;
 
   const newSecret = new Secret({
     author: req.user._id,
@@ -82,29 +86,48 @@ async function(req, res) {
 
 });
 
-router.get('/allByCity', passport.authenticate('jwt', {
+router.post('/allByCity', passport.authenticate('jwt', {
   session: false,
 }),
 async function(req, res) {
 
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
-  const { latitude, longitude } = req.query;
+  // return console.log(req.headers.referer, 'hola bebé');
+
+  // const { latitude, longitude } = req.query;
 
   // TODO: Modularize this into one file
   // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
+  // const requestUrl = `http://d6449894.ngrok.io/`;
 
-  const geolocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`
+  // const request = await axios.get(requestUrl);
 
-  const geolocation = await axios.get(geolocationUrl);
+  // console.log(request, "Geolocaiton");
 
-  console.log(geolocation, "Geolocaiton");
+  // return;
+
+  // const geolocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`;
+
+  // const geolocation = await axios.get(geolocationUrl);
+
+  // console.log(geolocation, "Geolocaiton");
+
+  // const {
+  //   Region,
+  //   City,
+  //   CountryCode,
+  // } = geolocation.data.address;
 
   const {
     Region,
     City,
+    latitude,
+    longitude,
     CountryCode,
-  } = geolocation.data.address;
+  } = req.body;
+
+  console.log(req.body, req.params);
 
   const locationData = {
     countryCode: CountryCode,
@@ -200,5 +223,6 @@ router.get('/:secretId', async function(req, res) {
     secret,
   });
 });
+
 
 module.exports = router;

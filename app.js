@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+// var proxy = require('express-http-proxy');
+
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -18,6 +20,8 @@ import './db';
 
 //Configure our app
 var app = express();
+
+// SocketIO
 
 const corsOption = {
   origin: true,
@@ -42,7 +46,15 @@ app.use('/api/secret', secret);
 app.use('/api/secret/comment', comment);
 app.set('trust proxy', true);
 
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+io.on('connection', () => { console.log('Cliente connected');
+io.emit("customEmit", {'hola':'b'});
+});
+
+
 // Sending response that app is alive
-app.listen(3000, () => {
+server.listen(3000, () => {
   console.log('SERVER IS ONLINE');
 });
