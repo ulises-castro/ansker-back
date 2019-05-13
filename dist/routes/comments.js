@@ -58,7 +58,8 @@ router.post('/', passport.authenticate('jwt', {
   }
 
   res.status(403).json({
-    success: false
+    success: false,
+    error: 'secret.publish.comment'
   });
 });
 
