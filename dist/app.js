@@ -47,7 +47,7 @@ app.use(passport.initialize());
 
 app.use('/api', auth);
 app.use('/api/secret', secret);
-app.use('/api/secret/comment', comment);
+app.use('/api/comment', comment);
 app.set('trust proxy', true);
 
 var server = require('http').createServer(app);

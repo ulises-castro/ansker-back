@@ -22,17 +22,9 @@ var JwtStrategy = passportJWT.Strategy;
 
 require('dotenv').config();
 
-router.post('/', passport.authenticate('jwt', {
+router.post('/publish', passport.authenticate('jwt', {
   session: false
 }), async function (req, res) {
-
-  // Colors avatars
-  // Todo boiler plate, fix that
-  var availableColours = ['#0000ff', '#ffa500', '#065535', '#ffc0cb', '#ff0000', '#003366', '#008080', '#8a2be2', '#666666', '#ff1493'];
-
-  var maxAllowed = availableColours.length;
-  var getColor = Math.floor(Math.random() * maxAllowed) + 1;
-  var backgroundColor = availableColours[getColor];
 
   var author = req.user._id;
   var _req$body = req.body,
@@ -45,9 +37,10 @@ router.post('/', passport.authenticate('jwt', {
   var commentData = {
     secretId: secretId,
     content: content,
-    backgroundColor: backgroundColor,
     author: author
   };
+
+  console.log(commentData, "coemnatrios");
 
   var response = await _comment2.default.publish(secretId, commentData);
 

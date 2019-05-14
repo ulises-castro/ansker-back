@@ -15,6 +15,7 @@ const CommentSchema = new Schema({
   secretId: {
     type: ObjectId,
     ref: 'Secret',
+    index: true,
   },
   content: {
     type: String,
@@ -35,43 +36,46 @@ async function(secretId, commentData) {
 
   const { author, backgroundColor } = commentData;
 
-  const secret = await Secret.findOne({secretId}).exec();
+  const secret = await Secret
+    .findOne({ 'secretId': Number(secretId) }).exec();
 
-  const userHasCommented = await Secret
-  .findOne({
-    '_id' : secret._id,
-    'commentsAuthors.authorId': author
-  }).exec();
+  // TODO: Implement avatars functionalities
+  // const userHasCommented = await Secret
+  // .findOne({
+  //   '_id' : secret._id,
+  //   'commentsAuthors.authorId': author
+  // }).exec();
 
-  // Register authors and asign random avatar as their identify
-  if (!userHasCommented) {
-    // Modify this to make dinamic to assign inrepeateable avatar
-    const availableAvatars = 30;
-    const avatar =  Math.floor(Math.random() * (availableAvatars)) + 1;
+  // // Register authors and asign random avatar as their identify
+  // if (!userHasCommented) {
+  //   // Modify this to make dinamic to assign inrepeateable avatar
+  //   const availableAvatars = 30;
+  //   const avatar =  Math.floor(Math.random() * (availableAvatars)) + 1;
 
-    secret.commentsAuthors.push({
-      author,
-      avatar,
-      backgroundColor,
-    });
+  //   secret.commentsAuthors.push({
+  //     author,
+  //     avatar,
+  //     backgroundColor,
+  //   });
 
-    await secret.save().then(comment => comment);
-  }
+  //   await secret.save().then(comment => comment);
+  // }
 
   // Save comment data in comments model
   commentData.secretId = secret._id;
   let newComment = new this(commentData);
 
-  newComment == await newComment.save()
-  .then(newComment => {
-    return newComment;
-  });
+  newComment = await newComment.save()
+  .then(newComment => newComment);
 
   // Create comment in secrets models and save
-  secret.comments.push({ 'commentId': newComment._id });
+  secret.comments.push({
+    'commentId': newComment._id
+  });
 
-  return await secret.save().then(comment => comment);
+  await secret.save().then(comment => comment);
 
+  return secret;
 }
 
 module.exports = mongoose.model('Comments', CommentSchema);

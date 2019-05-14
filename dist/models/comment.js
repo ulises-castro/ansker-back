@@ -24,7 +24,8 @@ var CommentSchema = new Schema({
   },
   secretId: {
     type: ObjectId,
-    ref: 'Secret'
+    ref: 'Secret',
+    index: true
   },
   content: {
     type: String,
@@ -45,44 +46,48 @@ CommentSchema.statics.publish = async function (secretId, commentData) {
       backgroundColor = commentData.backgroundColor;
 
 
-  var secret = await _secret2.default.findOne({ secretId: secretId }).exec();
+  var secret = await _secret2.default.findOne({ 'secretId': Number(secretId) }).exec();
 
-  var userHasCommented = await _secret2.default.findOne({
-    '_id': secret._id,
-    'commentsAuthors.authorId': author
-  }).exec();
+  // TODO: Implement avatars functionalities
+  // const userHasCommented = await Secret
+  // .findOne({
+  //   '_id' : secret._id,
+  //   'commentsAuthors.authorId': author
+  // }).exec();
 
-  // Register authors and asign random avatar as their identify
-  if (!userHasCommented) {
-    // Modify this to make dinamic to assign inrepeateable avatar
-    var availableAvatars = 30;
-    var avatar = Math.floor(Math.random() * availableAvatars) + 1;
+  // // Register authors and asign random avatar as their identify
+  // if (!userHasCommented) {
+  //   // Modify this to make dinamic to assign inrepeateable avatar
+  //   const availableAvatars = 30;
+  //   const avatar =  Math.floor(Math.random() * (availableAvatars)) + 1;
 
-    secret.commentsAuthors.push({
-      author: author,
-      avatar: avatar,
-      backgroundColor: backgroundColor
-    });
+  //   secret.commentsAuthors.push({
+  //     author,
+  //     avatar,
+  //     backgroundColor,
+  //   });
 
-    await secret.save().then(function (comment) {
-      return comment;
-    });
-  }
+  //   await secret.save().then(comment => comment);
+  // }
 
   // Save comment data in comments model
   commentData.secretId = secret._id;
   var newComment = new this(commentData);
 
-  newComment == (await newComment.save().then(function (newComment) {
+  newComment = await newComment.save().then(function (newComment) {
     return newComment;
-  }));
+  });
 
   // Create comment in secrets models and save
-  secret.comments.push({ 'commentId': newComment._id });
+  secret.comments.push({
+    'commentId': newComment._id
+  });
 
-  return await secret.save().then(function (comment) {
+  await secret.save().then(function (comment) {
     return comment;
   });
+
+  return secret;
 };
 
 module.exports = _mongoose2.default.model('Comments', CommentSchema);

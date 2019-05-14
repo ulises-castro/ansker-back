@@ -43,7 +43,7 @@ app.use(passport.initialize());
 
 app.use('/api', auth);
 app.use('/api/secret', secret);
-app.use('/api/secret/comment', comment);
+app.use('/api/comment', comment);
 app.set('trust proxy', true);
 
 const server = require('http').createServer(app);
@@ -52,7 +52,6 @@ const io = require('socket.io')(server);
 io.on('connection', () => { console.log('Cliente connected');
 io.emit("customEmit", {'hola':'b'});
 });
-
 
 // Sending response that app is alive
 server.listen(3000, () => {

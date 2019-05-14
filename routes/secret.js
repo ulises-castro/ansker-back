@@ -12,6 +12,7 @@ const axios = require('axios');
 
 import Secret from '../models/secret';
 import User from '../models/user';
+import Comment from '../models/comment';
 
 require('dotenv').config();
 
@@ -42,15 +43,6 @@ async function(req, res) {
   // TODO: Added into middleware to avoid boilerplate
   // const { location } = req.user.location;
   // const { longitude, latitude } = req.body;
-
-  // TODO: Modularize this into one file
-  // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
-
-  // const getlocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`
-
-  // const geolocation = await axios.get(geolocationUrl);
-
-  // console.log(geolocation, "Geolocaiton");
 
   const {
     CountryCode,
@@ -92,32 +84,6 @@ router.post('/allByCity', passport.authenticate('jwt', {
 async function(req, res) {
 
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-
-  // return console.log(req.headers.referer, 'hola bebé');
-
-  // const { latitude, longitude } = req.query;
-
-  // TODO: Modularize this into one file
-  // const geolocationUrl = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?token=${process.env.GEOLOCATION_TOKEN}&f=pjson&featureTypes=&location=${longitude},${latitude}`;
-  // const requestUrl = `http://d6449894.ngrok.io/`;
-
-  // const request = await axios.get(requestUrl);
-
-  // console.log(request, "Geolocaiton");
-
-  // return;
-
-  // const geolocationUrl = `https://utility.arcgis.com/usrsvcs/appservices/ALYmls905v3B6fIJ/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&featureTypes=&location=${longitude},${latitude}`;
-
-  // const geolocation = await axios.get(geolocationUrl);
-
-  // console.log(geolocation, "Geolocaiton");
-
-  // const {
-  //   Region,
-  //   City,
-  //   CountryCode,
-  // } = geolocation.data.address;
 
   const {
     Region,
@@ -207,6 +173,12 @@ router.get('/:secretId', async function(req, res) {
   .select('content backgroundColor publishAt fontFamily comments.content comments.registerAt likes.author')
   .lean().exec();
 
+  // TODO: Use populate here instead of consult
+  const comments = await Comment
+  .find({ secretId: secret._id  })
+  .lean()
+  .exec()
+
   if (!secret) {
     return res.status(404).json({
       success: false,
@@ -215,14 +187,13 @@ router.get('/:secretId', async function(req, res) {
   // Remove sensitive data and useless information
   delete secret._id;
   secret.likes = secret.likes.length;
-  secret.commentsData = secret.comments;
-  secret.comments = secret.comments.length;
+  secret.commentsData = comments;
+  secret.comments = comments.length;
 
   res.status(200).json({
     success: true,
     secret,
   });
 });
-
 
 module.exports = router;

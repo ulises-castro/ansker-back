@@ -13,23 +13,10 @@ import Comment from '../models/comment';
 
 require('dotenv').config();
 
-router.post('/', passport.authenticate('jwt', {
+router.post('/publish', passport.authenticate('jwt', {
   session: false,
 }),
 async function (req, res) {
-
-  // Colors avatars
-  // Todo boiler plate, fix that
-  const availableColours = [
-    '#0000ff', '#ffa500', '#065535',
-    '#ffc0cb', '#ff0000', '#003366',
-    '#008080', '#8a2be2', '#666666',
-    '#ff1493'
-  ];
-
-  const maxAllowed = availableColours.length;
-  const getColor = Math.floor(Math.random() * (maxAllowed)) + 1;
-  const backgroundColor = availableColours[getColor];
 
   const author = req.user._id;
   let { secretId, content } = req.body;
@@ -39,9 +26,10 @@ async function (req, res) {
   const commentData = {
     secretId,
     content,
-    backgroundColor,
     author,
   };
+
+  console.log(commentData, "coemnatrios");
 
   const response = await Comment.publish(secretId, commentData);
 
