@@ -177,7 +177,7 @@ router.get('/:secretId', async function (req, res) {
   var secret = await _secret2.default.findOne({ secretId: secretId }).select('content backgroundColor publishAt fontFamily comments.content comments.registerAt likes.author').lean().exec();
 
   // TODO: Use populate here instead of consult
-  var comments = await _comment2.default.find({ secretId: secret._id }).lean().exec();
+  var comments = await _comment2.default.find({ secretId: secret._id }).select('content publishAt -_id').lean().exec();
 
   if (!secret) {
     return res.status(404).json({

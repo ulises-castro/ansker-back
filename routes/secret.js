@@ -176,6 +176,7 @@ router.get('/:secretId', async function(req, res) {
   // TODO: Use populate here instead of consult
   const comments = await Comment
   .find({ secretId: secret._id  })
+  .select('content publishAt -_id')
   .lean()
   .exec()
 
