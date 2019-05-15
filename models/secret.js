@@ -123,7 +123,7 @@ LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
 
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });
 // TODO: implement paginate, scroll infinite
-SecretSchema.statics.getAllByCity =
+SecretSchema.statics.getAllByNear =
 async function (longitude, latitude) {
   console.log(longitude, latitude);
   const secrets = await this.find({
@@ -138,6 +138,26 @@ async function (longitude, latitude) {
       },
     },
   })
+  .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  // .skip(2)
+  .limit(20)
+  .sort({ publishAt: -1, })
+  .lean()
+  .exec();
+
+  return secrets;
+}
+
+SecretSchema.statics.getAllByCity =
+async function (countryCode, regionName, city) {
+  console.log(countryCode, regionName, city);
+  const secrets = await this.find(
+    {
+      "location.location.countryCode": countryCode,
+      "location.location.regionName": regionName,
+      "location.location.city": city,
+    },
+  )
   .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
   // .skip(2)
   .limit(20)

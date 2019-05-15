@@ -83,7 +83,7 @@ router.post('/publish', passport.authenticate('jwt', {
   });
 });
 
-router.post('/allByCity', passport.authenticate('jwt', {
+router.post('/allByNearDistance', passport.authenticate('jwt', {
   session: false
 }), async function (req, res) {
 
@@ -111,6 +111,65 @@ router.post('/allByCity', passport.authenticate('jwt', {
 
   // TODO: Using location to avoid make this request
   var updatedUser = await _user2.default.updateUserLocation(locationData, req.user._id);
+
+  var secrets = await _secret2.default.getAllByCity(Number(longitude), Number(latitude));
+
+  var userId = req.user._id;
+
+  // Passing only how many likes|comments|shares it has
+  secrets = secrets.map(function (secret) {
+    var likes = secret.likes,
+        comments = secret.comments,
+        shares = secret.shares;
+
+
+    var userLiked = secret.likes.find(function (like) {
+      return '' + like.author == userId;
+    });
+
+    secret.userLiked = userLiked ? true : false;
+
+    // Remove _id for security reasons
+    delete secret._id;
+
+    secret.likes = likes.length;
+    secret.comments = comments.length;
+    secret.shares = shares.length;
+
+    return secret;
+  });
+
+  res.status(200).json({
+    secrets: secrets
+  });
+});
+
+router.post('/allByCity', async function (req, res) {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+
+  // const {
+  //   Region,
+  //   City,
+  //   latitude,
+  //   longitude,
+  //   CountryCode,
+  // } = req.body;
+
+  console.log(req.body, req.params);
+
+  // const locationData = {
+  //   countryCode: CountryCode,
+  //   regionName: Region,
+  //   city: City,
+  //   location: {
+  //     type: 'Point',
+  //     coordinates: [Number(longitude), Number(latitude)],
+  //   }
+  // };
+
+  // TODO: Using location to avoid make this request
+  // let updatedUser = await User
+  //   .updateUserLocation(locationData, req.user._id);
 
   var secrets = await _secret2.default.getAllByCity(Number(longitude), Number(latitude));
 
