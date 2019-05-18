@@ -138,7 +138,9 @@ async function(req, res) {
 });
 
 
-router.post('/allByCity', async function(req, res) {
+router.get('/allByCity',
+async function(req, res) {
+
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
   // const {
@@ -151,32 +153,24 @@ router.post('/allByCity', async function(req, res) {
 
   console.log(req.body, req.params);
 
-  // const locationData = {
-  //   countryCode: CountryCode,
-  //   regionName: Region,
-  //   city: City,
-  //   location: {
-  //     type: 'Point',
-  //     coordinates: [Number(longitude), Number(latitude)],
-  //   }
-  // };
-
-  // TODO: Using location to avoid make this request
-  // let updatedUser = await User
-  //   .updateUserLocation(locationData, req.user._id);
+  const countryCode = 'MX';
+  const city = 'Guadalajara';
 
   let secrets = await Secret
-    .getAllByCity(Number(longitude), Number(latitude));
+    .getAllByCity(countryCode, city);
 
-  const userId = req.user._id;
-
+    // console.log(secrets, "Secrets");
   // Passing only how many likes|comments|shares it has
   secrets = secrets.map(secret => {
     let { likes, comments, shares } = secret;
 
-    const userLiked = secret.likes.find((like) => `${like.author}` == userId)
+    if (req.user) {
+      const userId = req.user._id;
+      const userLiked = secret.likes.find((like) => `${like.author}` == userId)
 
-    secret.userLiked = (userLiked) ? true : false;
+      // Set user as liked 
+      secret.userLiked = (userLiked) ? true : false;
+    }
 
     // Remove _id for security reasons
     delete secret._id;

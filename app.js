@@ -1,6 +1,11 @@
 require('dotenv').config();
 
 // var proxy = require('express-http-proxy');
+const allCities = require('all-the-cities-mongodb');
+var countries = require('country-data').countries;
+ 
+// import isoCountryCodeConverter from './services/convertCountryCodes';
+// console.log(isoCountryCodeConverter.convertTwoDigitToThree('US'));
 
 var express = require('express');
 var path = require('path');
@@ -41,10 +46,31 @@ require('./routes/passport.js');
 
 app.use(passport.initialize());
 
+app.set('trust proxy', true);
+
 app.use('/api', auth);
 app.use('/api/secret', secret);
 app.use('/api/comment', comment);
-app.set('trust proxy', true);
+app.get('/api/searchPlace/:city', function(req, res) {
+
+  let { city } = req.params;
+  city = city.toLowerCase();
+  // return console.log(req.params);
+
+  const cities = allCities.filter(cityCurrent => {
+    if (cityCurrent.name.toLowerCase().match(city)) {
+      const countryData = countries[cityCurrent.country];
+      cityCurrent.countryName = countryData.name;
+      cityCurrent.flag = countryData.emoji;
+      return cityCurrent;
+    }
+  });
+
+  return res.status(200).json({
+    cities,
+  });
+});
+
 
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);

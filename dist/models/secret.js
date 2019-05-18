@@ -4,6 +4,10 @@ var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _convertCountryCodes = require('../services/convertCountryCodes');
+
+var _convertCountryCodes2 = _interopRequireDefault(_convertCountryCodes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var AutoIncrement = require('mongoose-sequence')(_mongoose2.default);
@@ -151,12 +155,38 @@ SecretSchema.statics.getAllByNear = async function (longitude, latitude) {
   return secrets;
 };
 
-SecretSchema.statics.getAllByCity = async function (countryCode, regionName, city) {
-  console.log(countryCode, regionName, city);
+console.log();
+
+SecretSchema.statics.getAllByNear = async function (longitude, latitude) {
+  console.log(longitude, latitude);
   var secrets = await this.find({
-    "location.location.countryCode": countryCode,
-    "location.location.regionName": regionName,
-    "location.location.city": city
+    "location.location": {
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates: [longitude, latitude]
+        },
+        $maxDistance: 5000,
+        $minDistance: 0
+      }
+    }
+  }).select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  // .skip(2)
+  .limit(20).sort({ publishAt: -1 }).lean().exec();
+
+  return secrets;
+};
+
+SecretSchema.statics.getAllByCity = async function (countryCode, city) {
+
+  // Adapting searching to searched
+  countryCode = countryCode.toUpperCase();
+  countryCode = _convertCountryCodes2.default.convertTwoDigitToThree(countryCode);
+  console.log(countryCode, city);
+
+  var secrets = await this.find({
+    "location.countryCode": countryCode,
+    "location.city": city
   }).select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
   // .skip(2)
   .limit(20).sort({ publishAt: -1 }).lean().exec();
