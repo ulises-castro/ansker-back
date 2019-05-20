@@ -18,6 +18,7 @@
     "dotenv": "^7.0.0",
     "express": "~4.16.0",
     "express-http-proxy": "^1.5.1",
+    "googleapis": "^40.0.0",
     "http-errors": "~1.6.2",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",

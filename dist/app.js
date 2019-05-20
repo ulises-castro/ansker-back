@@ -8,9 +8,6 @@ require('dotenv').config();
 var allCities = require('all-the-cities-mongodb');
 var countries = require('country-data').countries;
 
-// import isoCountryCodeConverter from './services/convertCountryCodes';
-// console.log(isoCountryCodeConverter.convertTwoDigitToThree('US'));
-
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -24,13 +21,14 @@ var auth = require('./routes/auth');
 var secret = require('./routes/secret');
 var comment = require('./routes/comments');
 
+// Controllers
+var userController = require('./controllers/user');
+
 // Load database connection
 
 
 //Configure our app
 var app = express();
-
-// SocketIO
 
 var corsOption = {
   origin: true,
@@ -55,6 +53,13 @@ app.set('trust proxy', true);
 app.use('/api', auth);
 app.use('/api/secret', secret);
 app.use('/api/comment', comment);
+
+// Google auth ---------------------------------
+app.get('/api/request/gmail/auth', userController.requestGmailAuth);
+app.get('/api/get/gmail/user', userController.getGmailUserInfo);
+// ------------------------------------------
+
+//Get cities by name
 app.get('/api/searchPlace/:city', function (req, res) {
   var city = req.params.city;
 
@@ -75,6 +80,7 @@ app.get('/api/searchPlace/:city', function (req, res) {
   });
 });
 
+// SocketIO, configure to send information
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
