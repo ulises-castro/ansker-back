@@ -1,5 +1,8 @@
 'use strict'
 const googleApi = require('../libs/google');
+
+import User from '../models/user';
+
 var url = require('url');
 
 exports.requestGmailAuth = function (req, res, next) {
@@ -15,12 +18,22 @@ exports.getGmailUserInfo =
     let code = qs.get('code');
 
     if (!code) {
-        next(new Error('No code provided'))
+      next(new Error('No code provided'))
     }
 
     googleApi.getUserInfo(code)
     .then(function(response) {
-      res.send(response.data);
+      const userData = response.data;
+      userData.email = userData.emails[0].value;
+      userData.name = userData.displayName;
+
+      const newUser = User.findUserOrRegister(
+        userData.id,
+        userData,
+        'google'
+      );
+
+      return res.send(response.data);
     })
     .catch(function(e) {
       console.log('Error Google Api');

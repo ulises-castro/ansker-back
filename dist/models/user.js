@@ -71,8 +71,7 @@ var authProviders = {
           unique: true
         },
         name: String,
-        email: String,
-        token: String
+        email: String
       }
     },
     twitter: {
@@ -105,11 +104,11 @@ var UserSchema = new _mongoose2.default.Schema({
   locations: [locations],
   registerBy: {
     type: String,
-    default: 'facebook'
+    enum: ['facebook', 'google', 'local']
   },
   authProvider: {
     type: String,
-    default: 'facebook'
+    enum: ['facebook', 'google', 'local']
   },
   authProviders: authProviders
 });
@@ -128,35 +127,32 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
     // console.log('Finded here and USER', targetUserId, user);
     return user;
   }
-
   // REGISTER USER BECAUSE DOESNT EXISTS YET
-
   var registerAt = new Date();
 
   // Get user geolocation data ########################
   // TODO: Remove file and provider api
   // const userLocation = await getUserLocation(userData.ip);
-
   var id = userData.id,
       name = userData.name,
-      email = userData.email,
-      facebookToken = userData.facebookToken;
+      email = userData.email;
 
+
+  var authProviders = {};
+
+  authProviders[provider] = {
+    id: id,
+    name: name,
+    email: email,
+    facebookToken: userData.facebookToken || ''
+  };
 
   var newUser = User({
     // Change facebook to provider
-    username: 'facebook-' + targetUserId,
+    username: provider + '-' + targetUserId,
     // ip,
-    // Added more authProvider (Google | Twitter);
-    authProviders: {
-      facebook: {
-        id: id,
-        name: name,
-        email: email,
-        // TODO Create a function which performences update facebooktoken when user had been signed
-        token: facebookToken
-      }
-    },
+    authProviders: authProviders,
+    registerBy: provider,
     registerAt: registerAt
   });
 
