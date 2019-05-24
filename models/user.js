@@ -109,8 +109,10 @@ async function (
   targetUserId, userData, provider = 'facebook'
 ) {
 
+  const searchBy = `authProviders.${provider}.id`;
+
   let user = await this.findOne({
-    'authProviders.facebook.id': targetUserId
+    [searchBy] : targetUserId
   }).exec();
 
   if (user) {

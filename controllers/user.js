@@ -38,8 +38,6 @@ async function registerOrLoginUser(response, res) {
     newUser.id, jwtOptions.secret
   );
 
-  // return res.status.(200).json(send(response.data);
-
   res.redirect(`${URL_FRONT}/get-token/${token}`);
 }
 
@@ -54,7 +52,7 @@ exports.getGmailUserInfo =
 
     googleApi.getUserInfo(code)
     .then(function(response) {
-      registerOrLoginUser(response);
+      registerOrLoginUser(response, res);
     })
     .catch(function(e) {
       console.log('Error Google Api');

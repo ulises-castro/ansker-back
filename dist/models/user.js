@@ -10,6 +10,8 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var AutoIncrement = require('mongoose-sequence')(_mongoose2.default);
 
 var locations = new _mongoose2.default.Schema({
@@ -119,9 +121,9 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
   var provider = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'facebook';
 
 
-  var user = await this.findOne({
-    'authProviders.facebook.id': targetUserId
-  }).exec();
+  var searchBy = 'authProviders.' + provider + '.id';
+
+  var user = await this.findOne(_defineProperty({}, searchBy, targetUserId)).exec();
 
   if (user) {
     // console.log('Finded here and USER', targetUserId, user);

@@ -38,8 +38,6 @@ async function registerOrLoginUser(response, res) {
 
   var token = jwt.sign(newUser.id, jwtOptions.secret);
 
-  // return res.status.(200).json(send(response.data);
-
   res.redirect(URL_FRONT + '/get-token/' + token);
 }
 
@@ -52,7 +50,7 @@ exports.getGmailUserInfo = async function (req, res, next) {
   }
 
   googleApi.getUserInfo(code).then(function (response) {
-    registerOrLoginUser(response);
+    registerOrLoginUser(response, res);
   }).catch(function (e) {
     console.log('Error Google Api');
     next(new Error(e.message));
