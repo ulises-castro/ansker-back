@@ -10,18 +10,14 @@ var _facebookAuth2 = _interopRequireDefault(_facebookAuth);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+require('dotenv').config();
+
 var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
 
-
-var passport = require('passport');
 var passportJWT = require('passport-jwt');
-
 var ExtractJwt = passportJWT.ExtractJwt;
-var JwtStrategy = passportJWT.Strategy;
-
-require('dotenv').config();
 
 var jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
