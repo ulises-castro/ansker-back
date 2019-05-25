@@ -64,7 +64,9 @@ app.get('/api/searchPlace/:city', function(req, res) {
   // return console.log(req.params);
 
   let cities = allCities.filter(cityCurrent => {
-    if (cityCurrent.name.toLowerCase().match(city)) {
+    if (
+      cityCurrent.name.toLowerCase().match(city)
+    ) {
       const countryData = countries[cityCurrent.country];
       cityCurrent.countryName = countryData.name;
       cityCurrent.flag = countryData.emoji;
@@ -73,13 +75,26 @@ app.get('/api/searchPlace/:city', function(req, res) {
   });
 
   cities = cities.sort((a, b) => {
-    if (a.country === 'MX' && b.country !== 'MX')
+    if (a.population > b.population)
       return -1;
-    else if (a.country !== 'MX' && b.country === 'MX')
+    else if (b.population > a.population)
       return 1;
     else
       return 0;
   });
+
+  // cities = cities.sort((a, b) => {
+  //   if (a.country === 'MX' && b.country !== 'MX')
+  //     return -1;
+  //   else if (a.country !== 'MX' && b.country === 'MX')
+  //     return 1;
+  //   else
+  //     return 0;
+  // });
+
+
+
+  cities = cities.slice(0,5);
 
   return res.status(200).json({
     cities,

@@ -76,8 +76,20 @@ app.get('/api/searchPlace/:city', function (req, res) {
   });
 
   cities = cities.sort(function (a, b) {
-    if (a.country === 'MX' && b.country !== 'MX') return -1;else if (a.country !== 'MX' && b.country === 'MX') return 1;else return 0;
+    if (a.population > b.population) return -1;else if (b.population > a.population) return 1;else return 0;
   });
+
+  // cities = cities.sort((a, b) => {
+  //   if (a.country === 'MX' && b.country !== 'MX')
+  //     return -1;
+  //   else if (a.country !== 'MX' && b.country === 'MX')
+  //     return 1;
+  //   else
+  //     return 0;
+  // });
+
+
+  cities = cities.slice(0, 5);
 
   return res.status(200).json({
     cities: cities
