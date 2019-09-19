@@ -106,6 +106,6 @@ io.on('connection', function () {
 });
 
 // Sending response that app is alive
-server.listen(3001, function () {
+server.listen(3000, function () {
   console.log('SERVER IS ONLINE');
 });

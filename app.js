@@ -110,6 +110,6 @@ io.emit("customEmit", {'hola':'b'});
 });
 
 // Sending response that app is alive
-server.listen(3001, () => {
+server.listen(3000, () => {
   console.log('SERVER IS ONLINE');
 });
