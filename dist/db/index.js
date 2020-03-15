@@ -1,28 +1,30 @@
+'use strict';
+
 require('dotenv').config();
 
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
 
-const uri = 'mongodb://localhost:27017/ansker';
+var uri = 'mongodb://localhost:27017/ansker';
 
-const autoIndex = !!process.env.PRODUCTION;
+var autoIndex = !!process.env.PRODUCTION;
 
 // Defining vars to connect to database
-const options = {
+var options = {
   user: process.env.DATABASE_USER,
   pass: process.env.DATABASE_PWD,
   auth: {
-      authdb: 'admin'
+    authdb: 'admin'
   },
   useNewUrlParser: true,
   useCreateIndex: true,
-  autoIndex,
-  useUnifiedTopology: true,
+  autoIndex: autoIndex,
+  useUnifiedTopology: true
 };
 
 console.log(options);
 
-mongoose.connect(uri, options).then(() => {
+mongoose.connect(uri, options).then(function () {
   console.log('connected to database');
-}).catch(error => {
+}).catch(function (error) {
   console.log('There is a problem with database', error);
 });
