@@ -61,7 +61,6 @@ const authProviders = {
           },
           name: String,
           email: String,
-          token: String,
         }
       },
       twitter: {
@@ -94,11 +93,11 @@ const UserSchema = new mongoose.Schema({
   locations: [locations],
   registerBy: {
     type: String,
-    default: 'facebook'
+    enum: ['facebook', 'google', 'local'],
   },
   authProvider: {
     type: String,
-    default: 'facebook'
+    enum: ['facebook', 'google', 'local'],
   },
   authProviders,
 });
@@ -110,44 +109,43 @@ async function (
   targetUserId, userData, provider = 'facebook'
 ) {
 
+  const searchBy = `authProviders.${provider}.id`;
+
   let user = await this.findOne({
-    'authProviders.facebook.id': targetUserId
+    [searchBy] : targetUserId
   }).exec();
 
   if (user) {
     // console.log('Finded here and USER', targetUserId, user);
     return user;
   }
-
   // REGISTER USER BECAUSE DOESNT EXISTS YET
-
   const registerAt = new Date();
 
   // Get user geolocation data ########################
   // TODO: Remove file and provider api
   // const userLocation = await getUserLocation(userData.ip);
-
   const  {
     id,
     name,
     email,
-    facebookToken,
   } = userData;
+
+  let authProviders = {};
+
+  authProviders[provider] = {
+    id,
+    name,
+    email,
+    facebookToken: userData.facebookToken || '',
+  };
 
   let newUser = User({
     // Change facebook to provider
-    username: 'facebook-' + targetUserId,
+    username: provider + '-' + targetUserId,
     // ip,
-    // Added more authProvider (Google | Twitter);
-    authProviders: {
-      facebook: {
-        id,
-        name,
-        email,
-        // TODO Create a function which performences update facebooktoken when user had been signed
-        token: facebookToken,
-      }
-    },
+    authProviders,
+    registerBy: provider,
     registerAt,
   });
 

@@ -78,7 +78,7 @@ async function(req, res) {
 
 });
 
-router.post('/allByCity', passport.authenticate('jwt', {
+router.post('/allByNearDistance', passport.authenticate('jwt', {
   session: false,
 }),
 async function(req, res) {
@@ -121,6 +121,56 @@ async function(req, res) {
     const userLiked = secret.likes.find((like) => `${like.author}` == userId)
 
     secret.userLiked = (userLiked) ? true : false;
+
+    // Remove _id for security reasons
+    delete secret._id;
+
+    secret.likes = likes.length;
+    secret.comments = comments.length;
+    secret.shares = shares.length;
+
+    return secret;
+  });
+
+  res.status(200).json({
+    secrets,
+  });
+});
+
+
+router.get('/allByCity',
+async function(req, res) {
+
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+
+  // const {
+  //   Region,
+  //   City,
+  //   latitude,
+  //   longitude,
+  //   CountryCode,
+  // } = req.body;
+
+  console.log(req.body, req.params);
+
+  const countryCode = 'MX';
+  const city = 'Guadalajara';
+
+  let secrets = await Secret
+    .getAllByCity(countryCode, city);
+
+    // console.log(secrets, "Secrets");
+  // Passing only how many likes|comments|shares it has
+  secrets = secrets.map(secret => {
+    let { likes, comments, shares } = secret;
+
+    if (req.user) {
+      const userId = req.user._id;
+      const userLiked = secret.likes.find((like) => `${like.author}` == userId)
+
+      // Set user as liked 
+      secret.userLiked = (userLiked) ? true : false;
+    }
 
     // Remove _id for security reasons
     delete secret._id;
