@@ -37,7 +37,9 @@ const corsOption = {
 app.use(cors(corsOption));
 
 app.use(require('morgan')('dev'));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -53,13 +55,17 @@ app.use('/api/comment', comment);
 
 // Google auth ---------------------------------
 app.get('/api/request/gmail/auth', userController.requestGmailAuth)
+// TODO: Change this url
 app.get('/api/get/gmail/user', userController.getGmailUserInfo)
 // ------------------------------------------
 
+// TODO: Refactor this and create its controller to keep dry code
 //Get cities by name
-app.get('/api/searchPlace/:city', function(req, res) {
+app.get('/api/searchPlace/:city', function (req, res) {
 
-  let { city } = req.params;
+  let {
+    city
+  } = req.params;
   city = city.toLowerCase();
   // return console.log(req.params);
 
@@ -94,7 +100,7 @@ app.get('/api/searchPlace/:city', function(req, res) {
 
 
 
-  cities = cities.slice(0,5);
+  cities = cities.slice(0, 5);
 
   return res.status(200).json({
     cities,
@@ -105,8 +111,11 @@ app.get('/api/searchPlace/:city', function(req, res) {
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
-io.on('connection', () => { console.log('Cliente connected');
-io.emit("customEmit", {'hola':'b'});
+io.on('connection', () => {
+  console.log('Cliente connected');
+  io.emit("customEmit", {
+    'hola': 'b'
+  });
 });
 
 // Sending response that app is alive
