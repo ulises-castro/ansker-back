@@ -123,7 +123,7 @@ LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
 
 // SecretSchema.set('toJSON', { getters: true, virtuals: true });
 // TODO: implement paginate, scroll infinite
-SecretSchema.statics.getAllByCity =
+SecretSchema.statics.getAllByNear =
 async function (longitude, latitude) {
   console.log(longitude, latitude);
   const secrets = await this.find({
@@ -138,6 +138,59 @@ async function (longitude, latitude) {
       },
     },
   })
+  .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  // .skip(2)
+  .limit(20)
+  .sort({ publishAt: -1, })
+  .lean()
+  .exec();
+
+  return secrets;
+}
+
+import isoCountryCodeConverter from '../services/convertCountryCodes';
+console.log();
+
+
+SecretSchema.statics.getAllByNear =
+async function (longitude, latitude) {
+  console.log(longitude, latitude);
+  const secrets = await this.find({
+    "location.location": {
+      $near: {
+        $geometry: {
+            type: "Point" ,
+            coordinates: [ longitude, latitude ]
+        },
+        $maxDistance: 5000,
+        $minDistance: 0,
+      },
+    },
+  })
+  .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  // .skip(2)
+  .limit(20)
+  .sort({ publishAt: -1, })
+  .lean()
+  .exec();
+
+  return secrets;
+}
+
+SecretSchema.statics.getAllByCity =
+async function (countryCode, city) {
+  
+  // Adapting searching to searched
+  countryCode = countryCode.toUpperCase();
+  countryCode = isoCountryCodeConverter.convertTwoDigitToThree(countryCode);
+  console.log(countryCode, city);
+  
+  const secrets = await this.find(
+    {
+      "location.countryCode": countryCode,
+      "location.city": city,
+    },
+  )
   .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
   // .skip(2)
   .limit(20)

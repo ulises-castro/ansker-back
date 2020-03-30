@@ -83,7 +83,7 @@ router.post('/publish', passport.authenticate('jwt', {
   });
 });
 
-router.post('/allByCity', passport.authenticate('jwt', {
+router.post('/allByNearDistance', passport.authenticate('jwt', {
   session: false
 }), async function (req, res) {
 
@@ -128,6 +128,58 @@ router.post('/allByCity', passport.authenticate('jwt', {
     });
 
     secret.userLiked = userLiked ? true : false;
+
+    // Remove _id for security reasons
+    delete secret._id;
+
+    secret.likes = likes.length;
+    secret.comments = comments.length;
+    secret.shares = shares.length;
+
+    return secret;
+  });
+
+  res.status(200).json({
+    secrets: secrets
+  });
+});
+
+router.get('/allByCity', async function (req, res) {
+
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+
+  // const {
+  //   Region,
+  //   City,
+  //   latitude,
+  //   longitude,
+  //   CountryCode,
+  // } = req.body;
+
+  console.log(req.body, req.params);
+
+  var countryCode = 'MX';
+  var city = 'Guadalajara';
+
+  var secrets = await _secret2.default.getAllByCity(countryCode, city);
+
+  // console.log(secrets, "Secrets");
+  // Passing only how many likes|comments|shares it has
+  secrets = secrets.map(function (secret) {
+    var likes = secret.likes,
+        comments = secret.comments,
+        shares = secret.shares;
+
+
+    if (req.user) {
+      var userId = req.user._id;
+      var userLiked = secret.likes.find(function (like) {
+        return '' + like.author == userId;
+      });
+
+      // Set user as liked 
+      secret.userLiked = userLiked ? true : false;
+    }
 
     // Remove _id for security reasons
     delete secret._id;

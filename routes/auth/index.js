@@ -1,15 +1,11 @@
+require('dotenv').config();
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 import axios from 'axios';
-
-const passport = require('passport');
 const passportJWT = require('passport-jwt');
-
 const ExtractJwt = passportJWT.ExtractJwt;
-const JwtStrategy = passportJWT.Strategy;
-
-require('dotenv').config();
 
 const jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();

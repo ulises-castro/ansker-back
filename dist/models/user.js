@@ -10,6 +10,8 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var AutoIncrement = require('mongoose-sequence')(_mongoose2.default);
 
 var locations = new _mongoose2.default.Schema({
@@ -71,8 +73,7 @@ var authProviders = {
           unique: true
         },
         name: String,
-        email: String,
-        token: String
+        email: String
       }
     },
     twitter: {
@@ -105,11 +106,11 @@ var UserSchema = new _mongoose2.default.Schema({
   locations: [locations],
   registerBy: {
     type: String,
-    default: 'facebook'
+    enum: ['facebook', 'google', 'local']
   },
   authProvider: {
     type: String,
-    default: 'facebook'
+    enum: ['facebook', 'google', 'local']
   },
   authProviders: authProviders
 });
@@ -120,43 +121,40 @@ UserSchema.statics.findUserOrRegister = async function (targetUserId, userData) 
   var provider = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'facebook';
 
 
-  var user = await this.findOne({
-    'authProviders.facebook.id': targetUserId
-  }).exec();
+  var searchBy = 'authProviders.' + provider + '.id';
+
+  var user = await this.findOne(_defineProperty({}, searchBy, targetUserId)).exec();
 
   if (user) {
     // console.log('Finded here and USER', targetUserId, user);
     return user;
   }
-
   // REGISTER USER BECAUSE DOESNT EXISTS YET
-
   var registerAt = new Date();
 
   // Get user geolocation data ########################
   // TODO: Remove file and provider api
   // const userLocation = await getUserLocation(userData.ip);
-
   var id = userData.id,
       name = userData.name,
-      email = userData.email,
-      facebookToken = userData.facebookToken;
+      email = userData.email;
 
+
+  var authProviders = {};
+
+  authProviders[provider] = {
+    id: id,
+    name: name,
+    email: email,
+    facebookToken: userData.facebookToken || ''
+  };
 
   var newUser = User({
     // Change facebook to provider
-    username: 'facebook-' + targetUserId,
+    username: provider + '-' + targetUserId,
     // ip,
-    // Added more authProvider (Google | Twitter);
-    authProviders: {
-      facebook: {
-        id: id,
-        name: name,
-        email: email,
-        // TODO Create a function which performences update facebooktoken when user had been signed
-        token: facebookToken
-      }
-    },
+    authProviders: authProviders,
+    registerBy: provider,
     registerAt: registerAt
   });
 
