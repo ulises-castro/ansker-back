@@ -2,10 +2,13 @@
 // TODO: Remove from controller and move to routes
 require('dotenv').config();
 
-import {
-  getGoogleUserInfo,
-  getAccessTokenFromCode
-} from 'auth/google-auth'
+import * as queryString from 'query-string';
+
+
+// import {
+//   getGoogleUserInfo,
+//   getAccessTokenFromCode
+// } from '../auth/google-auth'
 
 import User from '../models/user';
 
@@ -19,20 +22,63 @@ jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 const URL_API = process.env.URL_API;
 const URL_FRONT = process.env.URL_FRONT;
 
-async function getGoogleUserCode() {
-  const urlParams = queryString.parse(window.location.search);
+async function getGoogleUserCode(req, res, next) {
+  // const urlParams = queryString.parse(window.location.search);
 
+  res.redirect('gola' + res)
   if (urlParams.error) {
     console.log(`An error occurred: ${urlParams.error}`);
   } else {
-    console.log(`The code is: ${urlParams.code}`);
+    console.log(`The code is: `);
 
-    const token = await getAccessTokenFromCode(urlParams.code)
+    // const token = await getAccessTokenFromCode(urlParams.code)
 
-    const googleUserInfo = await getGoogleUserInfo(token)
+    res.redirect(`${urlParams.code}`)
 
-    console.log(googleUserInfo)
+    // const googleUserInfo = await getGoogleUserInfo(token)
+
+    // console.log(googleUserInfo)
   }
+}
+
+async function getAccessTokenFromCode(code) {
+  const {
+    data
+  } = await axios({
+    url: `https://oauth2.googleapis.com/token`,
+    method: 'post',
+    data: {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      grant_type: 'authorization_code',
+      code,
+    },
+  });
+  console.log(data); // { access_token, expires_in, token_type, refresh_token }
+  return data.access_token;
+};
+
+async function getGoogleUserInfo(access_token) {
+  const {
+    data
+  } = await axios({
+    url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${accesstoken}`,
+    },
+  });
+  console.log(data); // { id, email, given_name, family_name }
+  return data;
+};
+// 
+
+
+
+export {
+  getGoogleUserCode,
+
 }
 
 // exports.requestGmailAuth = function (req, res, next) {

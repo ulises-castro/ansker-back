@@ -40,7 +40,9 @@ var corsOption = {
 app.use(cors(corsOption));
 
 app.use(require('morgan')('dev'));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -55,10 +57,13 @@ app.use('/api/secret', secret);
 app.use('/api/comment', comment);
 
 // Google auth ---------------------------------
-app.get('/api/request/gmail/auth', userController.requestGmailAuth);
-app.get('/api/get/gmail/user', userController.getGmailUserInfo);
+// Geting token sending code
+// app.post('/api/autheticate/google/token', userController.requestGmailAuth)
+// Get code
+app.get('/api/authenticate/google', userController.getGoogleUserCode);
 // ------------------------------------------
 
+// TODO: Refactor this and create its controller to keep dry code
 //Get cities by name
 app.get('/api/searchPlace/:city', function (req, res) {
   var city = req.params.city;
@@ -102,7 +107,9 @@ var io = require('socket.io')(server);
 
 io.on('connection', function () {
   console.log('Cliente connected');
-  io.emit("customEmit", { 'hola': 'b' });
+  io.emit("customEmit", {
+    'hola': 'b'
+  });
 });
 
 // Sending response that app is alive

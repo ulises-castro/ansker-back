@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const mongoose = require('mongoose');
 
-const uri = 'mongodb://localhost:27017/ansker';
+const uri = 'mongodb://127.0.0.1:27017/ansker';
 
 const autoIndex = !!process.env.PRODUCTION;
 
@@ -15,6 +15,9 @@ const options = {
   useCreateIndex: true,
   autoIndex,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000
+  // reconnectTries: 30,
+  // reconnectInterval: 500, // in ms
 };
 
 console.log(options);

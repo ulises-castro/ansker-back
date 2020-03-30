@@ -55,7 +55,7 @@ app.use('/api/comment', comment);
 
 // Google auth ---------------------------------
 // Geting token sending code
-app.get('/api/autheticate/google/token', userController.requestGmailAuth)
+// app.post('/api/autheticate/google/token', userController.requestGmailAuth)
 // Get code
 app.get('/api/authenticate/google', userController.getGoogleUserCode)
 // ------------------------------------------
