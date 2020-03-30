@@ -54,9 +54,10 @@ app.use('/api/secret', secret);
 app.use('/api/comment', comment);
 
 // Google auth ---------------------------------
-app.get('/api/request/gmail/auth', userController.requestGmailAuth)
-// TODO: Change this url
-app.get('/api/get/gmail/user', userController.getGmailUserInfo)
+// Geting token sending code
+app.get('/api/autheticate/google/token', userController.requestGmailAuth)
+// Get code
+app.get('/api/authenticate/google', userController.getGoogleUserCode)
 // ------------------------------------------
 
 // TODO: Refactor this and create its controller to keep dry code
