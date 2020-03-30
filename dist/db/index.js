@@ -10,11 +10,9 @@ var autoIndex = !!process.env.PRODUCTION;
 
 // Defining vars to connect to database
 var options = {
+  authSource: 'admin',
   user: process.env.DATABASE_USER,
   pass: process.env.DATABASE_PWD,
-  auth: {
-    authdb: 'admin'
-  },
   useNewUrlParser: true,
   useCreateIndex: true,
   autoIndex: autoIndex,
