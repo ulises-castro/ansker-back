@@ -25,6 +25,7 @@ const URL_FRONT = process.env.URL_FRONT;
 async function getGoogleUserCode(req, res, next) {
   // const urlParams = queryString.parse(window.location.search);
 
+  // TODO: fix me 
   res.redirect('gola' + res)
   if (urlParams.error) {
     console.log(`An error occurred: ${urlParams.error}`);
