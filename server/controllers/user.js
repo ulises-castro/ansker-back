@@ -64,7 +64,7 @@ async function getAccessTokenFromCode(req, res, next) {
   })
   console.log(data); // { access_token, expires_in, token_type, refresh_token }
   return res.status(200).json({
-    data: ...data
+    ...data
   })
 
   // TODO: Added a catch error handler

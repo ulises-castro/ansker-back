@@ -22,68 +22,41 @@ var client_secret = process.env.FACEBOOK_CLIENT_SECRET;
 var fbUrl = 'https://graph.facebook.com';
 
 var joinOrLoginFacebook = /*#__PURE__*/function () {
-  var _joinOrLoginFacebookAndVerified = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(facebookToken) {
-    var appToken, url, response1, appFacebookData, _appFacebookData$data, app_id, user_id, is_valid, facebookUserData, userIdFB, userData;
+  var _joinOrLoginFacebookAndVerified = _asyncToGenerator(function* (facebookToken) {
+    // Get AppToken ###########################
+    var appToken;
+    var url = "".concat(fbUrl, "/oauth/access_token?client_id=").concat(client_id, "&client_secret=").concat(client_secret, "&grant_type=client_credentials");
+    var response1 = yield axios.get(url);
+    appToken = response1.data.access_token; // Checking appToken #########################
 
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            // Get AppToken ###########################
-            url = "".concat(fbUrl, "/oauth/access_token?client_id=").concat(client_id, "&client_secret=").concat(client_secret, "&grant_type=client_credentials");
-            _context.next = 3;
-            return axios.get(url);
+    url = "".concat(fbUrl, "/debug_token?input_token=").concat(facebookToken, "&access_token=").concat(appToken);
+    var appFacebookData = yield axios.get(url);
+    var {
+      app_id,
+      user_id,
+      is_valid
+    } = appFacebookData.data.data; // console.log("Entro 22", appFacebookData.data.data, "---------");
 
-          case 3:
-            response1 = _context.sent;
-            appToken = response1.data.access_token; // Checking appToken #########################
+    if (app_id !== client_id) {
+      return false;
+      throw new Error("Invalid app id: expected: app_id received ".concat(app_id, " instead of: ").concat(client_id));
+    } // It's okay, get user information #############
 
-            url = "".concat(fbUrl, "/debug_token?input_token=").concat(facebookToken, "&access_token=").concat(appToken);
-            _context.next = 8;
-            return axios.get(url);
 
-          case 8:
-            appFacebookData = _context.sent;
-            _appFacebookData$data = appFacebookData.data.data, app_id = _appFacebookData$data.app_id, user_id = _appFacebookData$data.user_id, is_valid = _appFacebookData$data.is_valid; // console.log("Entro 22", appFacebookData.data.data, "---------");
+    url = "".concat(fbUrl, "/v3.2/").concat(user_id, "?fields=id,name,picture,email&access_token=").concat(appToken); // TODO: Creater catch error handler. ###################
 
-            if (!(app_id !== client_id)) {
-              _context.next = 13;
-              break;
-            }
+    var facebookUserData = yield axios.get(url); // TODO: This is temporaly, remove when added more ways to log
 
-            return _context.abrupt("return", false);
+    facebookUserData = facebookUserData.data;
+    facebookUserData['provider'] = 'facebook';
+    facebookUserData['facebookToken'] = facebookToken;
+    facebookUserData['email'] = facebookUserData.email || '';
+    var userIdFB = facebookUserData.id; // TODO: Find user in database via ID, and if it doesnt exists lets added.
 
-          case 13:
-            // It's okay, get user information #############
-            url = "".concat(fbUrl, "/v3.2/").concat(user_id, "?fields=id,name,picture,email&access_token=").concat(appToken); // TODO: Creater catch error handler. ###################
-
-            _context.next = 16;
-            return axios.get(url);
-
-          case 16:
-            facebookUserData = _context.sent;
-            // TODO: This is temporaly, remove when added more ways to log
-            facebookUserData = facebookUserData.data;
-            facebookUserData['provider'] = 'facebook';
-            facebookUserData['facebookToken'] = facebookToken;
-            facebookUserData['email'] = facebookUserData.email || '';
-            userIdFB = facebookUserData.id; // TODO: Find user in database via ID, and if it doesnt exists lets added.
-
-            console.log(userIdFB, "Obteniendo el facebook ID");
-            _context.next = 25;
-            return _user.default.findUserOrRegister(userIdFB, facebookUserData);
-
-          case 25:
-            userData = _context.sent;
-            return _context.abrupt("return", userData);
-
-          case 27:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
+    console.log(userIdFB, "Obteniendo el facebook ID");
+    var userData = yield _user.default.findUserOrRegister(userIdFB, facebookUserData);
+    return userData;
+  });
 
   function joinOrLoginFacebookAndVerified(_x) {
     return _joinOrLoginFacebookAndVerified.apply(this, arguments);

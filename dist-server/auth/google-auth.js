@@ -19,43 +19,30 @@ function getAccessTokenFromCode(_x, _x2, _x3) {
 }
 
 function _getAccessTokenFromCode() {
-  _getAccessTokenFromCode = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res, next) {
-    var code, _yield$axios, data;
-
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            code = req.params.code;
-            _context.next = 3;
-            return (0, _axios.default)({
-              url: "https://oauth2.googleapis.com/token",
-              method: 'post',
-              data: {
-                client_id: process.env.GOOGLE_CLIENT_ID,
-                client_secret: process.env.GOOGLE_CLIENT_SECRET,
-                redirect_uri: process.env.GOOGLE_REDIRECT_URI,
-                grant_type: 'authorization_code',
-                code: code
-              }
-            });
-
-          case 3:
-            _yield$axios = _context.sent;
-            data = _yield$axios.data;
-            console.log(data, "DATA token"); // { access_token, expires_in, token_type, refresh_token }
-
-            return _context.abrupt("return", res.status(200).json({
-              data: data
-            }));
-
-          case 8:
-          case "end":
-            return _context.stop();
-        }
+  _getAccessTokenFromCode = _asyncToGenerator(function* (req, res, next) {
+    var {
+      code
+    } = req.params;
+    var {
+      data
+    } = yield (0, _axios.default)({
+      url: "https://oauth2.googleapis.com/token",
+      method: 'post',
+      data: {
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+        grant_type: 'authorization_code',
+        code
       }
-    }, _callee);
-  }));
+    });
+    console.log(data, "DATA token"); // { access_token, expires_in, token_type, refresh_token }
+
+    return res.status(200).json({
+      data
+    });
+    return data.access_token;
+  });
   return _getAccessTokenFromCode.apply(this, arguments);
 }
 
@@ -66,36 +53,20 @@ function getGoogleUserInfo(_x4) {
 }
 
 function _getGoogleUserInfo() {
-  _getGoogleUserInfo = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(access_token) {
-    var _yield$axios2, data;
-
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.next = 2;
-            return (0, _axios.default)({
-              url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-              method: 'get',
-              headers: {
-                Authorization: "Bearer ".concat(accesstoken)
-              }
-            });
-
-          case 2:
-            _yield$axios2 = _context2.sent;
-            data = _yield$axios2.data;
-            console.log(data); // { id, email, given_name, family_name }
-
-            return _context2.abrupt("return", data);
-
-          case 6:
-          case "end":
-            return _context2.stop();
-        }
+  _getGoogleUserInfo = _asyncToGenerator(function* (access_token) {
+    var {
+      data
+    } = yield (0, _axios.default)({
+      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      method: 'get',
+      headers: {
+        Authorization: "Bearer ".concat(accesstoken)
       }
-    }, _callee2);
-  }));
+    });
+    console.log(data); // { id, email, given_name, family_name }
+
+    return data;
+  });
   return _getGoogleUserInfo.apply(this, arguments);
 }
 

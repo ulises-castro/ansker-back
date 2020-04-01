@@ -1,5 +1,10 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
 require("./db");
 
 require('dotenv').config(); // var proxy = require('express-http-proxy');
@@ -64,10 +69,12 @@ app.get('/api/authenticate/google', userController.getAccessTokenFromCode); // -
 //Get cities by name
 
 app.get('/api/searchPlace/:city', function (req, res) {
-  var city = req.params.city;
+  var {
+    city
+  } = req.params;
   city = city.toLowerCase(); // return console.log(req.params);
 
-  var cities = allCities.filter(function (cityCurrent) {
+  var cities = allCities.filter(cityCurrent => {
     if (cityCurrent.name.toLowerCase().match(city)) {
       var countryData = countries[cityCurrent.country];
       cityCurrent.countryName = countryData.name;
@@ -75,7 +82,7 @@ app.get('/api/searchPlace/:city', function (req, res) {
       return cityCurrent;
     }
   });
-  cities = cities.sort(function (a, b) {
+  cities = cities.sort((a, b) => {
     if (a.population > b.population) return -1;else if (b.population > a.population) return 1;else return 0;
   }); // cities = cities.sort((a, b) => {
   //   if (a.country === 'MX' && b.country !== 'MX')
@@ -88,7 +95,7 @@ app.get('/api/searchPlace/:city', function (req, res) {
 
   cities = cities.slice(0, 5);
   return res.status(200).json({
-    cities: cities
+    cities
   });
 }); // SocketIO, configure to send information
 
@@ -96,13 +103,15 @@ var server = require('http').createServer(app);
 
 var io = require('socket.io')(server);
 
-io.on('connection', function () {
+io.on('connection', () => {
   console.log('Cliente connected');
   io.emit("customEmit", {
     'hola': 'b'
   });
 }); // Sending response that app is alive
 
-server.listen(3000, function () {
+server.listen(3001, () => {
   console.log('SERVER IS ONLINE');
 });
+var _default = app;
+exports.default = _default;
