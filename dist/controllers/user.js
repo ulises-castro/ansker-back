@@ -4,15 +4,21 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getGoogleUserCode = undefined;
+exports.getAccessTokenFromCode = undefined;
 
 var _queryString = require('query-string');
 
 var queryString = _interopRequireWildcard(_queryString);
 
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _user = require('../models/user');
 
 var _user2 = _interopRequireDefault(_user);
+
+var _fs = require('fs');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35,60 +41,81 @@ jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 var URL_API = process.env.URL_API;
 var URL_FRONT = process.env.URL_FRONT;
 
-async function getGoogleUserCode(req, res, next) {
-  // const urlParams = queryString.parse(window.location.search);
+// async function getAccessTokenFromCode(req, res, next) {
+//   const {
+//     data
+//   } = await axios({
+//     url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+//     method: 'get',
+//     headers: {
+//       Authorization: `Bearer ${accesstoken}`,
+//     },
+//   });
+//   console.log(data); // { id, email, given_name, family_name }
 
-  res.redirect('gola' + res);
-  if (urlParams.error) {
-    console.log('An error occurred: ' + urlParams.error);
-  } else {
-    console.log('The code is: ');
+//   return res.status(200).json({
+//     data
+//   })
+// };
 
-    // const token = await getAccessTokenFromCode(urlParams.code)
+async function getAccessTokenFromCode(req, res, next) {
+  var code = req.query.code;
 
-    res.redirect('' + urlParams.code);
 
-    // const googleUserInfo = await getGoogleUserInfo(token)
-
-    // console.log(googleUserInfo)
-  }
-}
-
-async function getAccessTokenFromCode(code) {
-  var _ref = await axios({
+  (0, _axios2.default)({
     url: 'https://oauth2.googleapis.com/token',
     method: 'post',
     data: {
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      // redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      redirect_uri: 'http://localanskerme.me:1297/authenticate/google',
       grant_type: 'authorization_code',
       code: code
     }
-  }),
-      data = _ref.data;
-
-  console.log(data); // { access_token, expires_in, token_type, refresh_token }
-  return data.access_token;
+  }).then(function (data) {
+    console.log(data); // { access_token, expires_in, token_type, refresh_token }
+    return res.status(200).json({
+      data: data.data
+    });
+  }).catch(function (err) {
+    console.log('error', err);
+  });
 };
 
-async function getGoogleUserInfo(access_token) {
-  var _ref2 = await axios({
-    url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-    method: 'get',
-    headers: {
-      Authorization: 'Bearer ' + accesstoken
-    }
-  }),
-      data = _ref2.data;
-
-  console.log(data); // { id, email, given_name, family_name }
-  return data;
-};
-// 
+exports.getAccessTokenFromCode = getAccessTokenFromCode;
+// async function getGoogleUserCode(req, res, next) {
+//   // const urlParams = queryString.parse(window.location.search);
 
 
-exports.getGoogleUserCode = getGoogleUserCode;
+//   // TODO: fix me
+//   // console.log()
+//   // if (urlParams.error) {
+//   //   console.log(`An error occurred: ${urlParams.error}`);
+//   // } else {
+//   const {
+//     code
+//   } = req.query
+//   console.log(`The code is: ${code}`);
+
+//   // return res.redirect('google/code' + req.query.code)
+//   // const token = await getAccessTokenFromCode(urlParams.code)
+
+//   // res.redirect(`${urlParams.code}, TOKEN:`)
+
+//   try {
+//     const access_token = await getAccessTokenFromCode(code)
+//     const googleUserInfo = await getGoogleUserInfo(access_token)
+//   } catch (e) {
+//     console.log('ERROR ' + e)
+//   }
+
+//   // console.log(googleUserInfo)
+//   return res.status(200).json({
+//     access_token,
+//     googleUserInfo
+//   });
+// }
 
 // exports.requestGmailAuth = function (req, res, next) {
 //   const scopes = ['profile', 'email', 'openid'];

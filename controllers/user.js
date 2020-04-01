@@ -3,7 +3,7 @@
 require('dotenv').config();
 
 import * as queryString from 'query-string';
-
+import axios from 'axios'
 
 // import {
 //   getGoogleUserInfo,
@@ -11,6 +11,9 @@ import * as queryString from 'query-string';
 // } from '../auth/google-auth'
 
 import User from '../models/user';
+import {
+  accessSync
+} from 'fs';
 
 var url = require('url');
 
@@ -22,65 +25,86 @@ jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 const URL_API = process.env.URL_API;
 const URL_FRONT = process.env.URL_FRONT;
 
-async function getGoogleUserCode(req, res, next) {
-  // const urlParams = queryString.parse(window.location.search);
 
-  // TODO: fix me 
-  res.redirect('gola' + res)
-  if (urlParams.error) {
-    console.log(`An error occurred: ${urlParams.error}`);
-  } else {
-    console.log(`The code is: `);
+// async function getAccessTokenFromCode(req, res, next) {
+//   const {
+//     data
+//   } = await axios({
+//     url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+//     method: 'get',
+//     headers: {
+//       Authorization: `Bearer ${accesstoken}`,
+//     },
+//   });
+//   console.log(data); // { id, email, given_name, family_name }
 
-    // const token = await getAccessTokenFromCode(urlParams.code)
+//   return res.status(200).json({
+//     data
+//   })
+// };
 
-    res.redirect(`${urlParams.code}`)
-
-    // const googleUserInfo = await getGoogleUserInfo(token)
-
-    // console.log(googleUserInfo)
-  }
-}
-
-async function getAccessTokenFromCode(code) {
+async function getAccessTokenFromCode(req, res, next) {
   const {
-    data
-  } = await axios({
+    code
+  } = req.query
+
+  axios({
     url: `https://oauth2.googleapis.com/token`,
     method: 'post',
     data: {
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      // redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      redirect_uri: 'http://localanskerme.me:1297/authenticate/google',
       grant_type: 'authorization_code',
-      code,
+      code
     },
-  });
-  console.log(data); // { access_token, expires_in, token_type, refresh_token }
-  return data.access_token;
+  }).then(data => {
+    console.log(data); // { access_token, expires_in, token_type, refresh_token }
+    return res.status(200).json({
+      data: data.data
+    })
+  }).catch(err => {
+    console.log('error', err)
+  })
 };
-
-async function getGoogleUserInfo(access_token) {
-  const {
-    data
-  } = await axios({
-    url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-    method: 'get',
-    headers: {
-      Authorization: `Bearer ${accesstoken}`,
-    },
-  });
-  console.log(data); // { id, email, given_name, family_name }
-  return data;
-};
-// 
-
 
 
 export {
-  getGoogleUserCode,
-
+  getAccessTokenFromCode,
 }
+// async function getGoogleUserCode(req, res, next) {
+//   // const urlParams = queryString.parse(window.location.search);
+
+
+//   // TODO: fix me
+//   // console.log()
+//   // if (urlParams.error) {
+//   //   console.log(`An error occurred: ${urlParams.error}`);
+//   // } else {
+//   const {
+//     code
+//   } = req.query
+//   console.log(`The code is: ${code}`);
+
+//   // return res.redirect('google/code' + req.query.code)
+//   // const token = await getAccessTokenFromCode(urlParams.code)
+
+//   // res.redirect(`${urlParams.code}, TOKEN:`)
+
+//   try {
+//     const access_token = await getAccessTokenFromCode(code)
+//     const googleUserInfo = await getGoogleUserInfo(access_token)
+//   } catch (e) {
+//     console.log('ERROR ' + e)
+//   }
+
+//   // console.log(googleUserInfo)
+//   return res.status(200).json({
+//     access_token,
+//     googleUserInfo
+//   });
+// }
 
 // exports.requestGmailAuth = function (req, res, next) {
 //   const scopes = ['profile', 'email', 'openid'];

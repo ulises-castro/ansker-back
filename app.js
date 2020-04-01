@@ -57,7 +57,7 @@ app.use('/api/comment', comment);
 // Geting token sending code
 // app.post('/api/autheticate/google/token', userController.requestGmailAuth)
 // Get code
-app.get('/api/authenticate/google', userController.getGoogleUserCode)
+app.get('/api/authenticate/google', userController.getAccessTokenFromCode)
 // ------------------------------------------
 
 // TODO: Refactor this and create its controller to keep dry code

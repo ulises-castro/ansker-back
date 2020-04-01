@@ -1,7 +1,10 @@
 import axios from 'axios';
-import * as queryString from 'query-string';
 
-async function getAccessTokenFromCode(code) {
+async function getAccessTokenFromCode(req, res, next) {
+  const {
+    code
+  } = req.params
+
   const {
     data
   } = await axios({
@@ -15,7 +18,11 @@ async function getAccessTokenFromCode(code) {
       code,
     },
   });
-  console.log(data); // { access_token, expires_in, token_type, refresh_token }
+  console.log(data, "DATA token"); // { access_token, expires_in, token_type, refresh_token }
+
+  return res.status(200).json({
+    data
+  })
   return data.access_token;
 };
 
