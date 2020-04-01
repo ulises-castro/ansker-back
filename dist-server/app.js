@@ -110,7 +110,8 @@ io.on('connection', () => {
   });
 }); // Sending response that app is alive
 
-server.listen(3001, () => {
+var port = process.env.PORT || '3000';
+server.listen(port, () => {
   console.log('SERVER IS ONLINE');
 });
 var _default = app;
