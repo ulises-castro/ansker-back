@@ -7,9 +7,7 @@ exports.default = void 0;
 
 require("./db");
 
-require('dotenv').config(); // var proxy = require('express-http-proxy');
-
-
+// var proxy = require('express-http-proxy');
 var allCities = require('all-the-cities-mongodb');
 
 var countries = require('country-data').countries;
@@ -110,7 +108,7 @@ io.on('connection', () => {
   });
 }); // Sending response that app is alive
 
-var port = process.env.PORT || '3000';
+var port = process.env.port || '3000';
 server.listen(port, () => {
   console.log('SERVER IS ONLINE');
 });

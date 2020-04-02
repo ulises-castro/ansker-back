@@ -1,6 +1,6 @@
 'use strict'
 // TODO: Remove from controller and move to routes
-require('dotenv').config();
+;
 
 import * as queryString from 'query-string';
 import axios from 'axios'

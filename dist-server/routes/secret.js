@@ -27,8 +27,7 @@ var JwtStrategy = passportJWT.Strategy;
 
 var axios = require('axios');
 
-require('dotenv').config();
-
+;
 router.post('/publish', passport.authenticate('jwt', {
   session: false
 }), /*#__PURE__*/function () {

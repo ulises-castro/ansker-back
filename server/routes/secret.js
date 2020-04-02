@@ -14,7 +14,7 @@ import Secret from '../models/secret';
 import User from '../models/user';
 import Comment from '../models/comment';
 
-require('dotenv').config();
+;
 
 router.post('/publish', passport.authenticate('jwt', {
   session: false,

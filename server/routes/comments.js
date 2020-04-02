@@ -11,7 +11,7 @@ const JwtStrategy = passportJWT.Strategy;
 import Secret from '../models/secret';
 import Comment from '../models/comment';
 
-require('dotenv').config();
+;
 
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
