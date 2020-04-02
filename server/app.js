@@ -104,8 +104,6 @@ app.get('/api/searchPlace/:city', function (req, res) {
   //     return 0;
   // });
 
-
-
   cities = cities.slice(0, 5);
 
   return res.status(200).json({
@@ -117,6 +115,7 @@ app.get('/api/searchPlace/:city', function (req, res) {
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
+// TODO: Remove this and reimplement about notifications
 io.on('connection', () => {
   console.log('Cliente connected');
   io.emit("customEmit", {

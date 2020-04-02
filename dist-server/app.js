@@ -104,7 +104,8 @@ app.get('/api/searchPlace/:city', function (req, res) {
 
 var server = require('http').createServer(app);
 
-var io = require('socket.io')(server);
+var io = require('socket.io')(server); // TODO: Remove this and reimplement about notifications
+
 
 io.on('connection', () => {
   console.log('Cliente connected');
