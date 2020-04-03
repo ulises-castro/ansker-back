@@ -22,9 +22,7 @@ var passportJWT = require('passport-jwt');
 
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
-
-require('dotenv').config();
-
+;
 router.post('/publish', passport.authenticate('jwt', {
   session: false
 }), /*#__PURE__*/function () {

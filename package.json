@@ -16,7 +16,8 @@
   },
   "babel": {
     "presets": [
-      ["@babel/preset-env",
+      [
+        "@babel/preset-env",
         {
           "targets": {
             "esmodules": true
@@ -31,7 +32,7 @@
   "scripts": {
     "start": "npm run prod",
     "build": "npm-run-all clean transpile",
-    "server": "node ./dist-server/bin/www",
+    "server": "node  --require dotenv/config ./dist-server/bin/www",
     "dev": "NODE_ENV=development npm-run-all build server",
     "prod": "NODE_ENV=production npm-run-all build server",
     "transpile": "babel ./server --out-dir dist-server",
@@ -61,7 +62,8 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "query-string": "^6.11.1",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.2.0",
+    "swagger-ui-express": "^4.1.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
