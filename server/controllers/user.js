@@ -48,30 +48,34 @@ async function getAccessTokenFromCode(req, res, next) {
     code
   } = req.query
 
-  const {
-    data
-  } = await axios({
-    url: `https://oauth2.googleapis.com/token`,
-    method: 'post',
-    data: {
-      client_id: process.env.GOOGLE_CLIENT_ID,
-      client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      // redirect_uri: process.env.GOOGLE_REDIRECT_URI,
-      redirect_uri: 'http://localanskerme.me:1297/authenticate/google',
-      grant_type: 'authorization_code',
-      code
-    },
-  })
-  console.log(data); // { access_token, expires_in, token_type, refresh_token }
-  return res.status(200).json({
-    ...data
-  })
+  try {
+    const {
+      data
+    } = await axios({
+      url: `https://oauth2.googleapis.com/token`,
+      method: 'post',
+      data: {
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        // redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+        redirect_uri: 'http://localanskerme.me:1297/authenticate/google',
+        grant_type: 'authorization_code',
+        code
+      },
+    })
+    console.log(data); // { access_token, expires_in, token_type, refresh_token }
+    return res.status(200).json({
+      ...data
+    })
+  } catch (e) {
+    console.log(e, req.query)
+    return res.status(400).json({
+      'error': 'unable.to.process'
+    })
+  }
+}
 
-  // TODO: Added a catch error handler
-  // }).catch(err => {
-  //   console.log('error', err)
-  // })
-};
+// TODO: Added a catch error handler
 
 
 export {
