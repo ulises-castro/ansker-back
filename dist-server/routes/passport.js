@@ -6,7 +6,7 @@ var _user = _interopRequireDefault(require("../models/user"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-require('dotenv').config();
+;
 
 var passport = require('passport');
 

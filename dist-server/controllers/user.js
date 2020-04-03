@@ -1,4 +1,4 @@
-'use strict'; // TODO: Remove from controller and move to routes
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -29,8 +29,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-require('dotenv').config();
-
 var url = require('url');
 
 var jwt = require('jsonwebtoken');
@@ -56,38 +54,42 @@ var URL_FRONT = process.env.URL_FRONT; // async function getAccessTokenFromCode(
 
 function getAccessTokenFromCode(_x, _x2, _x3) {
   return _getAccessTokenFromCode.apply(this, arguments);
-}
+} // TODO: Added a catch error handler
+
 
 function _getAccessTokenFromCode() {
   _getAccessTokenFromCode = _asyncToGenerator(function* (req, res, next) {
     var {
       code
     } = req.query;
-    var {
-      data
-    } = yield (0, _axios.default)({
-      url: "https://oauth2.googleapis.com/token",
-      method: 'post',
-      data: {
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        // redirect_uri: process.env.GOOGLE_REDIRECT_URI,
-        redirect_uri: 'http://localanskerme.me:1297/authenticate/google',
-        grant_type: 'authorization_code',
-        code
-      }
-    });
-    console.log(data); // { access_token, expires_in, token_type, refresh_token }
 
-    return res.status(200).json(_objectSpread({}, data)); // TODO: Added a catch error handler
-    // }).catch(err => {
-    //   console.log('error', err)
-    // })
+    try {
+      var {
+        data
+      } = yield (0, _axios.default)({
+        url: "https://oauth2.googleapis.com/token",
+        method: 'post',
+        data: {
+          client_id: process.env.GOOGLE_CLIENT_ID,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET,
+          // redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+          redirect_uri: 'http://localanskerme.me:1297/authenticate/google',
+          grant_type: 'authorization_code',
+          code
+        }
+      });
+      console.log(data); // { access_token, expires_in, token_type, refresh_token }
+
+      return res.status(200).json(_objectSpread({}, data));
+    } catch (e) {
+      console.log(e, req.query);
+      return res.status(400).json({
+        'error': 'unable.to.process'
+      });
+    }
   });
   return _getAccessTokenFromCode.apply(this, arguments);
-}
-
-; // async function getGoogleUserCode(req, res, next) {
+} // async function getGoogleUserCode(req, res, next) {
 //   // const urlParams = queryString.parse(window.location.search);
 //   // TODO: fix me
 //   // console.log()

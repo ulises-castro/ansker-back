@@ -23,9 +23,7 @@ function _getAccessTokenFromCode() {
     var {
       code
     } = req.params;
-    var {
-      data
-    } = yield (0, _axios.default)({
+    (0, _axios.default)({
       url: "https://oauth2.googleapis.com/token",
       method: 'post',
       data: {
@@ -35,13 +33,13 @@ function _getAccessTokenFromCode() {
         grant_type: 'authorization_code',
         code
       }
-    });
-    console.log(data, "DATA token"); // { access_token, expires_in, token_type, refresh_token }
+    }).then(data => {
+      console.log(data, "DATA token"); // { access_token, expires_in, token_type, refresh_token }
 
-    return res.status(200).json({
-      data
-    });
-    return data.access_token;
+      return res.status(200).json({
+        data
+      });
+    }).catch(e => console.log(e));
   });
   return _getAccessTokenFromCode.apply(this, arguments);
 }

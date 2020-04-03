@@ -7,9 +7,7 @@ exports.default = void 0;
 
 require("./db");
 
-require('dotenv').config(); // var proxy = require('express-http-proxy');
-
-
+// var proxy = require('express-http-proxy');
 var allCities = require('all-the-cities-mongodb');
 
 var countries = require('country-data').countries;
@@ -38,7 +36,12 @@ var userController = require('./controllers/user'); // Load database connection
 
 
 //Configure our app
-var app = express();
+var app = express(); // TODO: Fix this 
+// Documentation
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./swagger.json');
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 var corsOption = {
   origin: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -101,7 +104,8 @@ app.get('/api/searchPlace/:city', function (req, res) {
 
 var server = require('http').createServer(app);
 
-var io = require('socket.io')(server);
+var io = require('socket.io')(server); // TODO: Remove this and reimplement about notifications
+
 
 io.on('connection', () => {
   console.log('Cliente connected');
@@ -110,7 +114,8 @@ io.on('connection', () => {
   });
 }); // Sending response that app is alive
 
-server.listen(3001, () => {
+var port = process.env.port || '3000';
+server.listen(port, () => {
   console.log('SERVER IS ONLINE');
 });
 var _default = app;

@@ -73,7 +73,11 @@ var authProviders = {
           unique: true
         },
         name: String,
-        email: String
+        email: String,
+        expires_in: new Date(),
+        refresh_token: String,
+        id_token: String,
+        token: String
       }
     },
     twitter: {
