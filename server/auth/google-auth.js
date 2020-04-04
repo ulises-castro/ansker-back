@@ -5,7 +5,8 @@ async function getAccessTokenFromCode(req, res, next) {
     code
   } = req.params
 
-  axios({
+  try {
+    axios({
       url: `https://oauth2.googleapis.com/token`,
       method: 'post',
       data: {
@@ -15,16 +16,18 @@ async function getAccessTokenFromCode(req, res, next) {
         grant_type: 'authorization_code',
         code,
       },
-    })
-    .then((data) => {
-      console.log(data,
-        "DATA token"); // { access_token, expires_in, token_type, refresh_token }
+    });
+    console.log(data, "DATA token"); // { access_token, expires_in, token_type, refresh_token }
 
-      return res.status(200).json({
-        data
-      })
+    return res.status(200).json({
+      data
     })
-    .catch((e) => console.log(e))
+  } catch (e) {
+    console.log(e)
+    return res.status(400).json({
+      'error': 'unable.to.process'
+    })
+  }
 };
 
 async function getGoogleUserInfo(access_token) {
