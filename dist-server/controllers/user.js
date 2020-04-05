@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getAccessTokenFromCode = getAccessTokenFromCode;
+exports.getAccessTokenFromCode = void 0;
 
 var queryString = _interopRequireWildcard(require("query-string"));
 
@@ -52,13 +52,8 @@ var URL_FRONT = process.env.URL_FRONT; // async function getAccessTokenFromCode(
 //   })
 // };
 
-function getAccessTokenFromCode(_x, _x2, _x3) {
-  return _getAccessTokenFromCode.apply(this, arguments);
-} // TODO: Added a catch error handler
-
-
-function _getAccessTokenFromCode() {
-  _getAccessTokenFromCode = _asyncToGenerator(function* (req, res, next) {
+var getAccessTokenFromCode = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator(function* (req, res, next) {
     var {
       code
     } = req.query;
@@ -72,8 +67,7 @@ function _getAccessTokenFromCode() {
         data: {
           client_id: process.env.GOOGLE_CLIENT_ID,
           client_secret: process.env.GOOGLE_CLIENT_SECRET,
-          // redirect_uri: process.env.GOOGLE_REDIRECT_URI,
-          redirect_uri: 'http://localanskerme.me:1297/authenticate/google',
+          redirect_uri: "".concat(PROCESS.env.URL_FRONT, "/authenticate/google"),
           grant_type: 'authorization_code',
           code
         }
@@ -81,15 +75,20 @@ function _getAccessTokenFromCode() {
       console.log(data); // { access_token, expires_in, token_type, refresh_token }
 
       return res.status(200).json(_objectSpread({}, data));
-    } catch (e) {
+    } catch (err) {
       console.log(e, req.query);
+      return next(err);
       return res.status(400).json({
         'error': 'unable.to.process'
       });
     }
   });
-  return _getAccessTokenFromCode.apply(this, arguments);
-} // async function getGoogleUserCode(req, res, next) {
+
+  return function getAccessTokenFromCode(_x, _x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}(); // TODO: Added a catch error handler
+// async function getGoogleUserCode(req, res, next) {
 //   // const urlParams = queryString.parse(window.location.search);
 //   // TODO: fix me
 //   // console.log()
@@ -150,3 +149,6 @@ function _getAccessTokenFromCode() {
 //       next(new Error(e.message));
 //     })
 //   }
+
+
+exports.getAccessTokenFromCode = getAccessTokenFromCode;

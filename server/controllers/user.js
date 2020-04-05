@@ -43,7 +43,7 @@ const URL_FRONT = process.env.URL_FRONT;
 //   })
 // };
 
-async function getAccessTokenFromCode(req, res, next) {
+const getAccessTokenFromCode = async (req, res, next) => {
   const {
     code
   } = req.query
@@ -57,8 +57,7 @@ async function getAccessTokenFromCode(req, res, next) {
       data: {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        // redirect_uri: process.env.GOOGLE_REDIRECT_URI,
-        redirect_uri: 'http://localanskerme.me:1297/authenticate/google',
+        redirect_uri: `${PROCESS.env.URL_FRONT}/authenticate/google`,
         grant_type: 'authorization_code',
         code
       },
@@ -67,8 +66,9 @@ async function getAccessTokenFromCode(req, res, next) {
     return res.status(200).json({
       ...data
     })
-  } catch (e) {
+  } catch (err) {
     console.log(e, req.query)
+    return next(err)
     return res.status(400).json({
       'error': 'unable.to.process'
     })
