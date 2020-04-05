@@ -19,6 +19,8 @@ var comment = require('./routes/comments');
 var userController = require('./controllers/user');
 
 // Load database connection
+import { ErrorHandler, handlerError } from './error'
+
 import './db';
 
 //Configure our app
@@ -64,6 +66,8 @@ app.use('/api/comment', comment);
 // Get code
 app.get('/api/authenticate/google', userController.getAccessTokenFromCode)
 // ------------------------------------------
+
+app.use
 
 // TODO: Refactor this and create its controller to keep dry code
 //Get cities by name
@@ -126,7 +130,7 @@ io.on('connection', () => {
 // Sending response that app is alive
 const port = process.env.port || '3000'
 server.listen(port, () => {
-  console.log('SERVER IS ONLINE');
+  console.log(`Server is listening at port ${port}`);
 });
 
 export default app
