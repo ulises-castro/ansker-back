@@ -11,10 +11,10 @@ const axios = require('axios')
 const cors = require('cors')
 
 // Routes
-const auth = require('./routes/auth')
-const secret = require('./routes/secret')
-const comment = require('./routes/comment')
-const user = requite('./routes/user')
+const auth = require('routes/auth')
+const secret = require('routes/secret')
+const comment = require('routes/comment')
+const user = require('routes/user')
 
 // Load database connection
 import { ErrorHandler, handlerError } from './helpers/error'
