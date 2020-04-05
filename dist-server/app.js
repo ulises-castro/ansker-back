@@ -37,7 +37,7 @@ var user = require("./routes/user"); // Load database connection
 
 
 //Configure our app
-var app = express(); // TODO: Fix this 
+var app = express(); // TODO: Fix this
 // Documentation
 // const swaggerUi = require('swagger-ui-express')
 // const swaggerDocument = require('./swagger.json')
