@@ -1,37 +1,35 @@
-// var proxy = require('express-http-proxy');
-const allCities = require('all-the-cities-mongodb');
-var countries = require('country-data').countries;
+// var proxy = require('express-http-proxy')
+const allCities = require('all-the-cities-mongodb')
+const countries = require('country-data').countries
 
-var express = require('express');
-var path = require('path');
-var bodyParser = require('body-parser');
+const express = require('express')
+const path = require('path')
+const bodyParser = require('body-parser')
 
-var passport = require('passport');
-var axios = require('axios');
-var cors = require('cors');
+const passport = require('passport')
+const axios = require('axios')
+const cors = require('cors')
 
 // Routes
-var auth = require('./routes/auth');
-var secret = require('./routes/secret');
-var comment = require('./routes/comments');
-
-// Controllers
-var userController = require('./controllers/user');
+const auth = require('./routes/auth')
+const secret = require('./routes/secret')
+const comment = require('./routes/comment')
+const user = requite('./routes/user')
 
 // Load database connection
-import { ErrorHandler, handlerError } from './error'
+import { ErrorHandler, handlerError } from './helpers/error'
 
-import './db';
+import './db'
 
 //Configure our app
-var app = express();
+var app = express()
 
 // TODO: Fix this 
 // Documentation
-// const swaggerUi = require('swagger-ui-express');
-// const swaggerDocument = require('./swagger.json');
+// const swaggerUi = require('swagger-ui-express')
+// const swaggerDocument = require('./swagger.json')
 
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 
 const corsOption = {
@@ -39,35 +37,28 @@ const corsOption = {
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: false,
   exposedHeaders: ['Authorization']
-};
+}
 
-app.use(cors(corsOption));
+app.use(cors(corsOption))
 
-app.use(require('morgan')('dev'));
+app.use(require('morgan')('dev'))
 app.use(bodyParser.urlencoded({
   extended: false
-}));
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+}))
+app.use(bodyParser.json())
+app.use(express.static(path.join(__dirname, 'public')))
 
-require('./routes/passport.js');
+require('./routes/passport.js')
 
-app.use(passport.initialize());
+app.use(passport.initialize())
 
-app.set('trust proxy', true);
+app.set('trust proxy', true)
 
-app.use('/api', auth);
-app.use('/api/secret', secret);
-app.use('/api/comment', comment);
+app.use('/api', auth)
+app.use('/api/secret', secret)
+app.use('/api/comment', comment)
+app.use('/api/user', user)
 
-// Google auth ---------------------------------
-// Geting token sending code
-// app.post('/api/autheticate/google/token', userController.requestGmailAuth)
-// Get code
-app.get('/api/authenticate/google', userController.getAccessTokenFromCode)
-// ------------------------------------------
-
-app.use
 
 // TODO: Refactor this and create its controller to keep dry code
 //Get cities by name
@@ -75,62 +66,66 @@ app.get('/api/searchPlace/:city', function (req, res) {
 
   let {
     city
-  } = req.params;
-  city = city.toLowerCase();
-  // return console.log(req.params);
+  } = req.params
+  city = city.toLowerCase()
+  // return console.log(req.params)
 
   let cities = allCities.filter(cityCurrent => {
     if (
       cityCurrent.name.toLowerCase().match(city)
     ) {
-      const countryData = countries[cityCurrent.country];
-      cityCurrent.countryName = countryData.name;
-      cityCurrent.flag = countryData.emoji;
-      return cityCurrent;
+      const countryData = countries[cityCurrent.country]
+      cityCurrent.countryName = countryData.name
+      cityCurrent.flag = countryData.emoji
+      return cityCurrent
     }
-  });
+  })
 
   cities = cities.sort((a, b) => {
     if (a.population > b.population)
-      return -1;
+      return -1
     else if (b.population > a.population)
-      return 1;
+      return 1
     else
-      return 0;
-  });
+      return 0
+  })
 
   // cities = cities.sort((a, b) => {
   //   if (a.country === 'MX' && b.country !== 'MX')
-  //     return -1;
+  //     return -1
   //   else if (a.country !== 'MX' && b.country === 'MX')
-  //     return 1;
+  //     return 1
   //   else
-  //     return 0;
-  // });
+  //     return 0
+  // })
 
-  cities = cities.slice(0, 5);
+  cities = cities.slice(0, 5)
 
   return res.status(200).json({
     cities,
-  });
-});
+  })
+})
 
 // SocketIO, configure to send information
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const server = require('http').createServer(app)
+// const io = require('socket.io')(server)
 
 // TODO: Remove this and reimplement about notifications
-io.on('connection', () => {
-  console.log('Cliente connected');
-  io.emit("customEmit", {
-    'hola': 'b'
-  });
-});
+// io.on('connection', () => {
+//   console.log('Cliente connected')
+//   io.emit("customEmit", {
+//     'hola': 'b'
+//   })
+// })
+
+app.get('/error', (req, res) => {
+  throw new ErrorHandler(500, 'Internal server error')
+})
 
 // Sending response that app is alive
 const port = process.env.port || '3000'
 server.listen(port, () => {
-  console.log(`Server is listening at port ${port}`);
-});
+  console.log(`Server is listening at port ${port}`)
+})
 
 export default app

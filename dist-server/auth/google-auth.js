@@ -23,23 +23,30 @@ function _getAccessTokenFromCode() {
     var {
       code
     } = req.params;
-    (0, _axios.default)({
-      url: "https://oauth2.googleapis.com/token",
-      method: 'post',
-      data: {
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: process.env.GOOGLE_REDIRECT_URI,
-        grant_type: 'authorization_code',
-        code
-      }
-    }).then(data => {
+
+    try {
+      (0, _axios.default)({
+        url: "https://oauth2.googleapis.com/token",
+        method: 'post',
+        data: {
+          client_id: process.env.GOOGLE_CLIENT_ID,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET,
+          redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+          grant_type: 'authorization_code',
+          code
+        }
+      });
       console.log(data, "DATA token"); // { access_token, expires_in, token_type, refresh_token }
 
       return res.status(200).json({
         data
       });
-    }).catch(e => console.log(e));
+    } catch (e) {
+      console.log(e);
+      return res.status(400).json({
+        'error': 'unable.to.process'
+      });
+    }
   });
   return _getAccessTokenFromCode.apply(this, arguments);
 }
