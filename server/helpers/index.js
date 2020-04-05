@@ -1,4 +1,6 @@
 
+import { ErrorHandler, handlerError } from './error'
+
 function degreesToRadians(degrees) {
   return degrees * Math.PI / 180;
 }
@@ -16,4 +18,9 @@ export const distanceInKm = function distanceInKmBetweenEarthCoordinates(lat1, l
       Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return (earthRadiusKm * c * 1000);
+}
+
+export {
+  ErrorHandler,
+  handlerError
 }
