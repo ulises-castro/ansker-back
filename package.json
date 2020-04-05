@@ -15,6 +15,22 @@
     ]
   },
   "babel": {
+    "plugins": [
+      [
+        "module-resolver",
+        {
+          "root": [
+            "./src"
+          ],
+          "alias": {
+            "controllers": "./server/controllers",
+            "routes": "./server/routes",
+            "test": "./test",
+            "underscore": "lodash"
+          }
+        }
+      ]
+    ],
     "presets": [
       [
         "@babel/preset-env",
@@ -69,6 +85,8 @@
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "eslint": "^6.8.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^2.6.3"
   }

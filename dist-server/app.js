@@ -27,15 +27,13 @@ var axios = require('axios');
 var cors = require('cors'); // Routes
 
 
-var auth = require('./routes/auth');
+var auth = require("./routes/auth");
 
-var secret = require('./routes/secret');
+var secret = require("./routes/secret");
 
-var comment = require('./routes/comments');
+var comment = require("./routes/comment");
 
-var user = requite('./routes/apis'); // Controllers
-
-var userController = require('./controllers/user'); // Load database connection
+var user = require("./routes/user"); // Load database connection
 
 
 //Configure our app
@@ -59,7 +57,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-require('./routes/passport.js');
+require("./routes/passport.js");
 
 app.use(passport.initialize());
 app.set('trust proxy', true);
