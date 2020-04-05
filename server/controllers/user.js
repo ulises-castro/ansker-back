@@ -67,11 +67,12 @@ const getAccessTokenFromCode = async (req, res, next) => {
       ...data
     })
   } catch (err) {
-    console.log(e, req.query)
-    return next(err)
-    return res.status(400).json({
-      'error': 'unable.to.process'
-    })
+    next(err)
+    // console.log(e, req.query)
+    // return next(err)
+    // return res.status(400).json({
+    //   'error': 'unable.to.process'
+    // })
   }
 }
 
