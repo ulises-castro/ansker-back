@@ -17,7 +17,7 @@ const handlerError = (err, res) => {
     message = 'Ocurrió un error, intente más tarde'
   }
 
-  res.status(statusCode).json({
+  return res.status(statusCode).json({
     status: 'error',
     statusCode,
     message
