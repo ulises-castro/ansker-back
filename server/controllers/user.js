@@ -1,11 +1,12 @@
 'use strict'
 // TODO: Remove from controller and move to routes
 ;
-require('dotenv').config()
+import to from 'await-to-js'
 
 import * as queryString from 'query-string';
 import axios from 'axios'
 
+import handler from 'helpers/handler'
 
 // import {
 //   getGoogleUserInfo,
@@ -50,10 +51,7 @@ const getAccessTokenFromCode = async (req, res, next) => {
     code
   } = req.query
 
-  try {
-    const {
-      data
-    } = await axios({
+  const [ err, data ] = await to(axios({
       url: `https://oauth2.googleapis.com/token`,
       method: 'post',
       data: {
@@ -63,18 +61,18 @@ const getAccessTokenFromCode = async (req, res, next) => {
         grant_type: 'authorization_code',
         code
       },
-    })
-    console.log(data); // { access_token, expires_in, token_type, refresh_token }
-    return res.status(200).json({
-      ...data
-    })
-  } catch (err) {
+    }))
+
+    if (data) {
+      res.status(200).json({
+        ...data
+      })
+    }
+    console.log(data, err); // { access_token, expires_in, token_type, refresh_token }
     next(err)
-  }
 }
 
 // TODO: Added a catch error handler
-
 
 export {
   getAccessTokenFromCode,
