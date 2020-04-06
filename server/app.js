@@ -117,8 +117,8 @@ const server = require('http').createServer(app)
 //   })
 // })
 
-app.get('/error', (req, res) => {
-  throw new ErrorHandler(500, 'Internal server error')
+app.use((err, req, res, next) => {
+  handlerError(err, res)
 })
 
 // Sending response that app is alive

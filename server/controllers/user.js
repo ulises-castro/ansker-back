@@ -1,9 +1,11 @@
 'use strict'
 // TODO: Remove from controller and move to routes
 ;
+require('dotenv').config()
 
 import * as queryString from 'query-string';
 import axios from 'axios'
+
 
 // import {
 //   getGoogleUserInfo,
@@ -57,7 +59,7 @@ const getAccessTokenFromCode = async (req, res, next) => {
       data: {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${PROCESS.env.URL_FRONT}/authenticate/google`,
+        redirect_uri: `${process.env.URL_FRONT}/authenticate/google`,
         grant_type: 'authorization_code',
         code
       },
@@ -68,11 +70,6 @@ const getAccessTokenFromCode = async (req, res, next) => {
     })
   } catch (err) {
     next(err)
-    // console.log(e, req.query)
-    // return next(err)
-    // return res.status(400).json({
-    //   'error': 'unable.to.process'
-    // })
   }
 }
 
