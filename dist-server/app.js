@@ -108,8 +108,8 @@ var server = require('http').createServer(app); // const io = require('socket.io
 // })
 
 
-app.get('/error', (req, res) => {
-  throw new _error.ErrorHandler(500, 'Internal server error');
+app.use((err, req, res, next) => {
+  (0, _error.handlerError)(err, res);
 }); // Sending response that app is alive
 
 var port = process.env.port || '3000';

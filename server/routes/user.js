@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 // Geting token sending code
 // app.post('/api/autheticate/google/token', userController.requestGmailAuth)
 // Get code
-router.get('/api/authenticate/google', userController.getAccessTokenFromCode)
+router.get('/authenticate/google', userController.getAccessTokenFromCode)
 // ------------------------------------------
 
 

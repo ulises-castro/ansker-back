@@ -29,6 +29,8 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+require('dotenv').config();
+
 var url = require('url');
 
 var jwt = require('jsonwebtoken');
@@ -67,7 +69,7 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
         data: {
           client_id: process.env.GOOGLE_CLIENT_ID,
           client_secret: process.env.GOOGLE_CLIENT_SECRET,
-          redirect_uri: "".concat(PROCESS.env.URL_FRONT, "/authenticate/google"),
+          redirect_uri: "".concat(process.env.URL_FRONT, "/authenticate/google"),
           grant_type: 'authorization_code',
           code
         }
@@ -76,11 +78,7 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
 
       return res.status(200).json(_objectSpread({}, data));
     } catch (err) {
-      next(err); // console.log(e, req.query)
-      // return next(err)
-      // return res.status(400).json({
-      //   'error': 'unable.to.process'
-      // })
+      next(err);
     }
   });
 
