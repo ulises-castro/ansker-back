@@ -1,9 +1,9 @@
 'use strict'
 // TODO: Remove from controller and move to routes
-;
+
 import to from 'await-to-js'
 
-import * as queryString from 'query-string';
+import * as queryString from 'query-string'
 import axios from 'axios'
 
 import handler from 'helpers/handler'
@@ -13,36 +13,45 @@ import handler from 'helpers/handler'
 //   getAccessTokenFromCode
 // } from '../auth/google-auth'
 
-import User from '../models/user';
+import User from '../models/user'
 import {
   accessSync
-} from 'fs';
+} from 'fs'
 
-var url = require('url');
+var url = require('url')
 
-const jwt = require('jsonwebtoken');
-const jwtOptions = {};
+const jwt = require('jsonwebtoken')
+const jwtOptions = {}
 
-jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
+jwtOptions.secret = process.env.JWT_SECRET_PASSWORD
 
-const URL_API = process.env.URL_API;
-const URL_FRONT = process.env.URL_FRONT;
+const URL_API = process.env.URL_API
+const URL_FRONT = process.env.URL_FRONT
 
 const getGoogleInfo = async (req, res, next) => {
-  const [ err, data ] = await to(axios({
+  const {
+    access_token
+  } = req.query
+
+  const [ err, googleInfoData ] = await to(axios({
     url: 'https://www.googleapis.com/oauth2/v2/userinfo',
     method: 'get',
     headers: {
-      Authorization: `Bearer ${accesstoken}`,
+      Authorization: `Bearer ${access_token}`,
     },
-  }));
-  console.log(data); // { id, email, given_name, family_name }
-  if (!err) next(err)
+  }))
+  console.log(googleInfoData) // { id, email, given_name, family_name }
+
+  console.log(err)
+
+  if (err) next(err)
+
+  const { data } = googleInfoData
 
   res.status(200).json({
     ...data
   })
-};
+}
 
 const getAccessTokenFromCode = async (req, res, next) => {
   const {
@@ -70,7 +79,7 @@ const getAccessTokenFromCode = async (req, res, next) => {
         ...data
       })
     }
-    // console.log(data, err); // { access_token, expires_in, token_type, refresh_token }
+    // console.log(data, err) // { access_token, expires_in, token_type, refresh_token }
     next(err)
 }
 
@@ -78,21 +87,22 @@ const getAccessTokenFromCode = async (req, res, next) => {
 
 // TODO: Added a catch error handler
 async function registerOrLoginUser(response, res) {
-  const userData = response.data;
-  userData.email = userData.emails[0].value;
-  userData.name = userData.displayName;
+  const userData = response
+  userData.email = userData.email
+  userData.name = userData.displayName
+  verified_email = true
 
   const newUser = await User.findUserOrRegister(
     userData.id,
     userData,
     'google'
-  );
+  )
 
   const token = jwt.sign(
     newUser.id, jwtOptions.secret
-  );
+  )
 
-  res.redirect(`${URL_FRONT}/get-token/${token}`);
+  res.redirect(`${URL_FRONT}/get-token/${token}`)
 }
 
 export {
@@ -100,18 +110,18 @@ export {
   getAccessTokenFromCode,
 }
 // async function getGoogleUserCode(req, res, next) {
-//   // const urlParams = queryString.parse(window.location.search);
+//   // const urlParams = queryString.parse(window.location.search)
 
 
 //   // TODO: fix me
 //   // console.log()
 //   // if (urlParams.error) {
-//   //   console.log(`An error occurred: ${urlParams.error}`);
+//   //   console.log(`An error occurred: ${urlParams.error}`)
 //   // } else {
 //   const {
 //     code
 //   } = req.query
-//   console.log(`The code is: ${code}`);
+//   console.log(`The code is: ${code}`)
 
 //   // return res.redirect('google/code' + req.query.code)
 //   // const token = await getAccessTokenFromCode(urlParams.code)
@@ -129,38 +139,38 @@ export {
 //   return res.status(200).json({
 //     access_token,
 //     googleUserInfo
-//   });
+//   })
 // }
 
 // exports.requestGmailAuth = function (req, res, next) {
-//   const scopes = ['profile', 'email', 'openid'];
+//   const scopes = ['profile', 'email', 'openid']
 
 //   let url = googleApi.generateUrl(scopes)
-//   res.redirect(url);
+//   res.redirect(url)
 // }
 
 // async function registerOrLoginUser(response, res) {
-//   const userData = response.data;
-//   userData.email = userData.emails[0].value;
-//   userData.name = userData.displayName;
+//   const userData = response.data
+//   userData.email = userData.emails[0].value
+//   userData.name = userData.displayName
 
 //   const newUser = await User.findUserOrRegister(
 //     userData.id,
 //     userData,
 //     'google'
-//   );
+//   )
 
 //   const token = jwt.sign(
 //     newUser.id, jwtOptions.secret
-//   );
+//   )
 
-//   res.redirect(`${URL_FRONT}/get-token/${token}`);
+//   res.redirect(`${URL_FRONT}/get-token/${token}`)
 // }
 
 // exports.getGmailUserInfo =
 //   async function (req, res, next) {
-//     const qs = new url.URL(req.url, URL_API).searchParams;
-//     let code = qs.get('code');
+//     const qs = new url.URL(req.url, URL_API).searchParams
+//     let code = qs.get('code')
 
 //     if (!code) {
 //       next(new Error('No code provided'))
@@ -168,10 +178,10 @@ export {
 
 //     googleApi.getUserInfo(code)
 //     .then(function(response) {
-//       registerOrLoginUser(response, res);
+//       registerOrLoginUser(response, res)
 //     })
 //     .catch(function(e) {
-//       console.log('Error Google Api');
-//       next(new Error(e.message));
+//       console.log('Error Google Api')
+//       next(new Error(e.message))
 //     })
 //   }

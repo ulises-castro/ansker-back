@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; // TODO: Remove from controller and move to routes
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -44,16 +44,23 @@ var URL_FRONT = process.env.URL_FRONT;
 
 var getGoogleInfo = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(function* (req, res, next) {
-    var [err, data] = yield (0, _awaitToJs.default)((0, _axios.default)({
+    var {
+      access_token
+    } = req.query;
+    var [err, googleInfoData] = yield (0, _awaitToJs.default)((0, _axios.default)({
       url: 'https://www.googleapis.com/oauth2/v2/userinfo',
       method: 'get',
       headers: {
-        Authorization: "Bearer ".concat(accesstoken)
+        Authorization: "Bearer ".concat(access_token)
       }
     }));
-    console.log(data); // { id, email, given_name, family_name }
+    console.log(googleInfoData); // { id, email, given_name, family_name }
 
-    if (!err) next(err);
+    console.log(err);
+    if (err) next(err);
+    var {
+      data
+    } = googleInfoData;
     res.status(200).json(_objectSpread({}, data));
   });
 
@@ -86,7 +93,7 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
         data
       } = googleAuthData;
       res.status(200).json(_objectSpread({}, data));
-    } // console.log(data, err); // { access_token, expires_in, token_type, refresh_token }
+    } // console.log(data, err) // { access_token, expires_in, token_type, refresh_token }
 
 
     next(err);
@@ -106,25 +113,26 @@ function registerOrLoginUser(_x7, _x8) {
 
 function _registerOrLoginUser() {
   _registerOrLoginUser = _asyncToGenerator(function* (response, res) {
-    var userData = response.data;
-    userData.email = userData.emails[0].value;
+    var userData = response;
+    userData.email = userData.email;
     userData.name = userData.displayName;
+    verified_email = true;
     var newUser = yield _user.default.findUserOrRegister(userData.id, userData, 'google');
     var token = jwt.sign(newUser.id, jwtOptions.secret);
     res.redirect("".concat(URL_FRONT, "/get-token/").concat(token));
   });
   return _registerOrLoginUser.apply(this, arguments);
 } // async function getGoogleUserCode(req, res, next) {
-//   // const urlParams = queryString.parse(window.location.search);
+//   // const urlParams = queryString.parse(window.location.search)
 //   // TODO: fix me
 //   // console.log()
 //   // if (urlParams.error) {
-//   //   console.log(`An error occurred: ${urlParams.error}`);
+//   //   console.log(`An error occurred: ${urlParams.error}`)
 //   // } else {
 //   const {
 //     code
 //   } = req.query
-//   console.log(`The code is: ${code}`);
+//   console.log(`The code is: ${code}`)
 //   // return res.redirect('google/code' + req.query.code)
 //   // const token = await getAccessTokenFromCode(urlParams.code)
 //   // res.redirect(`${urlParams.code}, TOKEN:`)
@@ -138,40 +146,40 @@ function _registerOrLoginUser() {
 //   return res.status(200).json({
 //     access_token,
 //     googleUserInfo
-//   });
+//   })
 // }
 // exports.requestGmailAuth = function (req, res, next) {
-//   const scopes = ['profile', 'email', 'openid'];
+//   const scopes = ['profile', 'email', 'openid']
 //   let url = googleApi.generateUrl(scopes)
-//   res.redirect(url);
+//   res.redirect(url)
 // }
 // async function registerOrLoginUser(response, res) {
-//   const userData = response.data;
-//   userData.email = userData.emails[0].value;
-//   userData.name = userData.displayName;
+//   const userData = response.data
+//   userData.email = userData.emails[0].value
+//   userData.name = userData.displayName
 //   const newUser = await User.findUserOrRegister(
 //     userData.id,
 //     userData,
 //     'google'
-//   );
+//   )
 //   const token = jwt.sign(
 //     newUser.id, jwtOptions.secret
-//   );
-//   res.redirect(`${URL_FRONT}/get-token/${token}`);
+//   )
+//   res.redirect(`${URL_FRONT}/get-token/${token}`)
 // }
 // exports.getGmailUserInfo =
 //   async function (req, res, next) {
-//     const qs = new url.URL(req.url, URL_API).searchParams;
-//     let code = qs.get('code');
+//     const qs = new url.URL(req.url, URL_API).searchParams
+//     let code = qs.get('code')
 //     if (!code) {
 //       next(new Error('No code provided'))
 //     }
 //     googleApi.getUserInfo(code)
 //     .then(function(response) {
-//       registerOrLoginUser(response, res);
+//       registerOrLoginUser(response, res)
 //     })
 //     .catch(function(e) {
-//       console.log('Error Google Api');
-//       next(new Error(e.message));
+//       console.log('Error Google Api')
+//       next(new Error(e.message))
 //     })
 //   }
