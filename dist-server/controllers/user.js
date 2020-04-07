@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getAccessTokenFromCode = void 0;
+exports.getAccessTokenFromCode = exports.getGoogleInfo = void 0;
 
 var _awaitToJs = _interopRequireDefault(require("await-to-js"));
 
@@ -40,24 +40,34 @@ var jwt = require('jsonwebtoken');
 var jwtOptions = {};
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 var URL_API = process.env.URL_API;
-var URL_FRONT = process.env.URL_FRONT; // async function getAccessTokenFromCode(req, res, next) {
-//   const {
-//     data
-//   } = await axios({
-//     url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-//     method: 'get',
-//     headers: {
-//       Authorization: `Bearer ${accesstoken}`,
-//     },
-//   });
-//   console.log(data); // { id, email, given_name, family_name }
-//   return res.status(200).json({
-//     data
-//   })
-// };
+var URL_FRONT = process.env.URL_FRONT;
+
+var getGoogleInfo = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator(function* (req, res, next) {
+    var [err, data] = yield (0, _awaitToJs.default)((0, _axios.default)({
+      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      method: 'get',
+      headers: {
+        Authorization: "Bearer ".concat(accesstoken)
+      }
+    }));
+    console.log(data); // { id, email, given_name, family_name }
+
+    if (!err) return res.status(200).json({
+      data
+    });
+    next(err);
+  });
+
+  return function getGoogleInfo(_x, _x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+exports.getGoogleInfo = getGoogleInfo;
 
 var getAccessTokenFromCode = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator(function* (req, res, next) {
+  var _ref2 = _asyncToGenerator(function* (req, res, next) {
     var {
       code
     } = req.query;
@@ -82,11 +92,29 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
     next(err);
   });
 
-  return function getAccessTokenFromCode(_x, _x2, _x3) {
-    return _ref.apply(this, arguments);
+  return function getAccessTokenFromCode(_x4, _x5, _x6) {
+    return _ref2.apply(this, arguments);
   };
 }(); // TODO: Added a catch error handler
-// async function getGoogleUserCode(req, res, next) {
+
+
+exports.getAccessTokenFromCode = getAccessTokenFromCode;
+
+function registerOrLoginUser(_x7, _x8) {
+  return _registerOrLoginUser.apply(this, arguments);
+}
+
+function _registerOrLoginUser() {
+  _registerOrLoginUser = _asyncToGenerator(function* (response, res) {
+    var userData = response.data;
+    userData.email = userData.emails[0].value;
+    userData.name = userData.displayName;
+    var newUser = yield _user.default.findUserOrRegister(userData.id, userData, 'google');
+    var token = jwt.sign(newUser.id, jwtOptions.secret);
+    res.redirect("".concat(URL_FRONT, "/get-token/").concat(token));
+  });
+  return _registerOrLoginUser.apply(this, arguments);
+} // async function getGoogleUserCode(req, res, next) {
 //   // const urlParams = queryString.parse(window.location.search);
 //   // TODO: fix me
 //   // console.log()
@@ -147,6 +175,3 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
 //       next(new Error(e.message));
 //     })
 //   }
-
-
-exports.getAccessTokenFromCode = getAccessTokenFromCode;
