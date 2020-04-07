@@ -69,23 +69,25 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
     var {
       code
     } = req.query;
-    var [err, data] = yield (0, _awaitToJs.default)((0, _axios.default)({
+    var [err, googleAuthData] = yield (0, _awaitToJs.default)((0, _axios.default)({
       url: "https://oauth2.googleapis.com/token",
       method: 'post',
       data: {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: "".concat(process.env.URL_FRONT, "/authenticate/google/token"),
+        redirect_uri: "".concat(process.env.URL_FRONT, "/authenticate/google"),
         grant_type: 'authorization_code',
         code
       }
-    }));
+    })); // console.log(googleAuthData)
 
-    if (data) {
+    if (googleAuthData) {
+      var {
+        data
+      } = googleAuthData;
       res.status(200).json(_objectSpread({}, data));
-    }
+    } // console.log(data, err); // { access_token, expires_in, token_type, refresh_token }
 
-    console.log(data, err); // { access_token, expires_in, token_type, refresh_token }
 
     next(err);
   });

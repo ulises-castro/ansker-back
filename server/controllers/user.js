@@ -49,24 +49,28 @@ const getAccessTokenFromCode = async (req, res, next) => {
     code
   } = req.query
 
-  const [ err, data ] = await to(axios({
+  const [ err, googleAuthData ] = await to(axios({
       url: `https://oauth2.googleapis.com/token`,
       method: 'post',
       data: {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${process.env.URL_FRONT}/authenticate/google/token`,
+        redirect_uri: `${process.env.URL_FRONT}/authenticate/google`,
         grant_type: 'authorization_code',
         code
       },
     }))
 
-    if (data) {
+    // console.log(googleAuthData)
+
+    if (googleAuthData) {
+      const { data } = googleAuthData
+
       res.status(200).json({
         ...data
       })
     }
-    console.log(data, err); // { access_token, expires_in, token_type, refresh_token }
+    // console.log(data, err); // { access_token, expires_in, token_type, refresh_token }
     next(err)
 }
 
