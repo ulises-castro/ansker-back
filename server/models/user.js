@@ -61,10 +61,8 @@ const authProviders = {
         },
         name: String,
         email: String,
-        expires_in: new Date(),
-        refresh_token: String,
-        id_token: String,
         token: String,
+        verified_email: Boolean
       }
     },
     twitter: {
@@ -81,6 +79,16 @@ const authProviders = {
     email: {
       type: String,
     }
+  }
+};
+
+
+const settings = {
+  type: {
+    language: {
+      type: String,
+      enum: ['es-latam', 'en-us']
+    },
   }
 };
 
@@ -103,6 +111,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['facebook', 'google', 'local'],
   },
+  settings,
   authProviders,
 });
 
@@ -122,7 +131,6 @@ UserSchema.statics.findUserOrRegister =
     }).exec();
 
     if (user) {
-      // console.log('Finded here and USER', targetUserId, user);
       return user;
     }
     // REGISTER USER BECAUSE DOESNT EXISTS YET
@@ -143,7 +151,7 @@ UserSchema.statics.findUserOrRegister =
       id,
       name,
       email,
-      facebookToken: userData.facebookToken || '',
+      // token: userData.facebookToken || '',
     };
 
     let newUser = User({
