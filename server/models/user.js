@@ -62,7 +62,7 @@ const authProviders = {
         name: String,
         email: String,
         token: String,
-        verified_email: Boolean
+        verified: Boolean
       }
     },
     twitter: {
@@ -120,11 +120,11 @@ UserSchema.plugin(AutoIncrement, {
 });
 
 UserSchema.statics.findUserOrRegister =
-  async function (
-    targetUserId, userData, provider = 'facebook'
+  async function (userData, provider = 'facebook'
   ) {
 
     const searchBy = `authProviders.${provider}.id`;
+    const targetUserId = userData.id
 
     let user = await this.findOne({
       [searchBy]: targetUserId
@@ -143,6 +143,8 @@ UserSchema.statics.findUserOrRegister =
       id,
       name,
       email,
+      token,
+      verified,
     } = userData;
 
     let authProviders = {};
@@ -151,6 +153,8 @@ UserSchema.statics.findUserOrRegister =
       id,
       name,
       email,
+      token,
+      verified
       // token: userData.facebookToken || '',
     };
 

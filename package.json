@@ -26,6 +26,7 @@
             "controllers": "./server/controllers",
             "routes": "./server/routes",
             "helpers": "./server/helpers",
+            "models": "./server/models",
             "underscore": "lodash"
           }
         }

@@ -1,31 +1,14 @@
 'use strict'
-// TODO: Remove from controller and move to routes
-
 import to from 'await-to-js'
-
-import * as queryString from 'query-string'
 import axios from 'axios'
 
-import handler from 'helpers/handler'
-
-// import {
-//   getGoogleUserInfo,
-//   getAccessTokenFromCode
-// } from '../auth/google-auth'
-
-import User from '../models/user'
-import {
-  accessSync
-} from 'fs'
-
-var url = require('url')
+import User from 'models/user'
 
 const jwt = require('jsonwebtoken')
 const jwtOptions = {}
 
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD
 
-const URL_API = process.env.URL_API
 const URL_FRONT = process.env.URL_FRONT
 
 const getGoogleInfo = async (req, res, next) => {
@@ -45,12 +28,12 @@ const getGoogleInfo = async (req, res, next) => {
   console.log(err)
 
   if (err) next(err)
-
   const { data } = googleInfoData
 
-  res.status(200).json({
-    ...data
-  })
+  data.token = access_token
+
+  registerOrLoginUser(data, res)
+
 }
 
 const getAccessTokenFromCode = async (req, res, next) => {
@@ -86,23 +69,24 @@ const getAccessTokenFromCode = async (req, res, next) => {
 
 
 // TODO: Added a catch error handler
-async function registerOrLoginUser(response, res) {
-  const userData = response
-  userData.email = userData.email
-  userData.name = userData.displayName
-  verified_email = true
+async function registerOrLoginUser(userData, res) {
 
-  const newUser = await User.findUserOrRegister(
-    userData.id,
+  userData.verified = userData.verified_email
+
+  const [err, newUser] = await to(User.findUserOrRegister(
     userData,
     'google'
-  )
+  ))
 
   const token = jwt.sign(
     newUser.id, jwtOptions.secret
   )
 
-  res.redirect(`${URL_FRONT}/get-token/${token}`)
+  if (err) next(err)
+
+  res.status(200).json({
+    token
+  })
 }
 
 export {
