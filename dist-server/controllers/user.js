@@ -53,10 +53,8 @@ var getGoogleInfo = /*#__PURE__*/function () {
     }));
     console.log(data); // { id, email, given_name, family_name }
 
-    if (!err) return res.status(200).json({
-      data
-    });
-    next(err);
+    if (!err) next(err);
+    res.status(200).json(_objectSpread({}, data));
   });
 
   return function getGoogleInfo(_x, _x2, _x3) {
@@ -77,7 +75,7 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
       data: {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: "".concat(process.env.URL_FRONT, "/authenticate/google"),
+        redirect_uri: "".concat(process.env.URL_FRONT, "/authenticate/google/token"),
         grant_type: 'authorization_code',
         code
       }

@@ -37,11 +37,11 @@ const getGoogleInfo = async (req, res, next) => {
     },
   }));
   console.log(data); // { id, email, given_name, family_name }
-  if (!err) return res.status(200).json({
-    data
-  })
+  if (!err) next(err)
 
-  next(err)
+  res.status(200).json({
+    ...data
+  })
 };
 
 const getAccessTokenFromCode = async (req, res, next) => {
@@ -55,7 +55,7 @@ const getAccessTokenFromCode = async (req, res, next) => {
       data: {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${process.env.URL_FRONT}/authenticate/google`,
+        redirect_uri: `${process.env.URL_FRONT}/authenticate/google/token`,
         grant_type: 'authorization_code',
         code
       },
