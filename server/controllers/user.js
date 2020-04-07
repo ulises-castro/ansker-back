@@ -62,13 +62,10 @@ const getAccessTokenFromCode = async (req, res, next) => {
         ...data
       })
     }
-    // console.log(data, err) // { access_token, expires_in, token_type, refresh_token }
+    // console.log(data, err) 
     next(err)
 }
 
-
-
-// TODO: Added a catch error handler
 async function registerOrLoginUser(userData, res) {
 
   userData.verified = userData.verified_email
@@ -78,11 +75,13 @@ async function registerOrLoginUser(userData, res) {
     'google'
   ))
 
+  if (err) next(err)
+
+  console.log(err, newUser)
+
   const token = jwt.sign(
     newUser.id, jwtOptions.secret
   )
-
-  if (err) next(err)
 
   res.status(200).json({
     token

@@ -81,7 +81,7 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
         data
       } = googleAuthData;
       res.status(200).json(_objectSpread({}, data));
-    } // console.log(data, err) // { access_token, expires_in, token_type, refresh_token }
+    } // console.log(data, err) 
 
 
     next(err);
@@ -90,8 +90,7 @@ var getAccessTokenFromCode = /*#__PURE__*/function () {
   return function getAccessTokenFromCode(_x4, _x5, _x6) {
     return _ref2.apply(this, arguments);
   };
-}(); // TODO: Added a catch error handler
-
+}();
 
 exports.getAccessTokenFromCode = getAccessTokenFromCode;
 
@@ -103,8 +102,9 @@ function _registerOrLoginUser() {
   _registerOrLoginUser = _asyncToGenerator(function* (userData, res) {
     userData.verified = userData.verified_email;
     var [err, newUser] = yield (0, _awaitToJs.default)(_user.default.findUserOrRegister(userData, 'google'));
-    var token = jwt.sign(newUser.id, jwtOptions.secret);
     if (err) next(err);
+    console.log(err, newUser);
+    var token = jwt.sign(newUser.id, jwtOptions.secret);
     res.status(200).json({
       token
     });
