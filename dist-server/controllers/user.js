@@ -1,4 +1,4 @@
-'use strict'; // TODO: Remove from controller and move to routes
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -7,19 +7,9 @@ exports.getAccessTokenFromCode = exports.getGoogleInfo = void 0;
 
 var _awaitToJs = _interopRequireDefault(require("await-to-js"));
 
-var queryString = _interopRequireWildcard(require("query-string"));
-
 var _axios = _interopRequireDefault(require("axios"));
 
-var _handler = _interopRequireDefault(require("../helpers/handler"));
-
 var _user = _interopRequireDefault(require("../models/user"));
-
-var _fs = require("fs");
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33,13 +23,10 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var url = require('url');
-
 var jwt = require('jsonwebtoken');
 
 var jwtOptions = {};
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
-var URL_API = process.env.URL_API;
 var URL_FRONT = process.env.URL_FRONT;
 
 var getGoogleInfo = /*#__PURE__*/function () {
@@ -61,7 +48,8 @@ var getGoogleInfo = /*#__PURE__*/function () {
     var {
       data
     } = googleInfoData;
-    res.status(200).json(_objectSpread({}, data));
+    data.token = access_token;
+    registerOrLoginUser(data, res);
   });
 
   return function getGoogleInfo(_x, _x2, _x3) {
@@ -112,14 +100,14 @@ function registerOrLoginUser(_x7, _x8) {
 }
 
 function _registerOrLoginUser() {
-  _registerOrLoginUser = _asyncToGenerator(function* (response, res) {
-    var userData = response;
-    userData.email = userData.email;
-    userData.name = userData.displayName;
-    verified_email = true;
-    var newUser = yield _user.default.findUserOrRegister(userData.id, userData, 'google');
+  _registerOrLoginUser = _asyncToGenerator(function* (userData, res) {
+    userData.verified = userData.verified_email;
+    var [err, newUser] = yield (0, _awaitToJs.default)(_user.default.findUserOrRegister(userData, 'google'));
     var token = jwt.sign(newUser.id, jwtOptions.secret);
-    res.redirect("".concat(URL_FRONT, "/get-token/").concat(token));
+    if (err) next(err);
+    res.status(200).json({
+      token
+    });
   });
   return _registerOrLoginUser.apply(this, arguments);
 } // async function getGoogleUserCode(req, res, next) {
