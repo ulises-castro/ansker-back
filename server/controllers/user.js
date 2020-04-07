@@ -28,23 +28,21 @@ jwtOptions.secret = process.env.JWT_SECRET_PASSWORD;
 const URL_API = process.env.URL_API;
 const URL_FRONT = process.env.URL_FRONT;
 
+const getGoogleInfo = async (req, res, next) => {
+  const [ err, data ] = await to(axios({
+    url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${accesstoken}`,
+    },
+  }));
+  console.log(data); // { id, email, given_name, family_name }
+  if (!err) return res.status(200).json({
+    data
+  })
 
-// async function getAccessTokenFromCode(req, res, next) {
-//   const {
-//     data
-//   } = await axios({
-//     url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-//     method: 'get',
-//     headers: {
-//       Authorization: `Bearer ${accesstoken}`,
-//     },
-//   });
-//   console.log(data); // { id, email, given_name, family_name }
-
-//   return res.status(200).json({
-//     data
-//   })
-// };
+  next(err)
+};
 
 const getAccessTokenFromCode = async (req, res, next) => {
   const {
@@ -72,9 +70,29 @@ const getAccessTokenFromCode = async (req, res, next) => {
     next(err)
 }
 
+
+
 // TODO: Added a catch error handler
+async function registerOrLoginUser(response, res) {
+  const userData = response.data;
+  userData.email = userData.emails[0].value;
+  userData.name = userData.displayName;
+
+  const newUser = await User.findUserOrRegister(
+    userData.id,
+    userData,
+    'google'
+  );
+
+  const token = jwt.sign(
+    newUser.id, jwtOptions.secret
+  );
+
+  res.redirect(`${URL_FRONT}/get-token/${token}`);
+}
 
 export {
+  getGoogleInfo,
   getAccessTokenFromCode,
 }
 // async function getGoogleUserCode(req, res, next) {
