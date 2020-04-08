@@ -103,7 +103,9 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: '',
   },
-  // Saved all ips
+  ip: {
+    type: String,
+  },
   locations: [locations],
   registerAt: {
     type: Date,
@@ -147,6 +149,7 @@ UserSchema.statics.findUserOrRegister =
     // const userLocation = await getUserLocation(userData.ip)
     const {
       id,
+      ip,
       name,
       email,
       token,
@@ -157,6 +160,7 @@ UserSchema.statics.findUserOrRegister =
 
     authProviders[provider] = {
       id,
+      ip,
       name,
       email,
       token,
@@ -167,8 +171,8 @@ UserSchema.statics.findUserOrRegister =
     const current_time = new Date().getTime()
 
     let newUser = User({
-      username: rug.generate() + current_time,
       ip,
+      username: rug.generate() + current_time,
       authProviders,
       registerBy: provider,
       registerAt,
