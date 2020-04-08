@@ -105,6 +105,10 @@ const UserSchema = new mongoose.Schema({
   },
   // Saved all ips
   locations: [locations],
+  registerAt: {
+    type: Date,
+    default: Date.now()
+  },
   registerBy: {
     type: String,
     enum: ['facebook', 'google', 'local'],
@@ -161,9 +165,8 @@ UserSchema.statics.findUserOrRegister =
     }
 
     let newUser = User({
-      // Change facebook to provider
       username: rug.generate() + current_date.getTime(),
-      // ip,
+      ip,
       authProviders,
       registerBy: provider,
       registerAt,
