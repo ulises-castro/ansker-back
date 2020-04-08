@@ -34,8 +34,28 @@ const getGoogleInfo = async (req, res, next) => {
 
   data.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
 
-  registerOrLoginUser(data, res)
+  registerOrLoginUser(data, res, next)
+}
 
+async function registerOrLoginUser(userData, res, next) {
+  userData.verified = userData.verified_email
+
+  const [err, newUser] = await to(User.findUserOrRegister(
+    userData,
+    'google'
+  ))
+
+  if (err) next(err)
+
+  console.log(err, newUser)
+
+  const token = jwt.sign(
+    newUser.id, jwtOptions.secret
+  )
+
+  res.status(200).json({
+    token
+  })
 }
 
 const getAccessTokenFromCode = async (req, res, next) => {
@@ -65,28 +85,6 @@ const getAccessTokenFromCode = async (req, res, next) => {
     }
     // console.log(data, err)
     next(err)
-}
-
-async function registerOrLoginUser(userData, res) {
-
-  userData.verified = userData.verified_email
-
-  const [err, newUser] = await to(User.findUserOrRegister(
-    userData,
-    'google'
-  ))
-
-  if (err) next(err)
-
-  console.log(err, newUser)
-
-  const token = jwt.sign(
-    newUser.id, jwtOptions.secret
-  )
-
-  res.status(200).json({
-    token
-  })
 }
 
 export {
