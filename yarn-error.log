@@ -1,5 +1,5 @@
 Arguments: 
-  /home/alex/.nvm/versions/node/v13.5.0/bin/node /usr/share/yarn/bin/yarn.js remove node-fetch
+  /home/alex/.nvm/versions/node/v13.5.0/bin/node /usr/share/yarn/bin/yarn.js add random-username-generator
 
 PATH: 
   /home/alex/.nvm/versions/node/v13.5.0/bin:/home/alex/.local/bin:/home/alex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/go/bin:/home/alex/.yarn/bin:/home/alex/.yarn/bin
