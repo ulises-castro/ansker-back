@@ -1,5 +1,7 @@
-import mongoose from 'mongoose';
-const AutoIncrement = require('mongoose-sequence')(mongoose);
+import mongoose from 'mongoose'
+const AutoIncrement = require('mongoose-sequence')(mongoose)
+
+import rug from 'random-username-generator'
 
 const locations = new mongoose.Schema({
   ip: {
@@ -38,7 +40,7 @@ const locations = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-});
+})
 
 const authProviders = {
   type: {
@@ -80,7 +82,7 @@ const authProviders = {
       type: String,
     }
   }
-};
+}
 
 
 const settings = {
@@ -90,7 +92,7 @@ const settings = {
       enum: ['es-latam', 'en-us']
     },
   }
-};
+}
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -113,41 +115,41 @@ const UserSchema = new mongoose.Schema({
   },
   settings,
   authProviders,
-});
+})
 
 UserSchema.plugin(AutoIncrement, {
   inc_field: 'userId'
-});
+})
 
 UserSchema.statics.findUserOrRegister =
   async function (userData, provider = 'facebook'
   ) {
 
-    const searchBy = `authProviders.${provider}.id`;
+    const searchBy = `authProviders.${provider}.id`
     const targetUserId = userData.id
 
     let user = await this.findOne({
       [searchBy]: targetUserId
-    }).exec();
+    }).exec()
 
     if (user) {
-      return user;
+      return user
     }
     // REGISTER USER BECAUSE DOESNT EXISTS YET
-    const registerAt = new Date();
+    const registerAt = new Date()
 
     // Get user geolocation data ########################
     // TODO: Remove file and provider api
-    // const userLocation = await getUserLocation(userData.ip);
+    // const userLocation = await getUserLocation(userData.ip)
     const {
       id,
       name,
       email,
       token,
       verified,
-    } = userData;
+    } = userData
 
-    let authProviders = {};
+    let authProviders = {}
 
     authProviders[provider] = {
       id,
@@ -156,58 +158,58 @@ UserSchema.statics.findUserOrRegister =
       token,
       verified
       // token: userData.facebookToken || '',
-    };
+    }
 
     let newUser = User({
       // Change facebook to provider
-      username: provider + '-' + targetUserId,
+      username: rug.generate() + current_date.getTime(),
       // ip,
       authProviders,
       registerBy: provider,
       registerAt,
-    });
+    })
 
     return await newUser.save().then((userCreated) => {
-      console.log('saved here', userCreated);
-      return userCreated;
-    });
+      console.log('saved here', userCreated)
+      return userCreated
+    })
   }
 
 UserSchema.statics.updateUserLocation =
   async function (locationData, userId) {
-    const _id = userId;
+    const _id = userId
     const user = await this.findOne({
       _id
-    }).exec();
+    }).exec()
 
     const {
       coordinates
-    } = locationData.location;
+    } = locationData.location
 
-    console.log(locationData);
+    console.log(locationData)
 
-    let isSameLocation = false;
+    let isSameLocation = false
     if (user.locations && user.locations.length) {
-      const userFormated = user.toObject();
-      const lastLocation = userFormated.locations.length - 1;
-      console.log(userFormated.locations[0], lastLocation);
+      const userFormated = user.toObject()
+      const lastLocation = userFormated.locations.length - 1
+      console.log(userFormated.locations[0], lastLocation)
 
-      const isNewLocation = userFormated.locations[lastLocation];
+      const isNewLocation = userFormated.locations[lastLocation]
       isSameLocation = (
         isNewLocation[1] === coordinates[1] &&
         isNewLocation[0] === coordinates[0]
-      );
+      )
     }
 
     if (!isSameLocation) {
-      user.locations.push(locationData);
-      return await user.save().then(location => location);
+      user.locations.push(locationData)
+      return await user.save().then(location => location)
     }
 
-    return false;
+    return false
   }
 
-// UserSchema.index({ "locations.location" : '2dsphere' });
-const User = mongoose.model('User', UserSchema);
+// UserSchema.index({ "locations.location" : '2dsphere' })
+const User = mongoose.model('User', UserSchema)
 
-export default User;
+export default User
