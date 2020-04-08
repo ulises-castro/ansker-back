@@ -164,8 +164,10 @@ UserSchema.statics.findUserOrRegister =
       // token: userData.facebookToken || '',
     }
 
+    const current_time = new Date().getTime()
+
     let newUser = User({
-      username: rug.generate() + current_date.getTime(),
+      username: rug.generate() + current_time,
       ip,
       authProviders,
       registerBy: provider,
