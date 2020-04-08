@@ -32,6 +32,8 @@ const getGoogleInfo = async (req, res, next) => {
 
   data.token = access_token
 
+  data.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+
   registerOrLoginUser(data, res)
 
 }
@@ -54,7 +56,6 @@ const getAccessTokenFromCode = async (req, res, next) => {
     }))
 
     // console.log(googleAuthData)
-
     if (googleAuthData) {
       const { data } = googleAuthData
 
@@ -62,7 +63,7 @@ const getAccessTokenFromCode = async (req, res, next) => {
         ...data
       })
     }
-    // console.log(data, err) 
+    // console.log(data, err)
     next(err)
 }
 
