@@ -1,20 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
 
-const ExtractJwt = passportJWT.ExtractJwt;
-const JwtStrategy = passportJWT.Strategy;
-
-const axios = require('axios');
-
-import Secret from '../models/secret';
-import User from '../models/user';
-import Comment from '../models/comment';
-
-;
+import Publication from 'models/publication';
+import User from 'models/user';
+import Comment from 'models/comment';
 
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
@@ -30,7 +22,7 @@ async function(req, res) {
 
   // console.log(req.user, "Holaaaa");
   const invalidDataReceived = {
-    error: 'secret.publish.invalid'
+    error: 'publication.publish.invalid'
   };
 
   console.log(req.body, "Req boyd");
@@ -52,7 +44,7 @@ async function(req, res) {
     latitude,
   } = req.body;
 
-  const newSecret = new Secret({
+  const newPublication = new publication({
     author: req.user._id,
     content: req.body.content,
     backgroundColor: req.body.backgroundColor,
@@ -67,7 +59,7 @@ async function(req, res) {
     }
   });
 
-  newSecret.save(function (err) {
+  newPublication.save(function (err) {
     if (err) {
       console.log(err, req.user);
       return res.status(403).json(invalidDataReceived);
@@ -109,31 +101,31 @@ async function(req, res) {
   let updatedUser = await User
     .updateUserLocation(locationData, req.user._id);
 
-  let secrets = await Secret
+  let publications = await Publication
     .getAllByCity(Number(longitude), Number(latitude));
 
   const userId = req.user._id;
 
   // Passing only how many likes|comments|shares it has
-  secrets = secrets.map(secret => {
-    let { likes, comments, shares } = secret;
+  publications = publications.map(publication => {
+    let { likes, comments, shares } = publication;
 
-    const userLiked = secret.likes.find((like) => `${like.author}` == userId)
+    const userLiked = publication.likes.find((like) => `${like.author}` == userId)
 
-    secret.userLiked = (userLiked) ? true : false;
+    publication.userLiked = (userLiked) ? true : false;
 
     // Remove _id for security reasons
-    delete secret._id;
+    delete publication._id;
 
-    secret.likes = likes.length;
-    secret.comments = comments.length;
-    secret.shares = shares.length;
+    publication.likes = likes.length;
+    publication.comments = comments.length;
+    publication.shares = shares.length;
 
-    return secret;
+    return publication;
   });
 
   res.status(200).json({
-    secrets,
+    publications,
   });
 });
 
@@ -156,34 +148,34 @@ async function(req, res) {
   const countryCode = 'MX';
   const city = 'Guadalajara';
 
-  let secrets = await Secret
+  let publications = await publication
     .getAllByCity(countryCode, city);
 
-    // console.log(secrets, "Secrets");
+    // console.log(publications, "publications");
   // Passing only how many likes|comments|shares it has
-  secrets = secrets.map(secret => {
-    let { likes, comments, shares } = secret;
+  publications = publications.map(publication => {
+    let { likes, comments, shares } = publication;
 
     if (req.user) {
       const userId = req.user._id;
-      const userLiked = secret.likes.find((like) => `${like.author}` == userId)
+      const userLiked = publication.likes.find((like) => `${like.author}` == userId)
 
       // Set user as liked 
-      secret.userLiked = (userLiked) ? true : false;
+      publication.userLiked = (userLiked) ? true : false;
     }
 
     // Remove _id for security reasons
-    delete secret._id;
+    delete publication._id;
 
-    secret.likes = likes.length;
-    secret.comments = comments.length;
-    secret.shares = shares.length;
+    publication.likes = likes.length;
+    publication.comments = comments.length;
+    publication.shares = shares.length;
 
-    return secret;
+    return publication;
   });
 
   res.status(200).json({
-    secrets,
+    publications,
   });
 });
 
@@ -192,58 +184,58 @@ router.post('/liked', passport.authenticate('jwt', {
 }),
 async function(req, res) {
   const userData = req.user;
-  const secretId = req.body.secretId;
+  const publicationId = req.body.publicationId;
   const author = userData._id;
 
-  const secret = await Secret.setLiked(secretId, author);
-  // console.log(secret);
+  const publication = await Publication.setLiked(publicationId, author);
+  // console.log(publication);
 
-  const rest = secret[1];
+  const rest = publication[1];
 
-  if (secret[0]) {
+  if (publication[0]) {
     res.status(200).json({
       success: true,
       rest,
     });
   } else {
     res.status(403).json({
-      error: 'secret.error.setLike'
+      error: 'publication.error.setLike'
     });
   }
 
 });
 
-router.get('/:secretId', async function(req, res) {
+router.get('/:publicationId', async function(req, res) {
   console.log(req.params, "Req");
 
-  const { secretId } = req.params;
+  const { publicationId } = req.params;
 
-  const secret = await Secret
-  .findOne({ secretId })
+  const publication = await Publication
+  .findOne({ publicationId })
   .select('content backgroundColor publishAt fontFamily comments.content comments.registerAt likes.author')
   .lean().exec();
 
   // TODO: Use populate here instead of consult
   const comments = await Comment
-  .find({ secretId: secret._id  })
+  .find({ publicationId: publication._id  })
   .select('content publishAt -_id')
   .lean()
   .exec()
 
-  if (!secret) {
+  if (!publication) {
     return res.status(404).json({
       success: false,
     });
   }
   // Remove sensitive data and useless information
-  delete secret._id;
-  secret.likes = secret.likes.length;
-  secret.commentsData = comments;
-  secret.comments = comments.length;
+  delete publication._id;
+  publication.likes = publication.likes.length;
+  publication.commentsData = comments;
+  publication.comments = comments.length;
 
   res.status(200).json({
     success: true,
-    secret,
+    publication,
   });
 });
 
