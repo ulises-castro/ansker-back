@@ -12,7 +12,7 @@ const cors = require('cors')
 
 // Routes
 const auth = require('routes/auth')
-const secret = require('routes/secret')
+const publication = require('routes/publication')
 const comment = require('routes/comment')
 const user = require('routes/user')
 

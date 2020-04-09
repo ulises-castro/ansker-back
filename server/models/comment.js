@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const ObjectId = Schema.Types.ObjectId;
 
-import Secret from './secret';
+import Publication from './publication';
 
 const CommentSchema = new Schema({
   author: {
@@ -12,9 +12,9 @@ const CommentSchema = new Schema({
     ref: 'User',
     require: true,
   },
-  secretId: {
+  publicationId: {
     type: ObjectId,
-    ref: 'Secret',
+    ref: 'publication',
     index: true,
   },
   content: {
@@ -32,17 +32,17 @@ const CommentSchema = new Schema({
 CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
 
 CommentSchema.statics.publish =
-async function(secretId, commentData) {
+async function(publicationId, commentData) {
 
   const { author, backgroundColor } = commentData;
 
-  const secret = await Secret
-    .findOne({ 'secretId': Number(secretId) }).exec();
+  const publication = await Publication
+    .findOne({ 'publicationId': Number(publicationId) }).exec();
 
   // TODO: Implement avatars functionalities
-  // const userHasCommented = await Secret
+  // const userHasCommented = await publication
   // .findOne({
-  //   '_id' : secret._id,
+  //   '_id' : publication._id,
   //   'commentsAuthors.authorId': author
   // }).exec();
 
@@ -52,30 +52,30 @@ async function(secretId, commentData) {
   //   const availableAvatars = 30;
   //   const avatar =  Math.floor(Math.random() * (availableAvatars)) + 1;
 
-  //   secret.commentsAuthors.push({
+  //   publication.commentsAuthors.push({
   //     author,
   //     avatar,
   //     backgroundColor,
   //   });
 
-  //   await secret.save().then(comment => comment);
+  //   await publication.save().then(comment => comment);
   // }
 
   // Save comment data in comments model
-  commentData.secretId = secret._id;
+  commentData.publicationId = publication._id;
   let newComment = new this(commentData);
 
   newComment = await newComment.save()
   .then(newComment => newComment);
 
-  // Create comment in secrets models and save
-  secret.comments.push({
+  // Create comment in publications models and save
+  publication.comments.push({
     'commentId': newComment._id
   });
 
-  await secret.save().then(comment => comment);
+  await publication.save().then(comment => comment);
 
-  return secret;
+  return publication;
 }
 
 module.exports = mongoose.model('Comments', CommentSchema);

@@ -1,17 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const passportJWT = require('passport-jwt');
 
-const ExtractJwt = passportJWT.ExtractJwt;
-const JwtStrategy = passportJWT.Strategy;
-
-import Secret from '../models/secret';
-import Comment from '../models/comment';
-
-;
+import Publication from 'models/publication';
+import Comment from 'models/comment';
 
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
@@ -19,19 +12,19 @@ router.post('/publish', passport.authenticate('jwt', {
 async function (req, res) {
 
   const author = req.user._id;
-  let { secretId, content } = req.body;
+  let { publicationId, content } = req.body;
 
   console.log(req.body, 'qué pedo mi perro');
 
   const commentData = {
-    secretId,
+    publicationId,
     content,
     author,
   };
 
-  console.log(commentData, "coemnatrios");
+  console.log(commentData, "comentarios");
 
-  const response = await Comment.publish(secretId, commentData);
+  const response = await Comment.publish(publicationId, commentData);
 
   if (response) {
     return res.status(200).json({
@@ -41,7 +34,7 @@ async function (req, res) {
 
   res.status(403).json({
     success: false,
-    error: 'secret.publish.comment',
+    error: 'publication.publish.comment',
   });
 });
 

@@ -83,7 +83,7 @@ const location = {
   }
 };
 
-const SecretSchema = new Schema({
+const PublicationSchema = new Schema({
   author: {
     type: ObjectId,
     ref: 'User',
@@ -117,16 +117,16 @@ const SecretSchema = new Schema({
   commentsAuthors: [randomAuthorSchema],
 });
 
-SecretSchema.plugin(AutoIncrement, { inc_field: 'secretId' });
+PublicationSchema.plugin(AutoIncrement, { inc_field: 'publicationId' });
 LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
 // CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
 
-// SecretSchema.set('toJSON', { getters: true, virtuals: true });
+// PublicationSchema.set('toJSON', { getters: true, virtuals: true });
 // TODO: implement paginate, scroll infinite
-SecretSchema.statics.getAllByNear =
+PublicationSchema.statics.getAllByNear =
 async function (longitude, latitude) {
   console.log(longitude, latitude);
-  const secrets = await this.find({
+  const publications = await this.find({
     "location.location": {
       $near: {
         $geometry: {
@@ -138,24 +138,24 @@ async function (longitude, latitude) {
       },
     },
   })
-  .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
   // .skip(2)
   .limit(20)
   .sort({ publishAt: -1, })
   .lean()
   .exec();
 
-  return secrets;
+  return publications;
 }
 
 import isoCountryCodeConverter from '../services/convertCountryCodes';
 console.log();
 
 
-SecretSchema.statics.getAllByNear =
+PublicationSchema.statics.getAllByNear =
 async function (longitude, latitude) {
   console.log(longitude, latitude);
-  const secrets = await this.find({
+  const publications = await this.find({
     "location.location": {
       $near: {
         $geometry: {
@@ -167,49 +167,49 @@ async function (longitude, latitude) {
       },
     },
   })
-  .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
   // .skip(2)
   .limit(20)
   .sort({ publishAt: -1, })
   .lean()
   .exec();
 
-  return secrets;
+  return publications;
 }
 
-SecretSchema.statics.getAllByCity =
+PublicationSchema.statics.getAllByCity =
 async function (countryCode, city) {
-  
+
   // Adapting searching to searched
   countryCode = countryCode.toUpperCase();
   countryCode = isoCountryCodeConverter.convertTwoDigitToThree(countryCode);
   console.log(countryCode, city);
-  
-  const secrets = await this.find(
+
+  const publications = await this.find(
     {
       "location.countryCode": countryCode,
       "location.city": city,
     },
   )
-  .select('content backgroundColor publishAt fontFamily comments shares likes secretId likes.registerAt likes.author')
+  .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
   // .skip(2)
   .limit(20)
   .sort({ publishAt: -1, })
   .lean()
   .exec();
 
-  return secrets;
+  return publications;
 }
 
 // ##### LIKE SYSTEM ############
-// TODO: Verify secret was send from same user's location.
-SecretSchema.statics.setLiked =
-async function (secretId, author) {
-  console.log(secretId, "Holaaa");
-  const like = await this.findOne({ secretId }).exec();
+// TODO: Verify publication was send from same user's location.
+PublicationSchema.statics.setLiked =
+async function (publicationId, author) {
+  console.log(publicationId, "Holaaa");
+  const like = await this.findOne({ publicationId }).exec();
 
   // Change find method for an FindOne, this is useless
-  // secret.likes.findOne
+  // publication.likes.findOne
   const likeFormated = like.toObject();
   const userLike = likeFormated.likes
     .find(like => `${like.author}` == author);
@@ -229,7 +229,7 @@ async function (secretId, author) {
   });
 }
 
-// SecretSchema.index({ "location.location.coordinates": "2dsphere" });
-// db.secrets.createIndex({"location.location": "2dsphere"})
+// PublicationSchema.index({ "location.location.coordinates": "2dsphere" });
+// db.publications.createIndex({"location.location": "2dsphere"})
 
-module.exports = mongoose.model('Secret', SecretSchema);
+module.exports = mongoose.model('Publication', PublicationSchema);
