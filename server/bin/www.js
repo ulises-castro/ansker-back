@@ -33,8 +33,8 @@ app.set('port', port)
  */
 
 const ssl = {
-  key: fs.readFileSync('/home/alex/ssl/mydev.dev+5-key.pem'),
-  cert: fs.readFileSync('/home/alex/ssl/mydev.dev+5.pem')
+  key: fs.readFileSync(process.env.SSL_KEY),
+  cert: fs.readFileSync(process.env.SSL_CERT)
 }
 
 const choiceProtocol = !JSON.parse(process.env.PRODUCTION) ? [https, ssl] : [http, {}]
