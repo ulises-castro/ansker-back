@@ -9,8 +9,6 @@ const jwtOptions = {}
 
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD
 
-const URL_FRONT = process.env.URL_FRONT
-
 const getGoogleInfo = async (req, res, next) => {
   const {
     access_token
