@@ -25,6 +25,7 @@
           "alias": {
             "controllers": "./server/controllers",
             "routes": "./server/routes",
+            "auth": "./server/auth",
             "helpers": "./server/helpers",
             "models": "./server/models",
             "underscore": "lodash"
