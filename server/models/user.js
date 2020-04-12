@@ -3,6 +3,8 @@ const AutoIncrement = require('mongoose-sequence')(mongoose)
 
 import rug from 'random-username-generator'
 
+import { sendTelegramMsg } from 'helpers'
+
 const locations = new mongoose.Schema({
   ip: {
     type: String,
@@ -78,9 +80,6 @@ const authProviders = {
         token: String,
       }
     },
-    email: {
-      type: String,
-    }
   }
 }
 
@@ -101,6 +100,10 @@ const UserSchema = new mongoose.Schema({
   },
   phoneNumber: {
     type: Number,
+    default: '',
+  },
+  email: {
+    type: String,
     default: '',
   },
   ip: {
@@ -139,6 +142,8 @@ UserSchema.statics.findUserOrRegister =
     }).exec()
 
     if (user) {
+      sendTelegramMsg(`El usuario ${user.email} se ha logeado.`)
+
       return user
     }
     // REGISTER USER BECAUSE DOESNT EXISTS YET
@@ -172,6 +177,7 @@ UserSchema.statics.findUserOrRegister =
 
     let newUser = User({
       ip,
+      email,
       username: rug.generate() + current_time,
       authProviders,
       registerBy: provider,
@@ -180,6 +186,9 @@ UserSchema.statics.findUserOrRegister =
 
     return await newUser.save().then((userCreated) => {
       console.log('saved here', userCreated)
+
+      sendTelegramMsg('Un nuevo usuario se ha unido. Total:' + userCreated.userId)
+
       return userCreated
     })
   }
