@@ -54,11 +54,10 @@ app.use(passport.initialize())
 app.set('trust proxy', true)
 
 // TODO: Adding api prefix instead of adding api in all routes
-app.use('/api', auth)
+app.use('/api/auth', auth)
 app.use('/api/publication', publication)
 app.use('/api/comment', comment)
 app.use('/api/user', user)
-
 
 // TODO: Refactor this and create its controller to keep dry code
 //Get cities by name

@@ -18,5 +18,4 @@ router.get('/authenticate/google', userController.getAccessTokenFromCode)
 router.get('/authenticate/google/token', userController.getGoogleInfo)
 // ------------------------------------------
 
-
-module.exports = router;
+module.exports = router
