@@ -6,12 +6,7 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 
-const  https = require('https')
-
-import fs from 'fs'
-
 const passport = require('passport')
-const axios = require('axios')
 const cors = require('cors')
 
 // Routes
@@ -109,22 +104,8 @@ app.get('/api/searchPlace/:city', function (req, res) {
   })
 })
 
-// TODO: SocketIO, configure to send information
-// const server = require('http').createServer(app)
-const server = process.env.mode === 'development' ? https.createServer({
-  key: fs.readFileSync('/home/alex/ssl/mydev.dev+5-key.pem'),
-  cert: fs.readFileSync('/home/alex/ssl/mydev.dev+5.pem')
-}, app) : require('http').createServer(app)
-
-
 app.use((err, req, res, next) => {
   handlerError(err, res)
-})
-
-// Sending response that app is alive
-const port = process.env.port || '3000'
-server.listen(port, () => {
-  console.log(`Server is listening at port ${port}`)
 })
 
 export default app
