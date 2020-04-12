@@ -111,10 +111,11 @@ app.get('/api/searchPlace/:city', function (req, res) {
 
 // TODO: SocketIO, configure to send information
 // const server = require('http').createServer(app)
-const server = https.createServer({
-  key: fs.readFileSync('server.key'),
-  cert: fs.readFileSync('server.cert')
-}, app)
+const server = process.env.mode === 'development' ? https.createServer({
+  key: fs.readFileSync('/home/alex/ssl/mydev.dev+5-key.pem'),
+  cert: fs.readFileSync('/home/alex/ssl/mydev.dev+5.pem')
+}, app) : require('http').createServer(app)
+
 
 app.use((err, req, res, next) => {
   handlerError(err, res)
