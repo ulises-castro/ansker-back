@@ -105,17 +105,12 @@ app.get('/api/searchPlace/:city', function (req, res) {
   })
 })
 
-// SocketIO, configure to send information
-const server = require('http').createServer(app)
-// const io = require('socket.io')(server)
-
-// TODO: Remove this and reimplement about notifications
-// io.on('connection', () => {
-//   console.log('Cliente connected')
-//   io.emit("customEmit", {
-//     'hola': 'b'
-//   })
-// })
+// TODO: SocketIO, configure to send information
+// const server = require('http').createServer(app)
+const server = https.createServer({
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.cert')
+}, app)
 
 app.use((err, req, res, next) => {
   handlerError(err, res)
