@@ -133,7 +133,6 @@ UserSchema.plugin(AutoIncrement, {
 UserSchema.statics.findUserOrRegister =
   async function (userData, provider = 'facebook'
   ) {
-
     const searchBy = `authProviders.${provider}.id`
     const targetUserId = userData.id
 
@@ -146,12 +145,9 @@ UserSchema.statics.findUserOrRegister =
 
       return user
     }
-    // REGISTER USER BECAUSE DOESNT EXISTS YET
+
     const registerAt = new Date()
 
-    // Get user geolocation data ########################
-    // TODO: Remove file and provider api
-    // const userLocation = await getUserLocation(userData.ip)
     const {
       id,
       ip,
@@ -170,7 +166,6 @@ UserSchema.statics.findUserOrRegister =
       email,
       token,
       verified
-      // token: userData.facebookToken || '',
     }
 
     const current_time = new Date().getTime()
