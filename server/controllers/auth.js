@@ -17,6 +17,7 @@ let fbUrl = 'https://graph.facebook.com'
 jwtOptions.secret = process.env.JWT_SECRET_PASSWORD
 
 const joinOrLoginFacebook = async (facebookToken, req, res, next) => {
+  //TODO: Break into chucks of code this
   // Get AppToken ###########################
   const client_id = process.env.FACEBOOK_CLIENT_ID
   const client_secret = process.env.FACEBOOK_CLIENT_SECRET
@@ -41,7 +42,7 @@ const joinOrLoginFacebook = async (facebookToken, req, res, next) => {
   const [errAppFacebookData, appFacebookData] = await to(axios.get(url))
 
   if (errAppFacebookData) {
-    console.log(errAppFacebookData, accessToken.data)
+    // console.log(errAppFacebookData, accessToken.data)
     throw ErrorHandler('400', 'Ocurrió un error intentalo más tarde')
   }
 
@@ -78,7 +79,7 @@ const joinOrLoginFacebook = async (facebookToken, req, res, next) => {
 
   const userIdFB = facebookUserData.id
 
-  console.log(userIdFB, "Obteniendo el facebook ID")
+  // console.log(userIdFB, "Obteniendo el facebook ID")
 
   registerOrLoginUser(facebookUserData, res, next)
 }
@@ -95,7 +96,7 @@ async function loginFacebook  (req, res, next) {
 
   //Get last posit[ion
   // TODO: Get clear this code and break into chunks of code and files.
-  console.log(facebookData, "facebookDataEEEEE")
+  // console.log(facebookData, "facebookDataEEEEE")
 
   if (err) {
     console.log(err)
