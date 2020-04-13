@@ -16,7 +16,7 @@ const comment = require('routes/comment')
 const user = require('routes/user')
 
 // Load database connection
-import { ErrorHandler, handlerError } from './helpers/error'
+import { handlerError } from './helpers/error'
 
 import './db'
 
