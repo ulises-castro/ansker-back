@@ -20,6 +20,5 @@ export const distanceInKm = function distanceInKmBetweenEarthCoordinates(lat1, l
 }
 
 export function sendTelegramMsg(msg) {
-  axios.get(`https://api.telegram.org/bot'
-  ${process.env.TELEGRAM_TOKEN}/sendMessage?chat_id=183061705&text=${msg}`)
+  axios.get(`https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}/sendMessage?chat_id=183061705&text=${msg}`)
 }
