@@ -77,10 +77,6 @@ const joinOrLoginFacebook = async (facebookToken, req, res, next) => {
   facebookUserData.email = facebookUserData.email
   facebookUserData.verified_email = true
 
-  const userIdFB = facebookUserData.id
-
-  // console.log(userIdFB, "Obteniendo el facebook ID")
-
   registerOrLoginUser(facebookUserData, res, next)
 }
 
