@@ -3,6 +3,6 @@ const router = express.Router()
 
 import { getCity } from 'controllers/city'
 
-router.get('/api/searchPlace/city/:city', getCity)
+router.get('/city/:city', getCity)
 
 module.exports = router
