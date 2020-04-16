@@ -1,12 +1,15 @@
-// TODO: Refactor this and create its controller to keep dry code
+const allCities = require('all-the-cities-mongodb')
+const countries = require('country-data').countries
+
 //Get cities by name
 const getCity  = (req, res) => {
-
   let {
     city
   } = req.params
+
+  const userCountry = req.headers['CF-IPCountry'] || false
+
   city = city.toLowerCase()
-  // return console.log(req.params)
 
   let cities = allCities.filter(cityCurrent => {
     if (
@@ -28,14 +31,16 @@ const getCity  = (req, res) => {
       return 0
   })
 
-  // cities = cities.sort((a, b) => {
-  //   if (a.country === 'MX' && b.country !== 'MX')
-  //     return -1
-  //   else if (a.country !== 'MX' && b.country === 'MX')
-  //     return 1
-  //   else
-  //     return 0
-  // })
+  if (userCountry) {
+    cities = cities.sort((a, b) => {
+      if (a.country === userCountry && b.country !== userCountry)
+        return -1
+      else if (a.country !== userCountry && b.country === userCountry)
+        return 1
+      else
+        return 0
+    })
+  }
 
   cities = cities.slice(0, 5)
 

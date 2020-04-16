@@ -1,7 +1,3 @@
-// var proxy = require('express-http-proxy')
-const allCities = require('all-the-cities-mongodb')
-const countries = require('country-data').countries
-
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
@@ -15,7 +11,6 @@ const publication = require('routes/publication')
 const comment = require('routes/comment')
 const user = require('routes/user')
 const city = require('routes/city')
-
 
 // Load database connection
 import { handlerError } from './helpers/error'
@@ -61,7 +56,7 @@ app.use('/api/user', user)
 app.use('/api/publication', publication)
 app.use('/api/comment', comment)
 
-app.use('/api/searchPlace', city)
+app.use('/api/searchPlace/city', city)
 
 app.use((err, req, res, next) => {
   handlerError(err, res)
