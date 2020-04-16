@@ -61,7 +61,7 @@ app.use('/api/user', user)
 app.use('/api/publication', publication)
 app.use('/api/comment', comment)
 
-app.use('/api/searchPlace/city', city)
+app.use('/api/searchPlace', city)
 
 app.use((err, req, res, next) => {
   handlerError(err, res)
