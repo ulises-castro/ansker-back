@@ -10,7 +10,7 @@ const auth = require('routes/auth')
 const publication = require('routes/publication')
 const comment = require('routes/comment')
 const user = require('routes/user')
-const city = require('routes/city')
+const country = require('routes/country')
 
 // Load database connection
 import { handlerError } from './helpers/error'
@@ -56,7 +56,7 @@ app.use('/api/user', user)
 app.use('/api/publication', publication)
 app.use('/api/comment', comment)
 
-app.use('/api/searchPlace/city', city)
+app.use('/api/searchPlace', country)
 
 app.use((err, req, res, next) => {
   handlerError(err, res)
