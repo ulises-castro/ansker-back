@@ -102,8 +102,8 @@ const PublicationSchema = new Schema({
   content: {
     type: String,
     required: true,
-    maxLength: 120,
-    minLength: 5,
+    maxLength: 180,
+    minLength: 10,
     trim: true,
   },
   // TODO: Check in future updates is this will workss
