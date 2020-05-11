@@ -13,12 +13,7 @@ router.post('/publish', passport.authenticate('jwt', {
 }),
 
 async function(req, res) {
-
   console.log(req.body, "Req boyd");
-
-  // TODO: Added into middleware to avoid boilerplate
-  // const { location } = req.user.location;
-  // const { longitude, latitude } = req.body;
 
   const {
     CountryCode,
