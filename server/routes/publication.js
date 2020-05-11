@@ -11,26 +11,10 @@ import Comment from 'models/comment';
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
 }),
+
 async function(req, res) {
 
-  const availableColours = [
-    '#0000ff', '#ffa500', '#065535',
-    '#ffc0cb', '#ff0000', '#003366',
-    '#008080', '#8a2be2', '#666666',
-    '#ff1493'
-  ];
-
-  // console.log(req.user, "Holaaaa");
-  const invalidDataReceived = {
-    error: 'publication.publish.invalid'
-  };
-
   console.log(req.body, "Req boyd");
-
-  // Sended an invalid color, received an no-valid color
-  if (availableColours.indexOf(req.body.backgroundColor) === -1) {
-    res.status(403).json(invalidDataReceived);
-  }
 
   // TODO: Added into middleware to avoid boilerplate
   // const { location } = req.user.location;
@@ -47,7 +31,6 @@ async function(req, res) {
   const newPublication = new publication({
     author: req.user._id,
     content: req.body.content,
-    backgroundColor: req.body.backgroundColor,
     location: {
       countryCode: CountryCode,
       regionName: Region,
@@ -129,10 +112,9 @@ async function(req, res) {
   });
 });
 
-
+// TODO: Create controllers and routes files, Remove boiler plate from allbycity and allbyneardistance
 router.get('/allByCity',
 async function(req, res) {
-
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
   // const {
@@ -160,7 +142,7 @@ async function(req, res) {
       const userId = req.user._id;
       const userLiked = publication.likes.find((like) => `${like.author}` == userId)
 
-      // Set user as liked 
+      // Set user as liked
       publication.userLiked = (userLiked) ? true : false;
     }
 
@@ -205,7 +187,8 @@ async function(req, res) {
 
 });
 
-router.get('/:publicationId', async function(req, res) {
+router.get('/:publicationId',
+async function(req, res) {
   console.log(req.params, "Req");
 
   const { publicationId } = req.params;
