@@ -83,6 +83,15 @@ const location = {
   }
 };
 
+const fontContent = {
+  color: {
+    type: 'String',
+  },
+  family: {
+    type: 'String',
+  },
+}
+
 const PublicationSchema = new Schema({
   author: {
     type: ObjectId,
@@ -97,15 +106,16 @@ const PublicationSchema = new Schema({
     minLength: 5,
     trim: true,
   },
-  background: {
+  // TODO: Check in future updates is this will workss
+  backgroundImage: {
     type: 'String',
+    required: false,
   },
   backgroundColor: {
     type: 'String',
+    required: false,
   },
-  fontFamily: {
-    type: 'String',
-  },
+  fontContent,
   publishAt: {
     type: Date,
     default: Date.now,
@@ -147,10 +157,7 @@ async function (longitude, latitude) {
 
   return publications;
 }
-
 import isoCountryCodeConverter from '../services/convertCountryCodes';
-console.log();
-
 
 PublicationSchema.statics.getAllByNear =
 async function (longitude, latitude) {
@@ -201,8 +208,9 @@ async function (countryCode, city) {
   return publications;
 }
 
-// ##### LIKE SYSTEM ############
-// TODO: Verify publication was send from same user's location.
+// ##### LIKE SYSTEM ############ 
+// TODO: Verify publication was send from same user's location. - OLD VERSION
+// TODO: https://trello.com/c/lxxAEyYr/33-up-down-system-just-thinking-about-it 
 PublicationSchema.statics.setLiked =
 async function (publicationId, author) {
   console.log(publicationId, "Holaaa");
