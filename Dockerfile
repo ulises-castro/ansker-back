@@ -8,6 +8,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY ./src ./src
+COPY .env ./
 COPY .babelrc ./
 
-EXPOSE 3000 3000
+EXPOSE 3030 3030
