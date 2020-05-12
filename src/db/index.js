@@ -2,15 +2,15 @@
 
 const mongoose = require('mongoose');
 
-const uri = 'mongodb://127.0.0.1:27017/ansker';
+const uri = 'mongodb://587f9fd4b7b2:27017/ansker';
 
 const autoIndex = !!process.env.PRODUCTION;
 
 // Defining vars to connect to database
 const options = {
-  authSource: 'admin',
-  user: process.env.DATABASE_USER,
-  pass: process.env.DATABASE_PWD,
+  // authSource: 'admin',
+  // user: process.env.DATABASE_USER,
+  // pass: process.env.DATABASE_PWD,
   useNewUrlParser: true,
   useCreateIndex: true,
   autoIndex,
@@ -19,8 +19,6 @@ const options = {
   // reconnectTries: 30,
   // reconnectInterval: 500, // in ms
 };
-
-console.log(options);
 
 mongoose.connect(uri, options).then(() => {
   console.log('connected to database');

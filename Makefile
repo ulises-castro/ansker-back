@@ -9,6 +9,7 @@ debug: build
 	@docker run \
 			-p 3030:3030 \
 			-p 9229:9229 \
+            -it --link 587f9fd4b7b2:587f9fd4b7b2 \
 			-v $(ROOT_DIR)/src:/usr/src/app/src \
 			--entrypoint npm \
 			$(NAME):latest \
