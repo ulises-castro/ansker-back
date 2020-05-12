@@ -6,7 +6,7 @@
  */
 
 
-import app from '../app'
+import app from '../server'
 import debugLib from 'debug'
 import http from 'http'
 import https from 'https'
