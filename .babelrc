@@ -1,0 +1,27 @@
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ],
+        "alias": {
+          "controllers": "./src/controllers",
+          "routes": "./src/routes",
+          "auth": "./src/auth",
+          "helpers": "./src/helpers",
+          "models": "./src/models",
+          "underscore": "lodash"
+        }
+      }
+    ]
+  ],
+  "presets": [
+    ["@babel/preset-env",
+    {
+      "targets": { "node": "current" }
+    }]
+  ],
+  "sourceMaps": "inline"
+}
