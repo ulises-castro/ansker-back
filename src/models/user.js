@@ -180,8 +180,6 @@ UserSchema.statics.findUserOrRegister =
     })
 
     return await newUser.save().then((userCreated) => {
-      console.log('saved here', userCreated)
-
       sendTelegramMsg('Un nuevo usuario se ha unido. Total:' + userCreated.userId)
 
       return userCreated
@@ -199,13 +197,10 @@ UserSchema.statics.updateUserLocation =
       coordinates
     } = locationData.location
 
-    console.log(locationData)
-
     let isSameLocation = false
     if (user.locations && user.locations.length) {
       const userFormated = user.toObject()
       const lastLocation = userFormated.locations.length - 1
-      console.log(userFormated.locations[0], lastLocation)
 
       const isNewLocation = userFormated.locations[lastLocation]
       isSameLocation = (

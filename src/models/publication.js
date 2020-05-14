@@ -135,7 +135,6 @@ LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
 // TODO: implement paginate, scroll infinite
 PublicationSchema.statics.getAllByNear =
 async function (longitude, latitude) {
-  console.log(longitude, latitude);
   const publications = await this.find({
     "location.location": {
       $near: {
@@ -188,9 +187,9 @@ PublicationSchema.statics.getAllByCity =
 async function (countryCode, city) {
 
   // Adapting searching to searched
+  // TODO: Check this I'm no sure about this
   countryCode = countryCode.toUpperCase();
   countryCode = isoCountryCodeConverter.convertTwoDigitToThree(countryCode);
-  console.log(countryCode, city);
 
   const publications = await this.find(
     {
@@ -213,7 +212,6 @@ async function (countryCode, city) {
 // TODO: https://trello.com/c/lxxAEyYr/33-up-down-system-just-thinking-about-it 
 PublicationSchema.statics.setLiked =
 async function (publicationId, author) {
-  console.log(publicationId, "Holaaa");
   const like = await this.findOne({ publicationId }).exec();
 
   // Change find method for an FindOne, this is useless
