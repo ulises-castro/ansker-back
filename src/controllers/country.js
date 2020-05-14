@@ -20,7 +20,7 @@ const getCity  = (req, res) => {
     city
   } = req.params
 
-  const userCountry = req.headers['CF-IPCountry'] || false
+  const userCountry = req.headers['CF-IPCountry'] || 'MX'
 
   city = city.toLowerCase()
 

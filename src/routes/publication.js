@@ -13,8 +13,7 @@ router.post('/publish', passport.authenticate('jwt', {
 }),
 
 async function(req, res) {
-  console.log(req.body, "Req boyd");
-
+  // console.log(req.body, "Req boyd");
   const {
     CountryCode,
     Region,
@@ -52,7 +51,6 @@ router.post('/allByNearDistance', passport.authenticate('jwt', {
   session: false,
 }),
 async function(req, res) {
-
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
   const {
