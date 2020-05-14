@@ -11,9 +11,7 @@ import Comment from 'models/comment';
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
 }),
-
 async function(req, res) {
-  // console.log(req.body, "Req boyd");
   const {
     CountryCode,
     Region,
@@ -38,7 +36,6 @@ async function(req, res) {
 
   newPublication.save(function (err) {
     if (err) {
-      console.log(err, req.user);
       return res.status(403).json(invalidDataReceived);
     }
 
@@ -163,7 +160,6 @@ async function(req, res) {
   const author = userData._id;
 
   const publication = await Publication.setLiked(publicationId, author);
-  // console.log(publication);
 
   const rest = publication[1];
 
