@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const LikeSchema = new Schema({
-  author: {
+  authorId: {
     type: ObjectId,
     ref: 'User',
     required: true,
@@ -17,7 +17,7 @@ const LikeSchema = new Schema({
 });
 
 const randomAuthorSchema = new Schema({
-  author: {
+  authorId: {
     type: ObjectId,
     ref: 'User',
     required: true,
@@ -43,7 +43,7 @@ const CommentSchema = new Schema({
 });
 
 const ShareSchema = new Schema({
-  author: {
+  authorId: {
     type: ObjectId,
     ref: 'User',
     required: true,
@@ -60,11 +60,11 @@ const location = {
     type: String,
     required: true,
   },
-  regionName: {
-    type: String,
-    required: true,
-    index: true,
-  },
+  // regionName: {
+  //   type: String,
+  //   required: true,
+  //   index: true,
+  // },
   city: {
     type: String,
     required: true,
@@ -93,7 +93,7 @@ const fontContent = {
 }
 
 const PublicationSchema = new Schema({
-  author: {
+  authorId: {
     type: ObjectId,
     ref: 'User',
     required: true,

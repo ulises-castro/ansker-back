@@ -8,25 +8,42 @@ import Publication from 'models/publication';
 import User from 'models/user';
 import Comment from 'models/comment';
 
+import { ErrorHandler } from 'helpers/error'
+
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
 }),
 async function(req, res) {
   const {
-    CountryCode,
-    Region,
-    City,
-    longitude,
-    latitude,
+    countryCode,
+    city,
+    location,
+    content,
+    backgroundColor,
   } = req.body;
 
-  const newPublication = new publication({
-    author: req.user._id,
-    content: req.body.content,
-    location: {
-      countryCode: CountryCode,
-      regionName: Region,
-      city: City,
+  const backgroundColors = [
+    '#0e5181', '#028f92', '#247a3e',
+  ]
+
+  const invalidDataReceived = {
+      success: false,
+      message: 'No pudimos procesar tu solicitud, intentalo más tarde',
+  }
+
+  if (!backgroundColor || !backgroundColors.includes(backgroundColor)) {
+    return res.status(403).json(invalidDataReceived)
+  }
+
+  const longitude = location.coordinates[0]
+  const latitude = location.coordinates[1]
+
+  const newPublication = new Publication({
+    authorId: req.user._id,
+    content: content,
+    location:{
+      countryCode,
+      city,
       location: {
         type: 'Point',
         coordinates: [ Number(longitude), Number(latitude) ],
@@ -58,8 +75,6 @@ async function(req, res) {
     CountryCode,
   } = req.body;
 
-  console.log(req.body, req.params);
-
   const locationData = {
     countryCode: CountryCode,
     regionName: Region,
@@ -70,7 +85,7 @@ async function(req, res) {
     }
   };
 
-  // TODO: Using location to avoid make this request
+  // TODO: Using location to avoid make this request, CHECK THIS 
   let updatedUser = await User
     .updateUserLocation(locationData, req.user._id);
 
