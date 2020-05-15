@@ -43,11 +43,11 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')))
 
-require('./routes/passport.js')
+app.set('trust proxy', true)
 
 app.use(passport.initialize())
 
-app.set('trust proxy', true)
+require('./routes/passport.js')
 
 // TODO: Adding api prefix instead of adding api in all routes
 app.use('/api/auth', auth)
