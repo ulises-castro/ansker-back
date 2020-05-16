@@ -188,8 +188,8 @@ async function (countryCode, city) {
 
   // Adapting searching to searched
   // TODO: Check this I'm no sure about this
-  countryCode = countryCode.toUpperCase();
-  countryCode = isoCountryCodeConverter.convertTwoDigitToThree(countryCode);
+  // countryCode = countryCode.toUpperCase();
+  // countryCode = isoCountryCodeConverter.convertTwoDigitToThree(countryCode);
 
   const publications = await this.find(
     {
