@@ -16,11 +16,7 @@ jwtOptions.secretOrKey = process.env.JWT_SECRET_PASSWORD
 
 var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, done) {
 
-  console.log("Holaaa")
-
   User.findOne({ '_id': jwt_payload }, function(err, user) {
-    console.log('Aqui entro, payload', jwt_payload, user)
-
     if (err) {
       done(err, false)
     }
