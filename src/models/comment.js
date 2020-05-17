@@ -7,7 +7,7 @@ const ObjectId = Schema.Types.ObjectId;
 import Publication from './publication';
 
 const CommentSchema = new Schema({
-  author: {
+  authorId: {
     type: ObjectId,
     ref: 'User',
     require: true,
@@ -20,7 +20,8 @@ const CommentSchema = new Schema({
   content: {
     type: String,
     require: true,
-    minLength: 1,
+    minLength: 2,
+    maxlength: 500,
     trim: true,
   },
   publishAt: {

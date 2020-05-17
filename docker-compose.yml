@@ -1,0 +1,10 @@
+services:
+  node:
+    command: npm start
+    build:
+      context: nodejs/
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../nodejs:/usr/src/app
+    working_dir: '/usr/src/app'

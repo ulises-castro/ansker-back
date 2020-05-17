@@ -37,12 +37,9 @@ const joinOrLoginFacebook = async (facebookToken, req, res, next) => {
   // Checking appToken #########################
   url = `${fbUrl}/debug_token?input_token=${facebookToken}&access_token=${appToken}`
 
-  // console.log(accessToken.data.access_token, url)
-
   const [errAppFacebookData, appFacebookData] = await to(axios.get(url))
 
   if (errAppFacebookData) {
-    // console.log(errAppFacebookData, accessToken.data)
     throw ErrorHandler('400', 'Ocurrió un error intentalo más tarde')
   }
 
@@ -54,8 +51,6 @@ const joinOrLoginFacebook = async (facebookToken, req, res, next) => {
   } = appFacebookData.data.data
 
   if (app_id !== client_id) {
-    // console.log(appFacebookData.data)
-
     throw new Error(
       `Invalid app id: expected: app_id received ${app_id} instead of: ${client_id}`
     )
@@ -92,11 +87,7 @@ async function loginFacebook  (req, res, next) {
 
   //Get last posit[ion
   // TODO: Get clear this code and break into chunks of code and files.
-  // console.log(facebookData, "facebookDataEEEEE")
-
   if (err) {
-    console.log(err)
-
     return res.status(400).json({
       token: false,
       message: 'No pudimos procesar tu solicitud, intentalo más tarde',
@@ -141,7 +132,6 @@ const loginGoogle = async (req, res, next) => {
       },
     }))
 
-    // console.log(googleAuthData)
     if (googleAuthData) {
       const { data } = googleAuthData
 
@@ -192,7 +182,7 @@ async function registerOrLoginUser(userData, res, next) {
 
   if (err) next(err)
 
-  console.log(err, newUser)
+  // console.log(err, newUser)
 
   const token = jwt.sign(
     newUser.id, jwtOptions.secret

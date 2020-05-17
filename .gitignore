@@ -1,5 +1,6 @@
 node_module/*
 node_modules/*
-dist-server/*
+ssl/*
+dist/*
 .env
 .env.development

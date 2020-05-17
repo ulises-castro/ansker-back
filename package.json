@@ -5,7 +5,7 @@
   "nodemonConfig": {
     "exec": "npm run dev",
     "watch": [
-      "server/*",
+      "src/*",
       "public/*"
     ],
     "ignore": [
@@ -14,48 +14,17 @@
       "*.spec.js"
     ]
   },
-  "babel": {
-    "plugins": [
-      [
-        "module-resolver",
-        {
-          "root": [
-            "./src"
-          ],
-          "alias": {
-            "controllers": "./server/controllers",
-            "routes": "./server/routes",
-            "auth": "./server/auth",
-            "helpers": "./server/helpers",
-            "models": "./server/models",
-            "underscore": "lodash"
-          }
-        }
-      ]
-    ],
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "esmodules": true
-          }
-        }
-      ]
-    ]
-  },
   "jest": {
     "testEnvironment": "node"
   },
   "scripts": {
-    "start": "npm run prod",
+    "start": "nodemon --exec 'babel-node -r ./node_modules/dotenv/config --inspect=0.0.0.0 src/bin/www.js'",
+    "prod": "NODE_ENV=production npm-run-all build start",
+    "dev": "NODE_ENV=development npm-run-all build start",
     "build": "npm-run-all clean transpile",
-    "server": "node -r dotenv/config ./dist-server/bin/www",
-    "dev": "NODE_ENV=development npm-run-all build server",
-    "prod": "NODE_ENV=production npm-run-all build server",
-    "transpile": "babel ./server --out-dir dist-server",
-    "clean": "rimraf dist-server",
-    "watch:dev": "nodemon",
+    "clean": "rm -rf dist",
+    "transpile": "babel src --out-dir dist",
+    "serve": "node -r ./node_modules/dotenv/config dist/server.js",
     "test": "jest"
   },
   "dependencies": {
@@ -86,6 +55,7 @@
   "devDependencies": {
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
+    "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.0.0",
     "babel-plugin-module-resolver": "^4.0.0",
     "eslint": "^6.8.0",
