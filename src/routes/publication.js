@@ -1,12 +1,13 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
-const passport = require('passport');
-const passportJWT = require('passport-jwt');
+const passport = require('passport')
 
-import Publication from 'models/publication';
-import User from 'models/user';
-import Comment from 'models/comment';
+import Publication from 'models/publication'
+import User from 'models/user'
+import Comment from 'models/comment'
+
+import { getAllByCity, getAll } from 'controllers/publication'
 
 import { ErrorHandler } from 'helpers/error'
 
@@ -66,46 +67,12 @@ async function(req, res) {
 // TODO: Create controllers and routes files, Remove boiler plate from allbycity and allbyneardistance
 router.get('/filter/:countryCode/:city', passport.authenticate('jwt', {
   session: false,
-}),
-async function(req, res) {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+}), getAllByCity)
 
-  const {
-    city,
-    countryCode,
-  } = req.params;
+router.get('/filter/all', passport.authenticate('jwt', {
+  session: false,
+}), getAll)
 
-  let publications = await Publication
-    .getAllByCity(countryCode, city);
-
-    // console.log(publications, "publications");
-  // Passing only how many likes|comments|shares it has
-  publications = publications.map(publication => {
-    let { likes, comments, shares } = publication
-
-    if (req.user) {
-      const userId = req.user._id
-      const userLiked = publication.likes.find((like) => `${like.author}` == userId)
-
-      // Set user as liked
-      publication.userLiked = (userLiked) ? true : false
-    }
-
-    // Remove _id for security reasons
-    delete publication._id
-
-    publication.likes = likes.length
-    publication.city = city
-    publication.comments = comments.length
-    publication.shares = shares.length
-
-    return publication
-  })
-
-  res.status(200).json({
-    publications,
-  })
-})
 
 router.post('/liked', passport.authenticate('jwt', {
   session: false,
