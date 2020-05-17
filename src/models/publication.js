@@ -158,46 +158,10 @@ async function (longitude, latitude) {
 }
 import isoCountryCodeConverter from '../services/convertCountryCodes';
 
-PublicationSchema.statics.getAllByNear =
-async function (longitude, latitude) {
-  console.log(longitude, latitude);
-  const publications = await this.find({
-    "location.location": {
-      $near: {
-        $geometry: {
-            type: "Point" ,
-            coordinates: [ longitude, latitude ]
-        },
-        $maxDistance: 5000,
-        $minDistance: 0,
-      },
-    },
-  })
-  .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
-  // .skip(2)
-  .limit(20)
-  .sort({ publishAt: -1, })
-  .lean()
-  .exec();
-
-  return publications;
-}
-
-PublicationSchema.statics.getAllByCity =
-async function (countryCode, city) {
-
-  // Adapting searching to searched
-  // TODO: Check this I'm no sure about this
-  // countryCode = countryCode.toUpperCase();
-  // countryCode = isoCountryCodeConverter.convertTwoDigitToThree(countryCode);
-
-  const publications = await this.find(
-    {
-      "location.countryCode": countryCode,
-      "location.city": city,
-    },
-  )
-  .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
+PublicationSchema.statics.getBy =
+async function (searchBy = {}) {
+  const publications = await this.find(searchBy)
+  .select('content backgroundColor publishAt location.city fontFamily comments shares likes publicationId likes.registerAt likes.author')
   // .skip(2)
   .limit(20)
   .sort({ publishAt: -1, })
@@ -210,6 +174,8 @@ async function (countryCode, city) {
 // ##### LIKE SYSTEM ############ 
 // TODO: Verify publication was send from same user's location. - OLD VERSION
 // TODO: https://trello.com/c/lxxAEyYr/33-up-down-system-just-thinking-about-it 
+
+// TODO: Remove find 222 line and use moongosee to find if user liked publication
 PublicationSchema.statics.setLiked =
 async function (publicationId, author) {
   const like = await this.findOne({ publicationId }).exec();
@@ -220,18 +186,14 @@ async function (publicationId, author) {
   const userLike = likeFormated.likes
     .find(like => `${like.author}` == author);
 
-    // console.log(userLike,"userlike", likeFormarted, (like.likes[0].author == author), author)
-  let rest = false;
   if (userLike) {
     like.likes.id(userLike._id).remove();
-    rest = true;
   } else {
     like.likes.push({ author });
   }
 
   return await like.save().then(like => {
-    // TODO: check this, return only like, rest is useless now
-    return [like, rest];
+    return [like];
   });
 }
 
@@ -239,3 +201,30 @@ async function (publicationId, author) {
 // db.publications.createIndex({"location.location": "2dsphere"})
 
 module.exports = mongoose.model('Publication', PublicationSchema);
+
+
+
+// PublicationSchema.statics.getAllByNear =
+// async function (longitude, latitude) {
+//   console.log(longitude, latitude);
+//   const publications = await this.find({
+//     "location.location": {
+//       $near: {
+//         $geometry: {
+//             type: "Point" ,
+//             coordinates: [ longitude, latitude ]
+//         },
+//         $maxDistance: 5000,
+//         $minDistance: 0,
+//       },
+//     },
+//   })
+//   .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
+//   // .skip(2)
+//   .limit(20)
+//   .sort({ publishAt: -1, })
+//   .lean()
+//   .exec();
+
+//   return publications;
+// }

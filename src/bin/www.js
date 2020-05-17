@@ -41,7 +41,7 @@ const choiceProtocol = !JSON.parse(process.env.PRODUCTION) ? [https, ssl] : [htt
 
 const server = https.createServer(choiceProtocol[1], app)
 
-server.listen(port)
+server.listen(port, '0.0.0.0')
 server.on('error', onError)
 server.on('listening', onListening)
 
