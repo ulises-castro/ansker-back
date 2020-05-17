@@ -10,19 +10,14 @@ router.post('/publish', passport.authenticate('jwt', {
   session: false,
 }),
 async function (req, res) {
-
   const author = req.user._id;
   let { publicationId, content } = req.body;
-
-  console.log(req.body, 'qué pedo mi perro');
 
   const commentData = {
     publicationId,
     content,
     author,
   };
-
-  console.log(commentData, "comentarios");
 
   const response = await Comment.publish(publicationId, commentData);
 
