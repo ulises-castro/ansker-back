@@ -12,7 +12,12 @@ const getParsedPublication = () => {
 export const getAll = async (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
 
-  let publications = await Publication.getBy()
+  const {
+    pageNumber
+  } = req.params
+
+
+  let publications = await Publication.getBy({}, pageNumber)
 
   // Passing only how many likes|comments|shares it has
   publications = publications.map(publication => {
