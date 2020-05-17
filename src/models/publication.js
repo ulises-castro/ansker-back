@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-const AutoIncrement = require('mongoose-sequence')(mongoose);
-const { Schema } = mongoose;
+import mongoose from 'mongoose'
+const AutoIncrement = require('mongoose-sequence')(mongoose)
+const { Schema } = mongoose
 
-const ObjectId = mongoose.Schema.Types.ObjectId;
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 const LikeSchema = new Schema({
   authorId: {
@@ -14,7 +14,7 @@ const LikeSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-});
+})
 
 const randomAuthorSchema = new Schema({
   authorId: {
@@ -31,7 +31,7 @@ const randomAuthorSchema = new Schema({
   backgroundColor: {
     type: 'String',
   },
-});
+})
 
 const CommentSchema = new Schema({
   commentId: {
@@ -40,7 +40,7 @@ const CommentSchema = new Schema({
     required: true,
     index: true,
   },
-});
+})
 
 const ShareSchema = new Schema({
   authorId: {
@@ -53,7 +53,7 @@ const ShareSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-});
+})
 
 const location = {
   countryCode: {
@@ -81,7 +81,7 @@ const location = {
       required: true,
     },
   }
-};
+}
 
 const fontContent = {
   color: {
@@ -125,13 +125,13 @@ const PublicationSchema = new Schema({
   comments: [CommentSchema],
   shares: [ShareSchema],
   commentsAuthors: [randomAuthorSchema],
-});
+})
 
-PublicationSchema.plugin(AutoIncrement, { inc_field: 'publicationId' });
-LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' });
-// CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
+PublicationSchema.plugin(AutoIncrement, { inc_field: 'publicationId' })
+LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' })
+// CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' })
 
-// PublicationSchema.set('toJSON', { getters: true, virtuals: true });
+// PublicationSchema.set('toJSON', { getters: true, virtuals: true })
 // TODO: implement paginate, scroll infinite
 PublicationSchema.statics.getAllByNear =
 async function (longitude, latitude) {
@@ -152,23 +152,26 @@ async function (longitude, latitude) {
   .limit(20)
   .sort({ publishAt: -1, })
   .lean()
-  .exec();
+  .exec()
 
-  return publications;
+  return publications
 }
-import isoCountryCodeConverter from '../services/convertCountryCodes';
+// import isoCountryCodeConverter from '../services/convertCountryCodes'
 
 PublicationSchema.statics.getBy =
-async function (searchBy = {}) {
-  const publications = await this.find(searchBy)
+async function (searchBy = {}, pageNumber = 1) {
+  const skip = (pageNumber - 1) * 2
+  const limit = pageNumber * 2
+
+  const publications = await this.find(searchBy, pageNumber)
   .select('content backgroundColor publishAt location.city fontFamily comments shares likes publicationId likes.registerAt likes.author')
-  // .skip(2)
-  .limit(20)
+  .skip(skip)
+  .limit(limit)
   .sort({ publishAt: -1, })
   .lean()
-  .exec();
+  .exec()
 
-  return publications;
+  return publications
 }
 
 // ##### LIKE SYSTEM ############ 
@@ -178,35 +181,35 @@ async function (searchBy = {}) {
 // TODO: Remove find 222 line and use moongosee to find if user liked publication
 PublicationSchema.statics.setLiked =
 async function (publicationId, author) {
-  const like = await this.findOne({ publicationId }).exec();
+  const like = await this.findOne({ publicationId }).exec()
 
   // Change find method for an FindOne, this is useless
   // publication.likes.findOne
-  const likeFormated = like.toObject();
+  const likeFormated = like.toObject()
   const userLike = likeFormated.likes
-    .find(like => `${like.author}` == author);
+    .find(like => `${like.author}` == author)
 
   if (userLike) {
-    like.likes.id(userLike._id).remove();
+    like.likes.id(userLike._id).remove()
   } else {
-    like.likes.push({ author });
+    like.likes.push({ author })
   }
 
   return await like.save().then(like => {
-    return [like];
-  });
+    return [like]
+  })
 }
 
-// PublicationSchema.index({ "location.location.coordinates": "2dsphere" });
+// PublicationSchema.index({ "location.location.coordinates": "2dsphere" })
 // db.publications.createIndex({"location.location": "2dsphere"})
 
-module.exports = mongoose.model('Publication', PublicationSchema);
+module.exports = mongoose.model('Publication', PublicationSchema)
 
 
 
 // PublicationSchema.statics.getAllByNear =
 // async function (longitude, latitude) {
-//   console.log(longitude, latitude);
+//   console.log(longitude, latitude)
 //   const publications = await this.find({
 //     "location.location": {
 //       $near: {
@@ -224,7 +227,7 @@ module.exports = mongoose.model('Publication', PublicationSchema);
 //   .limit(20)
 //   .sort({ publishAt: -1, })
 //   .lean()
-//   .exec();
+//   .exec()
 
-//   return publications;
+//   return publications
 // }
