@@ -161,7 +161,7 @@ async function (longitude, latitude) {
 PublicationSchema.statics.getBy =
 async function (searchBy = {}, pageNumber = 1) {
   const skip = (pageNumber - 1) * 2
-  const limit = pageNumber * 2
+  const limit = 2
 
   const publications = await this.find(searchBy, pageNumber)
   .select('content backgroundColor publishAt location.city fontFamily comments shares likes publicationId likes.registerAt likes.author')
