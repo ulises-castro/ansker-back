@@ -202,10 +202,7 @@ async function (publicationId, author) {
 
 // PublicationSchema.index({ "location.location.coordinates": "2dsphere" })
 // db.publications.createIndex({"location.location": "2dsphere"})
-
 module.exports = mongoose.model('Publication', PublicationSchema)
-
-
 
 // PublicationSchema.statics.getAllByNear =
 // async function (longitude, latitude) {

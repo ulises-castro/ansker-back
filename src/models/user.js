@@ -145,7 +145,7 @@ UserSchema.statics.findUserOrRegister =
     }).exec()
 
     if (user) {
-      sendTelegramMsg(`El usuario ${user.email} se ha logeado.`)
+      sendTelegramMsg(`El usuario ${user.username} se ha logeado.`)
 
       return user
     }

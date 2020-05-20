@@ -1,11 +1,13 @@
-import to from 'await-to-js'
-
 import Publication from 'models/publication'
 import Comment from 'models/comment'
 
-import { ErrorHandler } from 'helpers/error'
+import { formatText, sendTelegramMsg} from 'helpers'
 
 const getParsedPublication = () => {
+}
+
+export const report = async (req, res) => {
+  sendTelegramMsg(`REPORTED PUBLICATION \n El usuario ${req.user._id}, message:  \n .`)
 }
 
 // TODO: Create controllers and routes files, Remove boiler plate from allbycity and allbyneardistance
@@ -15,7 +17,6 @@ export const getAll = async (req, res) => {
   const {
     pageNumber
   } = req.params
-
 
   let publications = await Publication.getBy({}, pageNumber)
 
@@ -125,7 +126,7 @@ export const getPublication = async (req, res) => {
 }
 
 export const publish = async (req, res) => {
-  const {
+  let {
     countryCode,
     city,
     location,
@@ -149,11 +150,13 @@ export const publish = async (req, res) => {
   const longitude = location.coordinates[0]
   const latitude = location.coordinates[1]
 
+  content = formatText(content)
+
   const newPublication = new Publication({
     authorId: req.user._id,
     content,
     backgroundColor,
-    location:{
+    location: {
       countryCode,
       city,
       location: {
