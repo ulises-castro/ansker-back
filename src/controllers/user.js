@@ -1,13 +1,22 @@
 'use strict'
-import to from 'await-to-js'
-import axios from 'axios'
 
-import User from 'models/user'
+import { sendTelegramMsg } from 'helpers'
 
-const jwt = require('jsonwebtoken')
-const jwtOptions = {}
+export const sendContactMessage = (req, res) => {
+  const {
+    message
+  } = req.body
 
-jwtOptions.secret = process.env.JWT_SECRET_PASSWORD
+  try {
+    sendTelegramMsg(`CONTACT MESSAGE: \n User - "${req.user._id}" \n ${message}`)
 
-export {
+    res.status(200).json({
+      success: true,
+    })
+  } catch {
+    res.status(403).json({
+      success: false,
+      message: 'No se pudo enviar el mensaje, por favor intentalo de nuevo más tarde'
+    })
+  }
 }

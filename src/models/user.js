@@ -106,6 +106,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  desactivated: {
+    type: Boolean,
+    default: false,
+  },
   ip: {
     type: String,
   },
@@ -141,7 +145,7 @@ UserSchema.statics.findUserOrRegister =
     }).exec()
 
     if (user) {
-      sendTelegramMsg(`El usuario ${user.email} se ha logeado.`)
+      sendTelegramMsg(`El usuario ${user.username} se ha logeado.`)
 
       return user
     }
@@ -180,7 +184,7 @@ UserSchema.statics.findUserOrRegister =
     })
 
     return await newUser.save().then((userCreated) => {
-      sendTelegramMsg('Un nuevo usuario se ha unido. Total:' + userCreated.userId)
+      sendTelegramMsg('NUEVO USUARIO - Total: \n ' + userCreated.userId)
 
       return userCreated
     })
