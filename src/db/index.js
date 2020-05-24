@@ -7,7 +7,6 @@ const uri = 'mongodb://0.0.0.0:27017/ansker'
 
 // const uri = 'mongodb://srv-captain--ansker-mongodb/ansker'
 
-
 const autoIndex = !!process.env.PRODUCTION
 
 // Defining vars to connect to database
