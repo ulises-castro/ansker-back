@@ -19,6 +19,7 @@ async function (req, res) {
     author,
   };
 
+  // Implements catch of bugs
   const response = await Comment.publish(publicationId, commentData);
 
   if (response) {

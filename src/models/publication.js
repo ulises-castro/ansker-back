@@ -33,15 +33,6 @@ const randomAuthorSchema = new Schema({
   },
 })
 
-const CommentSchema = new Schema({
-  commentId: {
-    type: ObjectId,
-    ref: 'Comment',
-    required: true,
-    index: true,
-  },
-})
-
 const ShareSchema = new Schema({
   authorId: {
     type: ObjectId,
@@ -122,7 +113,6 @@ const PublicationSchema = new Schema({
   },
   location,
   likes: [LikeSchema],
-  comments: [CommentSchema],
   shares: [ShareSchema],
   commentsAuthors: [randomAuthorSchema],
 })
