@@ -32,6 +32,7 @@ const CommentSchema = new Schema({
 
 CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' });
 
+// TODO: fix this, and add random avatars
 CommentSchema.statics.publish =
 async function(publicationId, commentData) {
 
