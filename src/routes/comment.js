@@ -29,7 +29,8 @@ async function (req, res) {
 
   res.status(403).json({
     success: false,
-    error: 'publication.publish.comment',
+    message: 'No pudimos publicar tu comentario, inténtalo más tarde.',
+    // error: 'publication.publish.comment',
   });
 });
 
