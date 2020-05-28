@@ -48,8 +48,7 @@ CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' })
 // TODO: fix this, and add random avatars
 CommentSchema.statics.publish =
 async function(publicationId, commentData) {
-
-  const { author, backgroundColor } = commentData
+  // const { author, backgroundColor } = commentData
 
   const publication = await Publication
     .findOne({ 'publicationId': Number(publicationId) }).exec()
@@ -60,13 +59,6 @@ async function(publicationId, commentData) {
 
   newComment = await newComment.save()
   .then(newComment => newComment)
-
-  // Create comment in publications models and save
-  publication.comments.push({
-    'commentId': newComment._id
-  })
-
-  await publication.save().then(comment => comment)
 
   return publication
 }
