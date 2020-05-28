@@ -49,7 +49,6 @@ CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' })
 CommentSchema.statics.publish =
 async function(publicationId, commentData) {
   // const { author, backgroundColor } = commentData
-
   const publication = await Publication
     .findOne({ 'publicationId': Number(publicationId) }).exec()
 
@@ -61,6 +60,16 @@ async function(publicationId, commentData) {
   .then(newComment => newComment)
 
   return publication
+}
+
+CommentSchema.statics.getAll = async function (publicationId) {
+  const publication = await Publication
+  .findOne({ 'publicationId': Number(publicationId) }).exec()
+
+  const comments = await this.find({ publicationId: publication._id })
+  .select('-authorId -_id -likes')
+
+  return comments
 }
 
 module.exports = mongoose.model('Comments', CommentSchema)

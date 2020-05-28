@@ -4,7 +4,8 @@ const router = express.Router()
 const passport = require('passport')
 
 import {
-  publish
+  publish,
+  getAll
 } from 'controllers/comment'
 
 router.post(
@@ -13,6 +14,11 @@ router.post(
     session: false
   }),
   publish
+)
+
+router.get('/getAll/:publicationId', passport.authenticate('jwt', {
+    session: false
+  }), getAll
 )
 
 module.exports = router

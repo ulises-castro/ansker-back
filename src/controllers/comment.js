@@ -25,3 +25,20 @@ export const publish = async (req, res) => {
     message: 'No pudimos publicar tu comentario, inténtalo más tarde.',
   })
 }
+
+export const getAll = async (req, res) => {
+  const { publicationId } = req.params
+  const comments = await Comment.getAll(publicationId)
+
+  if (comments) {
+    res.status(200).json({
+      success: true,
+      comments
+    })
+  }
+
+  res.status(403).json({
+    success: false,
+    message: 'No pudimos publicar tu comentario, inténtalo más tarde.',
+  })
+}
