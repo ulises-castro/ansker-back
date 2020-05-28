@@ -34,7 +34,7 @@ export const getAll = async (req, res) => {
     }
 
     // Remove _id for security reasons
-    delete publication._id
+    
 
     publication.likes = likes.length
     publication.shares = shares.length
@@ -76,8 +76,6 @@ export const getAllByCity = async (req, res) => {
     }
 
     // Remove _id for security reasons
-    delete publication._id
-
     publication.likes = likes.length
     publication.shares = shares.length
 
@@ -112,7 +110,7 @@ export const getPublication = async (req, res) => {
     })
   }
   // Remove sensitive data and useless information
-  delete publication._id
+  
   publication.likes = publication.likes.length
   publication.commentsData = comments
   // publication.comments = comments.length

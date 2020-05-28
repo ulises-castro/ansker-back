@@ -137,7 +137,7 @@ async function (longitude, latitude) {
       },
     },
   })
-  .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
+  .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author -_id -_authorId')
   // .skip(2)
   .limit(20)
   .sort({ publishAt: -1, })
@@ -154,7 +154,7 @@ async function (searchBy = {}, pageNumber = 1) {
   const limit = 2
 
   const publications = await this.find(searchBy, pageNumber)
-  .select('content backgroundColor publishAt location.city fontFamily comments shares likes publicationId likes.registerAt likes.author')
+  .select('content backgroundColor publishAt location.city fontFamily comments shares likes publicationId likes.registerAt likes.author -_id -_authorId')
   .skip(skip)
   .limit(limit)
   .sort({ publishAt: -1, })
@@ -164,9 +164,9 @@ async function (searchBy = {}, pageNumber = 1) {
   return publications
 }
 
-// ##### LIKE SYSTEM ############ 
+// ##### LIKE SYSTEM ############
 // TODO: Verify publication was send from same user's location. - OLD VERSION
-// TODO: https://trello.com/c/lxxAEyYr/33-up-down-system-just-thinking-about-it 
+// TODO: https://trello.com/c/lxxAEyYr/33-up-down-system-just-thinking-about-it
 
 // TODO: Remove find 222 line and use moongosee to find if user liked publication
 PublicationSchema.statics.setLiked =
