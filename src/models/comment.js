@@ -62,12 +62,21 @@ async function(publicationId, commentData) {
   return publication
 }
 
-CommentSchema.statics.getAll = async function (publicationId) {
+CommentSchema.statics.getAll = async function (publicationId,userId) {
   const publication = await Publication
   .findOne({ 'publicationId': Number(publicationId) }).exec()
 
-  const comments = await this.find({ publicationId: publication._id })
-  .select('-authorId -_id -likes')
+  let comments = await this.find({ publicationId: publication._id })
+  .select('-_id -likes')
+  .lean()
+
+  comments = comments.map(comment => {
+    comment.userAuthor = (comment.authorId === userId) ? true : false
+
+    delete comment.authorId
+
+    return comment
+  })
 
   return comments
 }
