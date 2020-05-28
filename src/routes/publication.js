@@ -73,7 +73,6 @@ module.exports = router
 //     delete publication._id
 
 //     publication.likes = likes.length
-//     publication.comments = comments.length
 //     publication.shares = shares.length
 
 //     return publication

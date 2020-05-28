@@ -22,7 +22,7 @@ export const getAll = async (req, res) => {
 
   // Passing only how many likes|comments|shares it has
   publications = publications.map(publication => {
-    let { likes, comments, shares } = publication
+    let { likes, shares } = publication
 
     // TODO: Factorize this, become to one function
     if (req.user) {
@@ -37,7 +37,6 @@ export const getAll = async (req, res) => {
     delete publication._id
 
     publication.likes = likes.length
-    publication.comments = comments.length
     publication.shares = shares.length
 
     return publication
@@ -66,7 +65,7 @@ export const getAllByCity = async (req, res) => {
 
   // Passing only how many likes|comments|shares it has
   publications = publications.map(publication => {
-    let { likes, comments, shares } = publication
+    let { likes, shares } = publication
 
     if (req.user) {
       const userId = req.user._id
@@ -80,7 +79,6 @@ export const getAllByCity = async (req, res) => {
     delete publication._id
 
     publication.likes = likes.length
-    publication.comments = comments.length
     publication.shares = shares.length
 
     return publication
@@ -98,7 +96,7 @@ export const getPublication = async (req, res) => {
 
   const publication = await Publication
   .findOne({ publicationId })
-  .select('content backgroundColor publishAt fontFamily comments.content comments.registerAt likes.author')
+  .select('content backgroundColor publishAt fontFamily likes.author')
   .lean().exec()
 
   // TODO: Use populate here instead of consult
@@ -117,7 +115,7 @@ export const getPublication = async (req, res) => {
   delete publication._id
   publication.likes = publication.likes.length
   publication.commentsData = comments
-  publication.comments = comments.length
+  // publication.comments = comments.length
 
   res.status(200).json({
     success: true,
