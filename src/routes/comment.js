@@ -18,7 +18,8 @@ router.post(
 
 router.get('/getAll/:publicationId', passport.authenticate('jwt', {
     session: false
-  }), getAll
+  }),
+  getAll
 )
 
 module.exports = router

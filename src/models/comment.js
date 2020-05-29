@@ -81,6 +81,8 @@ CommentSchema.statics.getAll = async function (publicationId,userId) {
   return comments
 }
 
+CommentSchema.set('toJSON', { getters: true, virtuals: true })
+
 module.exports = mongoose.model('Comments', CommentSchema)
 
   // TODO: Implement avatars functionalities

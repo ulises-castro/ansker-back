@@ -29,11 +29,11 @@ export const publish = async (req, res) => {
 export const getAll = async (req, res) => {
   const { publicationId } = req.params
 
-  const userId = req.user._id
+  const userId = req.user.id
   const comments = await Comment.getAll(publicationId, userId)
 
   if (comments) {
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       comments
     })
