@@ -5,17 +5,15 @@ const mongoose = require('mongoose')
 // const uri = 'mongodb://587f9fd4b7b2:27017/ansker'
 // const uri = 'mongodb://0.0.0.0:27017/ansker'
 
-const uri = 'mongodb://srv-captain--ansker-mongodb/ansker'
+const uri = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PWD}@srv-captain--ansker-mongodb/ansker?authSource=admin`
 
 const autoIndex = (process.env.NODE_ENV === 'development')
 
-console.log(process.env.DATABASE_USER)
-
 // Defining vars to connect to database
 const options = {
-  authSource: 'admin',
-  user: process.env.DATABASE_USER,
-  pass: process.env.DATABASE_PWD,
+  // authSource: 'admin',
+  // user: process.env.DATABASE_USER,
+  // pass: process.env.DATABASE_PWD,
   // userMongoClient: true,
   useNewUrlParser: true,
   useCreateIndex: true,
