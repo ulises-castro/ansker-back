@@ -32,12 +32,12 @@ app.set('port', port)
  * Listen on provided port, on all network interfaces.
  */
 
-const ssl = {
-  key: fs.readFileSync(process.env.SSL_KEY),
-  cert: fs.readFileSync(process.env.SSL_CERT)
-}
+// const ssl = {
+//   key: fs.readFileSync(process.env.SSL_KEY),
+//   cert: fs.readFileSync(process.env.SSL_CERT)
+// }
 
-const choiceProtocol = (process.env.NODE_ENV === 'development') ? [https, ssl] : [http, {}]
+// const choiceProtocol = (process.env.NODE_ENV === 'development') ? [https, ssl] : [http, {}]
 
 const server = http.createServer(app)
 
