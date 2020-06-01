@@ -21,7 +21,7 @@
     "dev": "NODE_ENV=development npm-run-all build startDev",
     "startDev": "nodemon --exec 'babel-node -r ./node_modules/dotenv/config --inspect=0.0.0.0 src/bin/www.js'",
     "prod": "NODE_ENV=production npm-run-all build startProd",
-    "startProd": "nodemon --exec 'babel-node -r src/bin/www.js'",
+    "startProd": "node dist/bin/www.js",
     "build": "npm-run-all clean transpile",
     "clean": "rm -rf dist",
     "transpile": "babel src --out-dir dist",
