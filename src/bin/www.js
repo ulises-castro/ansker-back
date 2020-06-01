@@ -41,7 +41,12 @@ const choiceProtocol = (process.env.NODE_ENV === 'development') ? [https, ssl] :
 
 const server = https.createServer({}, app)
 
-server.listen(port, '0.0.0.0')
+// server.listen(port, '0.0.0.0')
+server.listen(80, function(){
+  console.log("server is running on port 80");
+})
+
+
 server.on('error', onError)
 server.on('listening', onListening)
 
