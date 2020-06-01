@@ -39,10 +39,9 @@ const ssl = {
 
 const choiceProtocol = (process.env.NODE_ENV === 'development') ? [https, ssl] : [http, {}]
 
-const server = http.createServer({}, app)
+const server = http.createServer(app)
 
 // server.listen(port, '0.0.0.0')
-
 server.on('error', onError)
 server.on('listening', onListening)
 
