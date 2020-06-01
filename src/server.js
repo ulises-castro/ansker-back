@@ -54,7 +54,7 @@ app.use('/api/auth', auth)
 app.use('/api/user', user)
 
 app.use('/api/publication', publication)
-app.use('/api/comment', comment)
+app.use('/api/publication/comment', comment)
 
 app.use('/api/searchPlace', country)
 
