@@ -37,7 +37,7 @@ const ssl = {
   cert: fs.readFileSync(process.env.SSL_CERT)
 }
 
-const choiceProtocol = !JSON.parse(process.env.production) ? [https, ssl] : [http, {}]
+const choiceProtocol = (process.env.NODE_ENV === 'development') ? [https, ssl] : [http, {}]
 
 const server = https.createServer(choiceProtocol[1], app)
 
