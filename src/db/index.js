@@ -1,9 +1,11 @@
 const mongoose = require('mongoose')
 
-let uri = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PWD}@srv-captain--ansker-mongodb/ansker?authSource=admin`
+let uri = `mongodb://srv-captain--ansker-mongodb/ansker`
 
 let customOptions = {
-  useMongoClient: true,
+  authSource: 'admin',
+  user: process.env.DATABASE_USER,
+  pass: process.env.DATABASE_PWD,
   autoIndex: false,
 }
 
@@ -12,16 +14,13 @@ if (process.env.NODE_ENV === 'development') {
 
   customOptions = {
     autoIndex: true,
-    useNewUrlParser: true,
   }
 }
 
 const options = {
-  // authSource: 'admin',
-  // user: process.env.DATABASE_USER,
-  // pass: process.env.DATABASE_PWD,
   ...customOptions,
   useCreateIndex: true,
+  useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000
   // reconnectTries: 30,
