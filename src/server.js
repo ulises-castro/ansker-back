@@ -50,13 +50,13 @@ app.use(passport.initialize())
 require('./routes/passport.js')
 
 // TODO: Adding api prefix instead of adding api in all routes
-app.use('/api/auth', auth)
-app.use('/api/user', user)
+app.use('/v1/auth', auth)
+app.use('/v1/user', user)
 
-app.use('/api/publication', publication)
-app.use('/api/publication/comment', comment)
+app.use('/v1/publication', publication)
+app.use('/v1/publication/comment', comment)
 
-app.use('/api/searchPlace', country)
+app.use('/v1/searchPlace', country)
 
 app.use((err, req, res, next) => {
   handlerError(err, res)
