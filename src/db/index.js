@@ -6,18 +6,17 @@ let uri = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PWD}@sr
 
 let customOptions = {
   useMongoClient: true,
-  autoIndex = false,
+  autoIndex: false,
 }
 
 if (process.env.NODE_ENV === 'development') {
   uri = 'mongodb://0.0.0.0:27017/ansker'
 
   customOptions = {
-    autoIndex = true,
+    autoIndex: true,
     useNewUrlParser: true,
   }
 }
-
 
 const options = {
   // authSource: 'admin',
