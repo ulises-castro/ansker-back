@@ -9,7 +9,6 @@ const uri = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PWD}@
 
 const autoIndex = (process.env.NODE_ENV === 'development')
 
-// Defining vars to connect to database
 const options = {
   // authSource: 'admin',
   // user: process.env.DATABASE_USER,
