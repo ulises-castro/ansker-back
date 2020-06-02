@@ -1,8 +1,5 @@
-
-
 const mongoose = require('mongoose')
 
-// const uri = 'mongodb://587f9fd4b7b2:27017/ansker'
 // const uri = 'mongodb://0.0.0.0:27017/ansker'
 
 const uri = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PWD}@srv-captain--ansker-mongodb/ansker?authSource=admin`
