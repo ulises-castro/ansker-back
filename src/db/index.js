@@ -2,18 +2,29 @@ const mongoose = require('mongoose')
 
 // const uri = 'mongodb://0.0.0.0:27017/ansker'
 
-const uri = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PWD}@srv-captain--ansker-mongodb/ansker?authSource=admin`
+let uri = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PWD}@srv-captain--ansker-mongodb/ansker?authSource=admin`
 
-const autoIndex = (process.env.NODE_ENV === 'development')
+let customOptions = {
+  useMongoClient: true,
+  autoIndex = false,
+}
+
+if (process.env.NODE_ENV === 'development') {
+  uri = 'mongodb://0.0.0.0:27017/ansker'
+
+  customOptions = {
+    autoIndex = true,
+    useNewUrlParser: true,
+  }
+}
+
 
 const options = {
   // authSource: 'admin',
   // user: process.env.DATABASE_USER,
   // pass: process.env.DATABASE_PWD,
-  useMongoClient: true,
-  // useNewUrlParser: true,
+  ...customOptions,
   useCreateIndex: true,
-  autoIndex,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000
   // reconnectTries: 30,
@@ -21,7 +32,7 @@ const options = {
 }
 
 mongoose.connect(uri, options).then(() => {
-  console.log('connected to database')
+  console.log('Connected to Database')
 }).catch(error => {
   console.log('There is a problem with database', error)
 })
