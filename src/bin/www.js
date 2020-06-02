@@ -37,9 +37,7 @@ app.set('port', port)
 //   cert: fs.readFileSync(process.env.SSL_CERT)
 // }
 
-// const choiceProtocol = (process.env.NODE_ENV === 'development') ? [https, ssl] : [http, {}]
-
-const server = http.createServer(app)
+let server = (process.env.NODE_ENV === 'development') ? https.createServer(app, ssl) : http.createServer(app)
 
 // server.listen(port, '0.0.0.0')
 server.on('error', onError)
