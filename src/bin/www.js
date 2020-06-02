@@ -22,6 +22,8 @@ const debug = debugLib('ansker-back:server')
 var port = normalizePort(process.env.PORT || '3000')
 app.set('port', port)
 
+console.log(port, "Puerto aqui")
+
 /**
  * Create HTTP server.
  */
@@ -101,4 +103,6 @@ function onListening() {
     'pipe ' + addr :
     'port ' + addr.port
   debug('Listening on ' + bind)
+
+  console.log('Listen on ' + bind)
 }
