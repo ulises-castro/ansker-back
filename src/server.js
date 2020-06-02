@@ -28,7 +28,7 @@ var app = express()
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 const corsOption = {
-  origin: true,
+  origin: process.env.URL_FRONT,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: false,
   exposedHeaders: ['Authorization']

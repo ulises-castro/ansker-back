@@ -41,7 +41,7 @@ console.log(port, "Puerto aqui")
 
 let server = (process.env.NODE_ENV === 'development') ? https.createServer(app, ssl) : http.createServer(app)
 
-server.listen(port, '0.0.0.0')
+server.listen(port, process.env.HOST)
 server.on('error', onError)
 server.on('listening', onListening)
 
