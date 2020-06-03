@@ -33,13 +33,16 @@ console.log(port, "Puerto aqui")
 /**
  * Listen on provided port, on all network interfaces.
  */
+let server = http.createServer(app)
 
-const ssl = {
-  key: fs.readFileSync(process.env.SSL_KEY),
-  cert: fs.readFileSync(process.env.SSL_CERT)
+if (process.env.NODE_ENV === 'development') {
+  const ssl = {
+    key: fs.readFileSync(process.env.SSL_KEY),
+    cert: fs.readFileSync(process.env.SSL_CERT)
+  }
+
+  server = https.createServer(ssl, app)
 }
-
-let server = (process.env.NODE_ENV === 'development') ? https.createServer(ssl, app) : http.createServer(app)
 
 server.listen(port, process.env.HOST)
 server.on('error', onError)
