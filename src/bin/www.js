@@ -39,7 +39,7 @@ const ssl = {
   cert: fs.readFileSync(process.env.SSL_CERT)
 }
 
-let server = (process.env.NODE_ENV === 'development') ? https.createServer(app, ssl) : http.createServer(app)
+let server = (process.env.NODE_ENV === 'development') ? https.createServer(ssl, app) : http.createServer(app)
 
 server.listen(port, process.env.HOST)
 server.on('error', onError)
