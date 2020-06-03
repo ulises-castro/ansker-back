@@ -72,7 +72,7 @@ export const getAllByCity = async (req, res) => {
       const userVotedUp = votes.find((vote) => `${vote.authorId}` == userId)
 
       // Set user as liked
-      publication.userVotedUp = userVotedUp
+      publication.userVotedUp = (userVotedUp) ? true : false
     }
 
     // Remove _id for security reasons
