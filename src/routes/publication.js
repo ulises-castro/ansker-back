@@ -3,7 +3,7 @@ const router = express.Router()
 
 const passport = require('passport')
 
-import { getAllByCity, getAll, getPublication, setLike, publish } from 'controllers/publication'
+import { getAllByCity, getAll, getPublication, voteUp, publish } from 'controllers/publication'
 
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
@@ -17,9 +17,9 @@ router.get('/filter/all/:pageNumber', passport.authenticate('jwt', {
   session: false,
 }), getAll)
 
-router.post('/liked', passport.authenticate('jwt', {
+router.post('/voteUp', passport.authenticate('jwt', {
   session: false,
-}), setLike)
+}), voteUp)
 
 router.get('/:publicationId', passport.authenticate('jwt', {
   session: false,
