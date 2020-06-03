@@ -20,23 +20,23 @@ export const getAll = async (req, res) => {
 
   let publications = await Publication.getBy({}, pageNumber)
 
-  // Passing only how many likes|comments|shares it has
+  // Passing only how many votes|comments|shares it has
   publications = publications.map(publication => {
-    let { likes, shares } = publication
+    let { votes, shares } = publication
 
     // TODO: Factorize this, become to one function
     if (req.user) {
       const userId = req.user._id
-      const userLiked = publication.likes.find((like) => `${like.author}` == userId)
+      const userVotedUp = publication.votes.find((vote) => `${vote.authorId}` == userId)
 
       // Set user as liked
-      publication.userLiked = (userLiked) ? true : false
+      publication.userVotedUp = (userVotedUp) ? true : false
     }
 
     // Remove _id for security reasons
     delete publication._id
 
-    publication.likes = likes.length
+    publication.votes = votes.length
     publication.shares = shares.length
 
     return publication
@@ -63,22 +63,22 @@ export const getAllByCity = async (req, res) => {
 
   let publications = await Publication.getBy(searchByCity, pageNumber)
 
-  // Passing only how many likes|comments|shares it has
+  // Passing only how many votes|comments|shares it has
   publications = publications.map(publication => {
-    let { likes, shares } = publication
+    let { votes, shares } = publication
 
     if (req.user) {
       const userId = req.user._id
-      const userLiked = publication.likes.find((like) => `${like.author}` == userId)
+      const userVotedUp = votes.find((vote) => `${vote.authorId}` == userId)
 
       // Set user as liked
-      publication.userLiked = (userLiked) ? true : false
+      publication.userVotedUp = userVotedUp
     }
 
     // Remove _id for security reasons
     delete publication._id
 
-    publication.likes = likes.length
+    publication.votes = votes.length
     publication.shares = shares.length
 
     return publication
@@ -96,7 +96,7 @@ export const getPublication = async (req, res) => {
 
   const publication = await Publication
   .findOne({ publicationId })
-  .select('content backgroundColor publishAt fontFamily likes.author')
+  .select('content backgroundColor publishAt fontFamily votes.author')
   .lean().exec()
 
   // TODO: Use populate here instead of consult
@@ -113,7 +113,7 @@ export const getPublication = async (req, res) => {
   }
   // Remove sensitive data and useless information
   delete publication._id
-  publication.likes = publication.likes.length
+  publication.votes = publication.votes.length
   publication.commentsData = comments
   // publication.comments = comments.length
 
@@ -173,12 +173,12 @@ export const publish = async (req, res) => {
   })
 }
 
-export const setLike = async function(req, res) {
+export const voteUp = async function(req, res) {
   const userData = req.user
-  const publicationId = req.body.publicationId
   const author = userData._id
+  let publicationId = req.body.publicationId
 
-  const publication = await Publication.setLiked(publicationId, author)
+  const publication = await Publication.setVote(publicationId, author)
 
   const rest = publication[1]
 
@@ -189,7 +189,7 @@ export const setLike = async function(req, res) {
     })
   } else {
     res.status(403).json({
-      error: 'publication.error.setLike'
+      error: 'publication.error.voteUp'
     })
   }
 }

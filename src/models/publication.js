@@ -4,11 +4,15 @@ const { Schema } = mongoose
 
 const ObjectId = mongoose.Schema.Types.ObjectId
 
-const LikeSchema = new Schema({
+const votesSchema = new Schema({
   authorId: {
     type: ObjectId,
     ref: 'User',
     required: true,
+  },
+  up: {
+    type: Boolean,
+    default: true,
   },
   registerAt: {
     type: Date,
@@ -112,13 +116,13 @@ const PublicationSchema = new Schema({
     default: Date.now,
   },
   location,
-  likes: [LikeSchema],
+  votes: [votesSchema],
   shares: [ShareSchema],
   commentsAuthors: [randomAuthorSchema],
 })
 
 PublicationSchema.plugin(AutoIncrement, { inc_field: 'publicationId' })
-LikeSchema.plugin(AutoIncrement, { inc_field: 'likeId' })
+votesSchema.plugin(AutoIncrement, { inc_field: 'vodeId' })
 // CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' })
 
 // PublicationSchema.set('toJSON', { getters: true, virtuals: true })
@@ -137,7 +141,7 @@ async function (longitude, latitude) {
       },
     },
   })
-  .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
+  .select('content backgroundColor publishAt fontFamily comments shares votes publicationId votes.registerAt votes.authorId')
   // .skip(2)
   .limit(20)
   .sort({ publishAt: -1, })
@@ -154,7 +158,7 @@ async function (searchBy = {}, pageNumber = 1) {
   const limit = 2
 
   const publications = await this.find(searchBy, pageNumber)
-  .select('content backgroundColor publishAt location.city fontFamily comments shares likes publicationId likes.registerAt likes.author')
+  .select('content backgroundColor publishAt location.city fontFamily comments shares votes publicationId votes.registerAt votes.authorId')
   .skip(skip)
   .limit(limit)
   .sort({ publishAt: -1, })
@@ -169,24 +173,24 @@ async function (searchBy = {}, pageNumber = 1) {
 // TODO: https://trello.com/c/lxxAEyYr/33-up-down-system-just-thinking-about-it 
 
 // TODO: Remove find 222 line and use moongosee to find if user liked publication
-PublicationSchema.statics.setLiked =
-async function (publicationId, author) {
-  const like = await this.findOne({ publicationId }).exec()
+PublicationSchema.statics.setVote =
+async function (publicationId, authorId, up = true) {
+  const targetPublication = await this.findOne({ publicationId }).exec()
 
   // Change find method for an FindOne, this is useless
-  // publication.likes.findOne
-  const likeFormated = like.toObject()
-  const userLike = likeFormated.likes
-    .find(like => `${like.author}` == author)
+  // publication.votes.findOne
+  const likeFormated = targetPublication.toObject()
+  const userAuthorVote = likeFormated.votes
+    .find(vote => `${vote.authorId}` == authorId)
 
-  if (userLike) {
-    like.likes.id(userLike._id).remove()
+  if (userAuthorVote) {
+    targetPublication.votes.id(userAuthorVote._id).remove()
   } else {
-    like.likes.push({ author })
+    targetPublication.votes.push({ authorId })
   }
 
-  return await like.save().then(like => {
-    return [like]
+  return await targetPublication.save().then(publication => {
+    return [publication]
   })
 }
 
@@ -209,7 +213,7 @@ module.exports = mongoose.model('Publication', PublicationSchema)
 //       },
 //     },
 //   })
-//   .select('content backgroundColor publishAt fontFamily comments shares likes publicationId likes.registerAt likes.author')
+//   .select('content backgroundColor publishAt fontFamily comments shares votes publicationId votes.registerAt votes.authorId')
 //   // .skip(2)
 //   .limit(20)
 //   .sort({ publishAt: -1, })
