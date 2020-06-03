@@ -62,7 +62,7 @@ async function(publicationId, commentData) {
   return publication
 }
 
-CommentSchema.statics.getAll = async function (publicationId,userId) {
+CommentSchema.statics.getAll = async function (publicationId, userId = 0) {
   const publication = await Publication
   .findOne({ 'publicationId': Number(publicationId) }).exec()
 
