@@ -106,6 +106,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
   desactivated: {
     type: Boolean,
     default: false,
