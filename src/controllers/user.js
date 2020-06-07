@@ -58,4 +58,4 @@ export async function signupEmail() {
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 
-signupEmail().catch(console.error);
+// signupEmail().catch(console.error);
