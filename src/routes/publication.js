@@ -9,14 +9,6 @@ router.post('/publish', passport.authenticate('jwt', {
   session: false,
 }), publish)
 
-router.get('/filter/:countryCode/:city/:pageNumber', passport.authenticate('jwt', {
-  session: false,
-}), getAllByCity)
-
-router.get('/filter/all/:pageNumber', passport.authenticate('jwt', {
-  session: false,
-}), getAll)
-
 router.post('/voteUp', passport.authenticate('jwt', {
   session: false,
 }), voteUp)
@@ -24,6 +16,10 @@ router.post('/voteUp', passport.authenticate('jwt', {
 router.get('/:publicationId', passport.authenticate('jwt', {
   session: false,
 }), getPublication)
+
+router.get('/filter/:countryCode/:city/:pageNumber', getAllByCity)
+
+router.get('/filter/all/:pageNumber', getAll)
 
 module.exports = router
 
