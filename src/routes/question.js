@@ -21,4 +21,4 @@
 
 // router.get('/filter/all/:pageNumber', getAll)
 
-// module.exports = router
+module.exports = router
