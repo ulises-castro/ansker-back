@@ -1,6 +1,8 @@
 import Publication from 'models/publication'
 import Comment from 'models/comment'
 
+import firebaseAdmin from 'firebase'
+
 import { formatText, sendTelegramMsg} from 'helpers'
 
 const getParsedPublication = () => {
