@@ -3,6 +3,8 @@
 import { sendTelegramMsg } from 'helpers'
 import  html from 'helpers/email'
 
+import User from 'models/user'
+
 export const sendContactMessage = (req, res) => {
   const {
     message
@@ -22,7 +24,15 @@ export const sendContactMessage = (req, res) => {
   }
 }
 
-"use strict"
+export const registerDevice = (req, res) => {
+
+  const body = req.body
+
+  res.status(200).json({
+    success: true
+  })
+}
+
 const nodemailer = require("nodemailer")
 // async..await is not allowed in global scope, must use a wrapper
 export async function signupEmail() {
