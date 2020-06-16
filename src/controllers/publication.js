@@ -3,6 +3,44 @@ import Comment from 'models/comment'
 
 import firebaseAdmin from 'firebase'
 
+const tokens = [
+  "dtHVKGT7z-iMRhY8h-zvbk:APA91bEJaz8cQah4AyH3SiAmiuGuJhEsxJIMwOIHTda87HV184X2o5xIOgT5tb74HqZLZLKgNf73CWlYomqUdcBdYaaH0clKlIEcLKMxcEyKBe4Xo20pdTyLy16Kmu2TEjsiubGeyelx",
+"epG24qi-JqiyTbGv4Vlo2O:APA91bHR7CeFVGbsaX59P9rjP9-p240ndbdhz2X0r0q7wWu6dd7IO1NZxAvTAjTDEJdoYARekWd95ROa2T9Wn4jTbunZsRoMOIkHhAOA-hZZ4ZRPiv24EM2-xbOnXPGAe-SCaPqxXIfv",
+"eccHX8tI1xycOBin5QVvJx:APA91bG2Kpvjxf-X84o_CS28XVxrQVRzLlPwyOpVE3UCJ9gGnpLzn44WnVs5ioCabX54ZAblF3wV1r_LXyHLvT8XCoFs1URyDqWzxU8WsQxIN33HVB3qupiVId9JzFql02yQHP",
+"cK4Rzwv6XfncsV5Khq-lhM:APA91bH1ervIfl_dD2bFfQ_5-5DsBrJn2Gwvpb_zDL4qShASYmlDopReHjkjO0JJq2J4O3sH7bI9sNKcJb28VBXWxg3tt6yVWkL-nPKGrUQDIkyjySVQl9G3XyAQUGJkBm7-UK2OkREF"];
+
+// "notification": {
+//   "title": "FCM Message",
+//   "body": "This is a message from FCM"
+// },
+// "webpush": {
+//   "headers": {
+//     "Urgency": "high"
+//   },
+//   "notification": {
+//     "body": "This is a message from FCM to web",
+//     "requireInteraction": "true",
+//     "badge": "/badge-icon.png"
+//   }
+// },
+// const message = {
+//   "notification": {
+//     "title": "FCM Message",
+//     "body": "This is a message from FCM"
+//   },
+//   data: {score: '850', time: '2:45'},
+//   tokens,
+// }
+
+// firebaseAdmin.messaging().sendMulticast(message)
+//   .then((response) => {
+//     // Response is a message ID string.
+//     console.log('Successfully sent message:', response);
+//   })
+//   .catch((error) => {
+//     console.log('Error sending message:', error);
+//   });
+
 import { formatText, sendTelegramMsg} from 'helpers'
 
 const getParsedPublication = () => {

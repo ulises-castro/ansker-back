@@ -83,7 +83,6 @@ const authProviders = {
   }
 }
 
-
 const settings = {
   type: {
     language: {
@@ -194,6 +193,7 @@ UserSchema.statics.findUserOrRegister =
     })
   }
 
+// TODO: Check V1 ================ For nearby function
 UserSchema.statics.updateUserLocation =
   async function (locationData, userId) {
     const _id = userId
