@@ -10,6 +10,7 @@ const auth = require('routes/auth')
 const publication = require('routes/publication')
 const comment = require('routes/comment')
 const user = require('routes/user')
+const device = require('routes/device')
 const country = require('routes/country')
 
 // Load database connection
@@ -52,6 +53,7 @@ require('./routes/passport.js')
 // TODO: Adding api prefix instead of adding api in all routes
 app.use('/v1/auth', auth)
 app.use('/v1/user', user)
+app.use('/v1/device', device)
 
 app.use('/v1/publication', publication)
 app.use('/v1/publication/comment', comment)
