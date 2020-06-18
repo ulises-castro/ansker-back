@@ -3,7 +3,7 @@
 "dockerfileLines": [
                     "FROM node:8.7.0-alpine",
                     "RUN mkdir -p /usr/src/app",
-                    "ADD /home/alex/Documents/credetials/firebase/ansker-fcm.json /usr/src/"
+                    "ADD /home/alex/Documents/credetials/firebase/ansker-fcm.json /usr/src/",
                     "WORKDIR /usr/src/app",
                     "COPY ./package.json /usr/src/app/",
                     "RUN npm install && npm cache clean --force",
