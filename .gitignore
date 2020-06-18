@@ -2,5 +2,6 @@ node_module/*
 node_modules/*
 ssl/*
 dist/*
+credentials/*
 .env
 .env.development
