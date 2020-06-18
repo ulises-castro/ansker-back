@@ -2,8 +2,8 @@
 "schemaVersion": 2,
 "dockerfileLines": [
                     "FROM node:8.7.0-alpine",
-                    "ADD credentials $HOME/credentials",
                     "RUN mkdir -p /usr/src/app",
+                    "ADD ./credentials /usr/src/",
                     "WORKDIR /usr/src/app",
                     "COPY ./package.json /usr/src/app/",
                     "RUN npm install && npm cache clean --force",
