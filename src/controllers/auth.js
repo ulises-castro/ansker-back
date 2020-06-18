@@ -132,6 +132,8 @@ const loginGoogle = async (req, res, next) => {
       },
     }))
 
+    console.log(err, 'err ')
+
     if (googleAuthData) {
       const { data } = googleAuthData
 
@@ -181,7 +183,6 @@ async function registerOrLoginUser(userData, res, next) {
   ))
 
   if (err) next(err)
-
   // console.log(err, newUser)
 
   const token = jwt.sign(
