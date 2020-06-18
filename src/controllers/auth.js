@@ -159,9 +159,9 @@ const googleInfoByToken = async (req, res, next) => {
     },
   }))
 
-  console.log(googleInfoByTokenData) // { id, email, given_name, family_name }
+  // console.log(googleInfoByTokenData) // { id, email, given_name, family_name }
 
-  console.log(err)
+  // console.log(err)
 
   if (err) next(err)
   const { data } = googleInfoByTokenData
@@ -183,7 +183,6 @@ async function registerOrLoginUser(userData, res, next) {
   ))
 
   if (err) next(err)
-  // console.log(err, newUser)
 
   const token = jwt.sign(
     newUser.id, jwtOptions.secret
