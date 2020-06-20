@@ -21,11 +21,21 @@ import Comment from 'models/comment'
 //     "body": "This is a message from FCM"
 //   },
 //   data: {score: '850', time: '2:45'},
-//   tokens,
+//   token: 'fIYaVpO9Tx63Su5uUSYIUj:APA91bHgkqL52xVKGkWkkYnvCeH8tmn3sRrbTygzpEhRNLTQG-Al7EOZePg6gV-LdlcwhRDRTvS9z_aN9cncfG5IqpcwC4vRfULbR63uq-gD9Bxu2GVq_cfYL8pGPLnol_uFrxlqjHXd',
 // }
+
+// firebaseAdmin.messaging().send(message)
+//   .then((response) => {
+//     // Response is a message ID string.
+//     console.log('Successfully sent message:', response);
+//   })
+//   .catch((error) => {
+//     console.log('Error sending message:', error);
+//   });
 
 import { formatText, sendTelegramMsg} from 'helpers'
 import { suscribeUserToTopic } from './notification';
+import firebaseAdmin from '../firebase'
 
 const getParsedPublication = () => {
 }
