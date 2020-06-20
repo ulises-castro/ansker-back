@@ -5,13 +5,12 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const DeviceSchema = {
   ip: {
     type: 'string',
-    require: true,
+    required: true,
     default: ''
   },
   userId: {
     type: ObjectId,
-    require: false,
-    default: false,
+    required: false,
     index: true
   },
   platform: {
@@ -26,7 +25,7 @@ const DeviceSchema = {
   },
   token: {
     type: String,
-    require: true
+    required: true
   }
 }
 
