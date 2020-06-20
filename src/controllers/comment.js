@@ -1,7 +1,7 @@
 
 import Comment from 'models/comment'
 
-import { suscribeUserToTopic } from 'controllers/notification'
+import { suscribeUserToTopic, notifyNewComments } from 'controllers/notification'
 
 export const publish = async (req, res) => {
   const authorId = req.user._id
@@ -16,7 +16,9 @@ export const publish = async (req, res) => {
   // Implements catch of bugs
   const newComment = await Comment.publish(publicationId, commentData)
 
-  suscribeUserToTopic(authorId, `publication-${newComment.publicationId}`)
+  await notifyNewComments(newComment.id)
+
+  suscribeUserToTopic(authorId, `publication-${newComment.id}`)
 
 
   if (newComment) {
@@ -34,6 +36,7 @@ export const publish = async (req, res) => {
 export const getAll = async (req, res) => {
   const { publicationId } = req.params
 
+  // 
   const userId = (req.user) ? req.user._id : 0
   const comments = await Comment.getAll(publicationId, userId)
 

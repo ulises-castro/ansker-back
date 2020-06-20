@@ -16,7 +16,7 @@ export const suscribeUserToTopic = async (userId, topic) => {
 
     // See the MessagingTopicManagementResponse reference documentation
     // for the contents of response.
-    console.log('Successfully subscribed to topic:', finalTopic);
+    console.log('Successfully subscribed to topic:', finalTopic, registrationTokens);
 
     return true
   } catch(e) {
