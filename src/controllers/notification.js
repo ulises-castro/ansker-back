@@ -29,13 +29,23 @@ export const notifyNewComments = async (publicationId) => {
   const messages = []
 
   messages.push({
-    notification: {title: 'New comment', body: 'Someone has comment on your publication.'},
+    notification: {title: 'New comment', body: 'Someone has commented on your publication.'},
     topic: `user-publication-${publicationId}`,
+    "webpush": {
+      "headers": {
+        "Urgency": "high"
+      }
+    }
   })
 
   messages.push({
-    notification: {title: 'New comment', body: 'Someone has comment on a publication that you commented as well.'},
+    notification: {title: 'New comment', body: 'Someone has commented on a publication that you commented as well.'},
     topic: `publication-${publicationId}`,
+    "webpush": {
+      "headers": {
+        "Urgency": "high"
+      }
+    }
   })
 
   firebaseAdmin.messaging().sendAll(messages)
