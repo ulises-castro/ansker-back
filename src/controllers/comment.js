@@ -16,7 +16,9 @@ export const publish = async (req, res) => {
   // Implements catch of bugs
   const newComment = await Comment.publish(publicationId, commentData)
 
-  await notifyNewComments(newComment.id)
+  const isUserAuthor = (newComment.authorId === authorId)
+
+  await notifyNewComments(newComment.id, isUserAuthor)
 
   suscribeUserToTopic(authorId, `publication-${newComment.id}`)
 
