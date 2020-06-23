@@ -22,6 +22,8 @@ const debug = debugLib('ansker-back:server')
 var port = normalizePort(process.env.PORT || '3000')
 app.set('port', port)
 
+console.log(port, "Puerto aqui")
+
 /**
  * Create HTTP server.
  */
@@ -31,17 +33,18 @@ app.set('port', port)
 /**
  * Listen on provided port, on all network interfaces.
  */
+let server = http.createServer(app)
 
-// const ssl = {
-//   key: fs.readFileSync(process.env.SSL_KEY),
-//   cert: fs.readFileSync(process.env.SSL_CERT)
-// }
+if (process.env.NODE_ENV === 'development') {
+  const ssl = {
+    key: fs.readFileSync(process.env.SSL_KEY),
+    cert: fs.readFileSync(process.env.SSL_CERT)
+  }
 
-// const choiceProtocol = (process.env.NODE_ENV === 'development') ? [https, ssl] : [http, {}]
+  server = https.createServer(ssl, app)
+}
 
-const server = http.createServer(app)
-
-// server.listen(port, '0.0.0.0')
+server.listen(port, process.env.HOST)
 server.on('error', onError)
 server.on('listening', onListening)
 
@@ -103,4 +106,6 @@ function onListening() {
     'pipe ' + addr :
     'port ' + addr.port
   debug('Listening on ' + bind)
+
+  console.log('Listen on ' + bind)
 }

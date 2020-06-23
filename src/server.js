@@ -10,6 +10,7 @@ const auth = require('routes/auth')
 const publication = require('routes/publication')
 const comment = require('routes/comment')
 const user = require('routes/user')
+const device = require('routes/device')
 const country = require('routes/country')
 
 // Load database connection
@@ -28,7 +29,7 @@ var app = express()
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 const corsOption = {
-  origin: true,
+  origin: process.env.URL_FRONT,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: false,
   exposedHeaders: ['Authorization']
@@ -50,13 +51,14 @@ app.use(passport.initialize())
 require('./routes/passport.js')
 
 // TODO: Adding api prefix instead of adding api in all routes
-app.use('/api/auth', auth)
-app.use('/api/user', user)
+app.use('/v1/auth', auth)
+app.use('/v1/user', user)
+app.use('/v1/device', device)
 
-app.use('/api/publication', publication)
-app.use('/api/publication/comment', comment)
+app.use('/v1/publication', publication)
+app.use('/v1/publication/comment', comment)
 
-app.use('/api/searchPlace', country)
+app.use('/v1/searchPlace', country)
 
 app.use((err, req, res, next) => {
   handlerError(err, res)

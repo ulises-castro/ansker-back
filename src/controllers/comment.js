@@ -1,6 +1,8 @@
 
 import Comment from 'models/comment'
 
+import { suscribeUserToTopic, notifyNewComments } from 'controllers/notification'
+
 export const publish = async (req, res) => {
   const authorId = req.user._id
   let { publicationId, content } = req.body
@@ -12,9 +14,16 @@ export const publish = async (req, res) => {
   }
 
   // Implements catch of bugs
-  const response = await Comment.publish(publicationId, commentData)
+  const newComment = await Comment.publish(publicationId, commentData)
 
-  if (response) {
+  const isUserAuthor = (newComment.authorId === authorId)
+
+  await notifyNewComments(newComment.id, isUserAuthor)
+
+  suscribeUserToTopic(authorId, `publication-${newComment.id}`)
+
+
+  if (newComment) {
     return res.status(200).json({
       success: true,
     })
@@ -29,7 +38,8 @@ export const publish = async (req, res) => {
 export const getAll = async (req, res) => {
   const { publicationId } = req.params
 
-  const userId = req.user.id
+  // 
+  const userId = (req.user) ? req.user._id : 0
   const comments = await Comment.getAll(publicationId, userId)
 
   if (comments) {

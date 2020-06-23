@@ -16,10 +16,6 @@ router.post(
   publish
 )
 
-router.get('/getAll/:publicationId', passport.authenticate('jwt', {
-    session: false
-  }),
-  getAll
-)
+router.get('/getAll/:publicationId', getAll)
 
 module.exports = router

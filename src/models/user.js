@@ -83,7 +83,6 @@ const authProviders = {
   }
 }
 
-
 const settings = {
   type: {
     language: {
@@ -105,6 +104,10 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     default: '',
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
   },
   desactivated: {
     type: Boolean,
@@ -190,6 +193,7 @@ UserSchema.statics.findUserOrRegister =
     })
   }
 
+// TODO: Check V1 ================ For nearby function
 UserSchema.statics.updateUserLocation =
   async function (locationData, userId) {
     const _id = userId

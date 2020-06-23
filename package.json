@@ -18,14 +18,13 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "dev": "NODE_ENV=development npm-run-all build startDev",
-    "startDev": "nodemon --exec 'babel-node -r ./node_modules/dotenv/config --inspect=0.0.0.0 src/bin/www.js'",
+    "dev": "NODE_ENV=development npm-run-all build start",
+    "start": "nodemon --exec 'babel-node -r ./node_modules/dotenv/config --inspect=0.0.0.0 src/bin/www.js'",
     "prod": "NODE_ENV=production npm-run-all build startProd",
-    "startProd": "node ./dist/bin/www.js",
+    "startProd": "node dist/bin/www.js",
     "build": "npm-run-all clean transpile",
     "clean": "rm -rf dist",
     "transpile": "babel src --out-dir dist",
-    "serve": "node -r ./node_modules/dotenv/config dist/server.js",
     "test": "jest"
   },
   "dependencies": {
@@ -41,11 +40,13 @@
     "express": "~4.16.0",
     "express-async-handler": "^1.1.4",
     "express-http-proxy": "^1.5.1",
+    "firebase-admin": "^8.12.1",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.6",
     "mongoose-sequence": "^5.2.2",
     "morgan": "~1.9.0",
+    "nodemailer": "^6.4.8",
     "nodemon": "^2.0.2",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",

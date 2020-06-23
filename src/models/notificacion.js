@@ -3,18 +3,40 @@ const AutoIncrement = require('mongoose-sequence');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
-const notification = new Schema({
-  type: {
-    type: String,
-    required: true,
-  },
+/*
+Type of notifications
+
+0 - Someone has publicate something on your selected city.
+1 - Someone comment your publication
+2 - Author had comment its publication
+
+//TODO: V1 - Q&A version
+0 - There a hot publication on your selected city.
+
+4 - Someone/Author username has ask your question
+
+*/
+
+const notificationShema = new Schema({
   userId: {
     type: ObjectId,
     ref: 'User',
-    required: '',
+    required: true,
   },
-  readAt: {
+  createdAt: {
     type: Date,
+    required: true,
+  },
+  readedAt: {
+    type: Date,
+    default: null,
     required: false,
+  },
+  type: {
+    type: Number,
+    required: true,
   }
 });
+
+module.exports = mongoose.model('Notification', notificationShema)
+

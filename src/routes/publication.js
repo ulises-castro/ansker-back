@@ -3,27 +3,23 @@ const router = express.Router()
 
 const passport = require('passport')
 
-import { getAllByCity, getAll, getPublication, setLike, publish } from 'controllers/publication'
+import { getAllByCity, getAll, getPublication, voteUp, publish } from 'controllers/publication'
 
 router.post('/publish', passport.authenticate('jwt', {
   session: false,
 }), publish)
 
-router.get('/filter/:countryCode/:city/:pageNumber', passport.authenticate('jwt', {
+router.post('/voteUp', passport.authenticate('jwt', {
   session: false,
-}), getAllByCity)
-
-router.get('/filter/all/:pageNumber', passport.authenticate('jwt', {
-  session: false,
-}), getAll)
-
-router.post('/liked', passport.authenticate('jwt', {
-  session: false,
-}), setLike)
+}), voteUp)
 
 router.get('/:publicationId', passport.authenticate('jwt', {
   session: false,
 }), getPublication)
+
+router.get('/filter/:countryCode/:city/:pageNumber', getAllByCity)
+
+router.get('/filter/all/:pageNumber', getAll)
 
 module.exports = router
 
