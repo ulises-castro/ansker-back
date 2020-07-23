@@ -1,5 +1,5 @@
-import mongoose, { Schema } from 'mongoose';
-const AutoIncrement = require('mongoose-sequence');
+import mongoose, {Schema} from 'mongoose';
+const AutoIncrement = require ('mongoose-sequence');
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
@@ -15,9 +15,11 @@ Type of notifications
 
 4 - Someone/Author username has ask your question
 
+TODO: 
+  1 - Refactorized this into classes to handler in a easy way
 */
 
-const notificationShema = new Schema({
+const notificationShema = new Schema ({
   userId: {
     type: ObjectId,
     ref: 'User',
@@ -35,8 +37,7 @@ const notificationShema = new Schema({
   type: {
     type: Number,
     required: true,
-  }
+  },
 });
 
-module.exports = mongoose.model('Notification', notificationShema)
-
+module.exports = mongoose.model ('Notification', notificationShema);
