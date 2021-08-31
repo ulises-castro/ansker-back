@@ -1,4 +1,5 @@
 node_module/*
+gpg
 node_modules/*
 ssl/*
 dist/*

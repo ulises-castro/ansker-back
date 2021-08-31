@@ -10,8 +10,6 @@ class ErrorHandler extends Error {
 const handlerError = (err, res) => {
   let { statusCode, message } = err
 
-  // console.log(err)
-
   if (err.response) {
     statusCode = 400
     message = 'Ocurrió un error, intente más tarde'

@@ -4,7 +4,6 @@ let countries = require('country-data').countries
 
 // TODO: Returning countries
 const getCountry = (req, res) => {
-  // const allContries = countries.all
   const countries = [
     countries.MX,
   ]
@@ -15,7 +14,7 @@ const getCountry = (req, res) => {
 }
 
 //Get cities by name
-const getCity  = (req, res) => {
+const getCity = (req, res) => {
   let {
     city
   } = req.params

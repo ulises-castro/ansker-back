@@ -23,8 +23,6 @@ const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000
-  // reconnectTries: 30,
-  // reconnectInterval: 500, // in ms
 }
 
 mongoose.connect(uri, options).then(() => {

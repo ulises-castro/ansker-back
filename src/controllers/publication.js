@@ -1,44 +1,8 @@
 import Publication from 'models/publication'
 import Comment from 'models/comment'
 
-// "notification": {
-//   "title": "FCM Message",
-//   "body": "This is a message from FCM"
-// },
-// "webpush": {
-//   "headers": {
-//     "Urgency": "high"
-//   },
-//   "notification": {
-//     "body": "This is a message from FCM to web",
-//     "requireInteraction": "true",
-//     "badge": "/badge-icon.png"
-//   }
-// },
-// const message = {
-//   "notification": {
-//     "title": "FCM Message",
-//     "body": "This is a message from FCM"
-//   },
-//   data: {score: '850', time: '2:45'},
-//   token: 'fIYaVpO9Tx63Su5uUSYIUj:APA91bHgkqL52xVKGkWkkYnvCeH8tmn3sRrbTygzpEhRNLTQG-Al7EOZePg6gV-LdlcwhRDRTvS9z_aN9cncfG5IqpcwC4vRfULbR63uq-gD9Bxu2GVq_cfYL8pGPLnol_uFrxlqjHXd',
-// }
-
-// firebaseAdmin.messaging().send(message)
-//   .then((response) => {
-//     // Response is a message ID string.
-//     console.log('Successfully sent message:', response);
-//   })
-//   .catch((error) => {
-//     console.log('Error sending message:', error);
-//   });
-
-import { formatText, sendTelegramMsg} from 'helpers'
+import { formatText, sendTelegramMsg } from 'helpers'
 import { suscribeUserToTopic } from './notification';
-import firebaseAdmin from '../firebase'
-
-const getParsedPublication = () => {
-}
 
 export const report = async (req, res) => {
   sendTelegramMsg(`REPORTED PUBLICATION \n El usuario ${req.user._id}, message:  \n .`)
@@ -129,16 +93,16 @@ export const getPublication = async (req, res) => {
   const { publicationId } = req.params
 
   const publication = await Publication
-  .findOne({ publicationId })
-  .select('content backgroundColor publishAt fontFamily votes.author')
-  .lean().exec()
+    .findOne({ publicationId })
+    .select('content backgroundColor publishAt fontFamily votes.author')
+    .lean().exec()
 
   // TODO: Use populate here instead of consult
   const comments = await Comment
-  .find({ publicationId: publication._id  })
-  .select('content publishAt -_id')
-  .lean()
-  .exec()
+    .find({ publicationId: publication._id })
+    .select('content publishAt -_id')
+    .lean()
+    .exec()
 
   if (!publication) {
     return res.status(404).json({
@@ -171,8 +135,8 @@ export const publish = async (req, res) => {
   ]
 
   const invalidDataReceived = {
-      success: false,
-      message: 'No pudimos procesar tu solicitud, intentalo más tarde',
+    success: false,
+    message: 'No pudimos procesar tu solicitud, intentalo más tarde',
   }
 
   if (!backgroundColor || !backgroundColors.includes(backgroundColor) || (!city || !countryCode)) {
@@ -193,7 +157,7 @@ export const publish = async (req, res) => {
       city,
       location: {
         type: 'Point',
-        coordinates: [ Number(longitude), Number(latitude) ],
+        coordinates: [Number(longitude), Number(latitude)],
       }
     }
   })
@@ -214,7 +178,7 @@ export const publish = async (req, res) => {
   })
 }
 
-export const voteUp = async function(req, res) {
+export const voteUp = async function (req, res) {
   const userData = req.user
   const author = userData._id
   let publicationId = req.body.publicationId

@@ -55,11 +55,6 @@ const location = {
     type: String,
     required: true,
   },
-  // regionName: {
-  //   type: String,
-  //   required: true,
-  //   index: true,
-  // },
   city: {
     type: String,
     required: true,
@@ -123,50 +118,47 @@ const PublicationSchema = new Schema({
 
 PublicationSchema.plugin(AutoIncrement, { inc_field: 'publicationId' })
 votesSchema.plugin(AutoIncrement, { inc_field: 'vodeId' })
-// CommentSchema.plugin(AutoIncrement, { inc_field: 'commentId' })
 
-// PublicationSchema.set('toJSON', { getters: true, virtuals: true })
 // TODO: implement paginate, scroll infinite
 PublicationSchema.statics.getAllByNear =
-async function (longitude, latitude) {
-  const publications = await this.find({
-    "location.location": {
-      $near: {
-        $geometry: {
-            type: "Point" ,
-            coordinates: [ longitude, latitude ]
+  async function (longitude, latitude) {
+    const publications = await this.find({
+      "location.location": {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [longitude, latitude]
+          },
+          $maxDistance: 5000,
+          $minDistance: 0,
         },
-        $maxDistance: 5000,
-        $minDistance: 0,
       },
-    },
-  })
-  .select('content backgroundColor publishAt fontFamily comments shares votes publicationId votes.registerAt votes.authorId')
-  // .skip(2)
-  .limit(20)
-  .sort({ publishAt: -1, })
-  .lean()
-  .exec()
+    })
+      .select('content backgroundColor publishAt fontFamily comments shares votes publicationId votes.registerAt votes.authorId')
+      // .skip(2)
+      .limit(20)
+      .sort({ publishAt: -1, })
+      .lean()
+      .exec()
 
-  return publications
-}
-// import isoCountryCodeConverter from '../services/convertCountryCodes'
+    return publications
+  }
 
 PublicationSchema.statics.getBy =
-async function (searchBy = {}, pageNumber = 1) {
-  const skip = (pageNumber - 1) * 2
-  const limit = 2
+  async function (searchBy = {}, pageNumber = 1) {
+    const skip = (pageNumber - 1) * 2
+    const limit = 2
 
-  const publications = await this.find(searchBy, pageNumber)
-  .select('content backgroundColor publishAt location.city fontFamily comments shares votes publicationId votes.registerAt votes.authorId')
-  .skip(skip)
-  .limit(limit)
-  .sort({ publishAt: -1, })
-  .lean()
-  .exec()
+    const publications = await this.find(searchBy, pageNumber)
+      .select('content backgroundColor publishAt location.city fontFamily comments shares votes publicationId votes.registerAt votes.authorId')
+      .skip(skip)
+      .limit(limit)
+      .sort({ publishAt: -1, })
+      .lean()
+      .exec()
 
-  return publications
-}
+    return publications
+  }
 
 // ##### LIKE SYSTEM ############ 
 // TODO: Verify publication was send from same user's location. - OLD VERSION
@@ -174,51 +166,24 @@ async function (searchBy = {}, pageNumber = 1) {
 
 // TODO: Remove find 222 line and use moongosee to find if user liked publication
 PublicationSchema.statics.setVote =
-async function (publicationId, authorId, up = true) {
-  const targetPublication = await this.findOne({ publicationId }).exec()
+  async function (publicationId, authorId, up = true) {
+    const targetPublication = await this.findOne({ publicationId }).exec()
 
-  // Change find method for an FindOne, this is useless
-  // publication.votes.findOne
-  const likeFormated = targetPublication.toObject()
-  const userAuthorVote = likeFormated.votes
-    .find(vote => `${vote.authorId}` == authorId)
+    // Change find method for an FindOne, this is useless
+    // publication.votes.findOne
+    const likeFormated = targetPublication.toObject()
+    const userAuthorVote = likeFormated.votes
+      .find(vote => `${vote.authorId}` == authorId)
 
-  if (userAuthorVote) {
-    targetPublication.votes.id(userAuthorVote._id).remove()
-  } else {
-    targetPublication.votes.push({ authorId })
+    if (userAuthorVote) {
+      targetPublication.votes.id(userAuthorVote._id).remove()
+    } else {
+      targetPublication.votes.push({ authorId })
+    }
+
+    return await targetPublication.save().then(publication => {
+      return [publication]
+    })
   }
 
-  return await targetPublication.save().then(publication => {
-    return [publication]
-  })
-}
-
-// PublicationSchema.index({ "location.location.coordinates": "2dsphere" })
-// db.publications.createIndex({"location.location": "2dsphere"})
 module.exports = mongoose.model('Publication', PublicationSchema)
-
-// PublicationSchema.statics.getAllByNear =
-// async function (longitude, latitude) {
-//   console.log(longitude, latitude)
-//   const publications = await this.find({
-//     "location.location": {
-//       $near: {
-//         $geometry: {
-//             type: "Point" ,
-//             coordinates: [ longitude, latitude ]
-//         },
-//         $maxDistance: 5000,
-//         $minDistance: 0,
-//       },
-//     },
-//   })
-//   .select('content backgroundColor publishAt fontFamily comments shares votes publicationId votes.registerAt votes.authorId')
-//   // .skip(2)
-//   .limit(20)
-//   .sort({ publishAt: -1, })
-//   .lean()
-//   .exec()
-
-//   return publications
-// }

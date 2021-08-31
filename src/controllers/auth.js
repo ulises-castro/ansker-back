@@ -75,14 +75,14 @@ const joinOrLoginFacebook = async (facebookToken, req, res, next) => {
   registerOrLoginUser(facebookUserData, res, next)
 }
 
-async function loginFacebook  (req, res, next) {
+async function loginFacebook(req, res, next) {
   const { tokenFB } = req.body
 
   let payload = {
     tokenFB
   }
 
-// Find User via Facebook || Register if user doesn't exists in database
+  // Find User via Facebook || Register if user doesn't exists in database
   const [err, facebookData] = await to(joinOrLoginFacebook(payload.tokenFB, req, res, next))
 
   //Get last posit[ion
@@ -120,48 +120,43 @@ const loginGoogle = async (req, res, next) => {
     code
   } = req.query
 
-  const [ err, googleAuthData ] = await to(axios({
-      url: `https://oauth2.googleapis.com/token`,
-      method: 'post',
-      data: {
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${process.env.URL_FRONT}/authenticate/google`,
-        grant_type: 'authorization_code',
-        code
-      },
-    }))
+  const [err, googleAuthData] = await to(axios({
+    url: `https://oauth2.googleapis.com/token`,
+    method: 'post',
+    data: {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: `${process.env.URL_FRONT}/authenticate/google`,
+      grant_type: 'authorization_code',
+      code
+    },
+  }))
 
-    console.log(err, 'err ')
+  console.log(err, 'err ')
 
-    if (googleAuthData) {
-      const { data } = googleAuthData
+  if (googleAuthData) {
+    const { data } = googleAuthData
 
-      res.status(200).json({
-        ...data
-      })
-    }
+    res.status(200).json({
+      ...data
+    })
+  }
 
-    next(err)
+  next(err)
 }
-
 
 const googleInfoByToken = async (req, res, next) => {
   const {
     access_token
   } = req.query
 
-  const [ err, googleInfoByTokenData ] = await to(axios({
+  const [err, googleInfoByTokenData] = await to(axios({
     url: 'https://www.googleapis.com/oauth2/v2/userinfo',
     method: 'get',
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
   }))
-
-  // console.log(googleInfoByTokenData) // { id, email, given_name, family_name }
-
-  // console.log(err)
 
   if (err) next(err)
   const { data } = googleInfoByTokenData
